@@ -4,7 +4,7 @@ import gsap from "gsap";
 import { Button } from "../components/component";
 import { IScene, Manager } from "../Manager";
 import { GameScene } from "./GameScene";
-import { EquipScene } from "./EquipScene"
+import { PackScene } from "./PackScene"
 import { SortScene } from "./SortScene";
 import { AnimationScene } from "../examples/animation";
 import { Particles as ParticlesCene } from "../examples/particles";
@@ -48,6 +48,9 @@ export class MainScene extends Container implements IScene {
 
         this.changeNavPage(Manager.currentNavIndex);
 
+        // app bakcgroupd
+        Manager.backgroundColor(0x000);
+
         const skewStyle = new TextStyle({
             fontFamily: '9pxDemo',
             fontSize: 50,
@@ -61,7 +64,7 @@ export class MainScene extends Container implements IScene {
             { 'text': '副将', 'scene': SlaveScene, ease: "expo.out" },
             { 'text': '排行', 'scene': SortScene, ease: "expo.out" },
             { 'text': '匹配', 'scene': GameScene, ease: "expo.out" },
-            { 'text': '物品', 'scene': EquipScene, ease: "expo.out" },
+            { 'text': '物品', 'scene': PackScene, ease: "expo.out" },
             { 'text': 'Spine', 'scene': SpineScene, ease: "expo.out" },
             { 'text': 'Animation', 'scene': AnimationScene, ease: "expo.out" },
             { 'text': '粒子', 'scene': ParticlesCene, ease: "expo.out" },
@@ -188,7 +191,7 @@ export class MainScene extends Container implements IScene {
 
         var datas = [
             { 'name': '状态', 'calllback': () => { Manager.changeScene(new UserScene) }, },
-            { 'name': '物品', 'calllback': () => { }, },
+            { 'name': '物品', 'calllback': () => { ws.send({ route: "goods", uri: "list", type: 3 }) }, },
             { 'name': '副将', 'calllback': () => { ws.send({ route: "slave", uri: "list" }) }, },
             { 'name': '组队', 'calllback': () => { }, },
             { 'name': '排行', 'calllback': () => { ws.send({ route: "user", uri: "sort" }) }, },

@@ -1,7 +1,7 @@
 import { Container, Sprite, AnimatedSprite, SCALE_MODES } from "pixi.js";
 import { IScene, Manager } from "../Manager";
 import { Back } from "../components/back";
-import { LoginScene as BackScene } from "./LoginScene";
+import { LoginScene } from "./LoginScene";
 
 import { Animation } from "../components/animation"
 import { Skill } from "../components/skill";
@@ -85,7 +85,7 @@ export class GameScene extends Container implements IScene {
         this.addChild(new Chat());
 
         // 返回
-        this.addChild(new Back(BackScene));
+        this.addChild(new Back(LoginScene));
 
         // 粒子
         // this.addChild(new Particles());

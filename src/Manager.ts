@@ -50,7 +50,7 @@ export class Manager {
 
     private constructor() { }
 
-    public static initialize(width: number = 750, height: number = 1334, background: number = 0xFAFAFA) {
+    public static initialize(width: number = 750, height: number = 1334, background: number = 0x000) {
         // store our width and height
         Manager._width = width;
         Manager._height = height;
@@ -83,6 +83,10 @@ export class Manager {
         Manager.particles = new Particles();
         Manager.particles.zIndex = 200;
         Manager.app.stage.addChild(Manager.particles);
+    }
+
+    public static backgroundColor(color: number = 0x000) {
+        Manager.app.renderer.backgroundColor = color;
     }
 
     /**

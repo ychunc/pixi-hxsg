@@ -85,23 +85,43 @@ export class StyleText extends Container {
     }
 }
 
-export class Button extends Container {
+type Callback = (...args: any[]) => void | null;
 
+export class Button extends Container {
     public graphics: Graphics;
+    /**
+     * 按钮颜色
+     */
     public butColor: number = 0xC600C3;
+
+    /**
+     * 按钮宽度
+     */
     public butWidth: number = 110;
+
+    /**
+     * 按钮高度
+     */
     public butHeight: number = 60;
+
+    /**
+     * 按钮边框
+     */
     public butBorder: number = 4;
+
+    /**
+     * 按钮Alpha
+     */
     public butAlpha: number = 0.55;
     public action: string = '';
     public text: Text;
 
     /**
      * 创建按钮
-     * @param txt 文本
-     * @param style 
+     * @param text 文本 | 对象
+     * @param style
      */
-    constructor(txt: string = '', style: any = {}) {
+    constructor(text: any, style?: {} | ITextStyle, butColor: number = 0xC600C3, callback: Callback = () => { }) {
         super();
 
         // 文字
@@ -111,18 +131,29 @@ export class Button extends Container {
             fill: ['#ffffff'],
             lineJoin: 'round',
         });
-        this.text = new Text(txt, Object.assign(Textstyle, style));
 
-        this.butWidth = this.text.width + 26;
-        this.butHeight = this.text.height + 6;
+        if (typeof text != 'string') {
+            this.text = text
+        } else {
+            this.text = new Text(text, Object.assign(Textstyle, style));
 
-        this.text.x = this.butWidth / 2 - this.text.width / 2;
-        this.text.y = this.butHeight / 2 - this.text.height / 2;
+            this.butWidth = this.text.width + 26;
+            this.butHeight = this.text.height + 6;
+
+            this.text.x = this.butWidth / 2 - this.text.width / 2;
+            this.text.y = this.butHeight / 2 - this.text.height / 2;
+        }
+
+        // but color
+        this.butColor = butColor;
+
+        // callback
+        callback(this);
 
         // 按钮
         this.graphics = new Graphics();
-        // 背景
 
+        // 背景
         this.up();
         this.addChild(this.graphics, this.text);
 

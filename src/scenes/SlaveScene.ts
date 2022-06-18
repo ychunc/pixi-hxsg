@@ -1,8 +1,4 @@
-import {
-    Container,
-    // Sprite, Texture, 
-    Graphics
-} from "pixi.js";
+import { Container, Graphics } from "pixi.js";
 import { IScene, Manager } from "../Manager";
 import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
@@ -11,7 +7,7 @@ import { ws } from "../components/websocket";
 
 export class SlaveScene extends Container implements IScene {
 
-    public data: any;
+    public static data: any;
 
     public n: number = 0;
     public back: Back;
@@ -22,6 +18,8 @@ export class SlaveScene extends Container implements IScene {
         let header = new Header(false);
         let frame = new Frame();
 
+        // app bakcgroupd
+        Manager.backgroundColor(0x010134);
 
         let title = new StyleText('副将', {
             fontSize: 40,
@@ -43,8 +41,8 @@ export class SlaveScene extends Container implements IScene {
         row.x = initX;
         this.addChild(row);
 
-        let list = ws.data.list;
-        console.log(ws.data, list);
+        let list = SlaveScene.data.list;
+        console.log('ws', ws.data, 'list', list);
 
         for (let index = 0; index < list.length; index++) {
             let item = list[index];

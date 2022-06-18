@@ -63,6 +63,8 @@ export class ws {
     }
     public static ISTEST = false;
     public static test() {
+        // ws.send({ route: "goods", uri: "list", type: 3 })
+        // ws.send({ "route": "user", "uri": "sort" })
         // ws.send({ "route": "npc", "uri": "join" })
         // ws.send({ "route": "npc", "uri": "row", "data": ["0", "0", "0", "0"], "skill": [0, 0, 0, 0] })
     }

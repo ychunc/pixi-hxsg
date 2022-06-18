@@ -20,6 +20,9 @@ export class UserScene extends Container implements IScene {
         let header = new Header(true);
         let frame = new Frame();
 
+        // app bakcgroupd
+        Manager.backgroundColor(0x010134);
+
         // create the scrollbox
         this.scrollbox = new Scrollbox({
             boxWidth: Manager.width - frame.left.width * 2,

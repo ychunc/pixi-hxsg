@@ -12,6 +12,12 @@ export class Back extends Container {
     public scene: any;
     public callback: any;
 
+    /**
+     * 返回按钮
+     * @param scene 返回的界面对象
+     * @param beforeCallback 前置回调
+     * @param afterCallback 后置回调
+     */
     constructor(scene: any, beforeCallback: Callback = () => { }, afterCallback: Callback = () => { }) {
         super();
 
@@ -45,7 +51,7 @@ export class Back extends Container {
     public doBack() {
         // 返回之前做点什么
         if (this.callback) this.callback();
-        // 强化场景
+        // 切换场景
         Manager.changeScene(new this.scene);
     }
 }
