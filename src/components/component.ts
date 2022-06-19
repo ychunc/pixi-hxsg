@@ -89,15 +89,14 @@ export class StyleText extends Container {
      */
     constructor(txt: string = '', style?: {} | ITextStyle) {
         super();
-        let color = ['d3393c']; color;
+
         style = Object.assign({
             // fontFamily: '9pxDemo',
             fontFamily: 'Arial',
             fontWeight: 'bold',
             fontSize: 40,
-            // fill: '#FFF',
             fill: '#ffffeb',
-
+            lineJoin: "round",
         }, style);
         this.text = new Text(txt, style)
 
@@ -165,7 +164,7 @@ export class confirmBox extends Container {
         confirm.y = this.background.height / 2 - 80;
         confirm.on('pointertap', () => {
             confirmCallback();
-            this.destroy(); // 不应该在这销毁
+            // this.destroy(); // 不应该在这销毁
         });
 
 
@@ -184,7 +183,7 @@ export class confirmBox extends Container {
         gsap.to(this.background, { duration: 0.3, alpha: 1, ease: "back.out(2)" });
         gsap.to(this.background.scale, { duration: 0.3, x: 1, y: 1, ease: "back.out(2)" });
 
-        Manager.app.stage.addChild(this);
+        // Manager.app.stage.addChild(this);
     }
 }
 

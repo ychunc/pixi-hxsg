@@ -1,4 +1,4 @@
-import { Application, Container as PIXIContainer, DisplayObject, Text } from 'pixi.js'
+import { Application, Container as Container, DisplayObject, Text } from 'pixi.js'
 
 import { Particles } from "./components/particles";
 
@@ -21,16 +21,6 @@ export class Manager {
      * Particles
      */
     public static particles: Particles;
-
-    /**
-     * current map data
-     */
-    public static mapData: any;
-
-    /**
-     * current nav index
-     */
-    public static currentNavIndex: number = 0;
 
     /**
      * With getters but not setters, these variables become read-only
@@ -63,7 +53,7 @@ export class Manager {
             backgroundColor: background,
             width: width,
             height: height,
-            // antialias: true, // 反锯齿
+            antialias: true, // 反锯齿
         }
         Manager.app = new Application(options)
 
@@ -169,7 +159,7 @@ export interface IScene extends DisplayObject {
     update(framesPassed: number): void;
 }
 
-export class Container extends PIXIContainer implements IScene {
+export class ManageContainer extends Container implements IScene {
     public static data: any;
 
     public update(): void {

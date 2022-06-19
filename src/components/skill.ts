@@ -228,8 +228,8 @@ export class Skill {
         this.tl.add(gsap.to({}, { duration: 0 },).eventCallback('onComplete', () => {
             // 劈动画
             let anim = Animation.lphs();
-            anim.x = XB == 1 ? 16 : 38;
-            anim.y = 20;
+            anim.x = XB == 1 ? 16 : 40;
+            anim.y = 25;
             PS.addChild(anim);
 
             // 攻击人物隐藏

@@ -42,7 +42,7 @@ export class MainScene extends Container implements IScene {
 
         this.addChild(new Header());
 
-        this.changeNavPage(Manager.currentNavIndex);
+        this.changeNavPage(MainScene.currentNavIndex);
 
         // app bakcgroupd
         Manager.backgroundColor(0x000);
@@ -108,7 +108,7 @@ export class MainScene extends Container implements IScene {
         let navs: Sprite[] = [];
         for (let index = 0; index <= 3; index++) {
             let is = ''
-            if (index == Manager.currentNavIndex) {
+            if (index == MainScene.currentNavIndex) {
                 is = '_on'
             }
             let nav = Sprite.from('home_nav' + String(index) + is)
@@ -122,7 +122,7 @@ export class MainScene extends Container implements IScene {
             nav.interactive = true;
             nav.on("pointertap", () => {
                 // 全局index
-                Manager.currentNavIndex = index;
+                MainScene.currentNavIndex = index;
                 // 重置图标
                 navs.forEach((element, n) => {
                     element.texture = Texture.from('home_nav' + String(n));
@@ -137,7 +137,7 @@ export class MainScene extends Container implements IScene {
             });
         }
 
-        this.addChild(this.nav_column(Manager.currentNavIndex));
+        this.addChild(this.nav_column(MainScene.currentNavIndex));
         this.addChild(new Container, ...navs);
     }
 
@@ -163,6 +163,11 @@ export class MainScene extends Container implements IScene {
     }
 
     /**
+     * current nav index
+     */
+    public static currentNavIndex: number = 0;
+
+    /**
      * 设施
      */
     public nav_facilities() {
@@ -185,7 +190,7 @@ export class MainScene extends Container implements IScene {
             { 'name': '宝库', 'calllback': () => { }, },
             { 'name': '公告', 'calllback': () => { }, },
             { 'name': 'VIP', 'calllback': () => { }, },
-            { 'name': '登出', 'calllback': () => { Manager.currentNavIndex = 0; Manager.changeScene(new LoginScene) }, },
+            { 'name': '登出', 'calllback': () => { MainScene.currentNavIndex = 0; Manager.changeScene(new LoginScene) }, },
         ];
 
         let obj: StyleText[] = []
@@ -209,13 +214,18 @@ export class MainScene extends Container implements IScene {
     }
 
     /**
+     * current map data
+     */
+    public static mapData: any;
+
+    /**
      * nav_人物
      */
     public nav_people() {
         var container = new Container();
-        if (!Manager.mapData) return container;
+        if (!MainScene.mapData) return container;
 
-        var data = Manager.mapData;
+        var data = MainScene.mapData;
 
         for (const key in data.npc) {
 

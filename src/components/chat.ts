@@ -44,11 +44,10 @@ export class Chat extends Container {
                 this.currentIndex = index;
                 this.currentChatSprite.x = 344 + this.currentIndex * 100;
 
-
-                new confirmBox('确定要解雇副将吗?', {}, () => {
+                this.addChild(new confirmBox('确定要解雇副将吗?', {}, () => {
                     console.log('ssss');
+                }))
 
-                })
             });
 
             container.addChild(sprite);

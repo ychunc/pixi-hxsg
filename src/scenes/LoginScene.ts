@@ -92,14 +92,13 @@ export class LoginScene extends Container implements IScene {
             Manager.changeScene(new MainScene);
         }, this);
 
-        if (!ws.ISContent) {
-            this.login(true);
+        if (ws.action == 'AUTO') {
+            ws.connect();
         }
     }
 
-    public login(test = false) {
-        ws.ISTEST = test
-        ws.content();
+    public login() {
+        ws.connect();
     }
 
     public static removeInput() {

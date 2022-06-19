@@ -1,7 +1,7 @@
 import { Manager } from "../Manager";
 import { MainScene } from "../scenes/MainScene";
 import { LoginScene } from "../scenes/LoginScene";
-import { SlaveScene } from "../scenes/SlaveScene";
+import { SlaveDetailScene, SlaveScene } from "../scenes/SlaveScene";
 import { GameScene } from "../scenes/GameScene";
 import { UserScene } from "../scenes/UserScene";
 import { SortScene } from "../scenes/SortScene";
@@ -20,7 +20,7 @@ export class Route {
                 Manager.changeScene(new MainScene)
                 break;
             case 'map':
-                Manager.mapData = result.data
+                MainScene.mapData = result.data
                 Manager.currentScene.changeNavPage(0);
                 break;
             case 'user':
@@ -39,6 +39,11 @@ export class Route {
                         break;
                     case 'del':
                         ws.send({ route: "slave", uri: "list" });
+                        break;
+                    case 'exp':
+                        SlaveDetailScene.data = result.data;
+                        SlaveScene.data.list[SlaveDetailScene.selectedIndex] = result.data;
+                        Manager.changeScene(new SlaveDetailScene);
                         break;
                     default:
                         break;
