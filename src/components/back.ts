@@ -21,12 +21,14 @@ export class Back extends Container {
     constructor(scene: any, beforeCallback: Callback = () => { }, afterCallback: Callback = () => { }) {
         super();
 
+        this.zIndex = 950;
+
         this.alpha = 0.3;
 
         this.button = new Button('返回');
 
         this.backgroup = Sprite.from("leg");
-
+        this.backgroup.visible = false;
         this.addChild(this.backgroup, this.button);
 
         this.backgroup.height = Manager.width / this.backgroup.width * 2.2 * this.backgroup.height;
@@ -42,8 +44,8 @@ export class Back extends Container {
 
         this.y = Manager.height;
 
-        gsap.to(this, { duration: 0.3, y: Manager.height - this.height, alpha: 1 }).eventCallback('onComplete', () => {
-            if (afterCallback) afterCallback(this)
+        gsap.to(this, { duration: 0.3, y: Manager.height - this.height - 100, alpha: 1 }).eventCallback('onComplete', () => {
+            if (afterCallback) afterCallback(this);
         })
     }
 

@@ -17,6 +17,7 @@ export class ws {
 
     public static content(url: string = '') {
         ws.close();
+
         url = "wss://o0ooo0ooo0oo.xyz:8950"
         ws.websocket = new WebSocket(url || ws.url);
         ws.websocket.onopen = ws.onOpen;
@@ -32,11 +33,8 @@ export class ws {
                 'background:#ff0000 ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff');
             return;
         }
-        try {
-            ws.websocket.send(JSON.stringify(data));
-        } catch (error) {
-            ws.ISContent = false;
-        }
+
+        ws.websocket.send(JSON.stringify(data));
     }
 
     public static onError() {
@@ -78,5 +76,10 @@ export class ws {
     }
 
     public static onClose() {
+        ws.ISContent = false;
+
+        console.log('%c ws %c onClose',
+            'background:#35495e ; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff',
+            'background:#FF0000 ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff');
     }
 }

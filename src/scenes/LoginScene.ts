@@ -7,7 +7,7 @@ import { ws } from "../components/websocket"
 import gsap from "gsap";
 
 export class LoginScene extends Container implements IScene {
-    public data: any;
+    public static data: any;
 
     public static username: HTMLInputElement
     public static password: HTMLInputElement
@@ -42,7 +42,7 @@ export class LoginScene extends Container implements IScene {
             strokeThickness: 12,
         });
 
-        const skewText = new Text('梦幻三国', skewStyle);
+        const skewText = new Text('', skewStyle);
         skewText.alpha = 0.8;
         skewText.anchor.set(0.5, 0.5);
         skewText.x = Manager.width / 2;

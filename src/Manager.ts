@@ -1,4 +1,4 @@
-import { Application, DisplayObject, Text } from 'pixi.js'
+import { Application, Container as PIXIContainer, DisplayObject, Text } from 'pixi.js'
 
 import { Particles } from "./components/particles";
 
@@ -58,12 +58,12 @@ export class Manager {
         // Create our pixi app
         const options: any = {
             view: document.getElementById("pixi-canvas") as HTMLCanvasElement,
-            // resolution: window.devicePixelRatio || 1, // [别开了]
+            // resolution: window.devicePixelRatio || 1, // [别开了,开了可能会很卡]
             autoDensity: true,
             backgroundColor: background,
             width: width,
             height: height,
-            antialias: true, // 反锯齿
+            // antialias: true, // 反锯齿
         }
         Manager.app = new Application(options)
 
@@ -81,7 +81,7 @@ export class Manager {
 
         // particles
         Manager.particles = new Particles();
-        Manager.particles.zIndex = 200;
+        Manager.particles.zIndex = 500;
         Manager.app.stage.addChild(Manager.particles);
     }
 
@@ -167,4 +167,12 @@ export class Manager {
 export interface IScene extends DisplayObject {
     [x: string]: any;
     update(framesPassed: number): void;
+}
+
+export class Container extends PIXIContainer implements IScene {
+    public static data: any;
+
+    public update(): void {
+        // To be a scene we must have the update method even if we don't use it.
+    }
 }

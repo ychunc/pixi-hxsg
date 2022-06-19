@@ -31,6 +31,9 @@ let base = [
 
     { name: "dead_fl", url: "./game/dead_fl.json" },
 
+    { name: "dead_1", url: "./game/dead_1.png" },
+    { name: "dead_2", url: "./game/dead_2.png" },
+
 
     // ui
     { name: "home_nav", url: "./ui/home_nav.json" },
@@ -65,8 +68,9 @@ let base = [
     { name: "row_skill", url: "./ui/row_skill.png" },
     { name: "f_jt", url: "./ui/f_jt.png" },
 
-    { name: "dead_1", url: "./game/dead_1.png" },
-    { name: "dead_2", url: "./game/dead_2.png" },
+    { name: "confirm_box", url: "./ui/confirm_box.png" },
+
+
 ]
 data.push(base)
 export const assets = data

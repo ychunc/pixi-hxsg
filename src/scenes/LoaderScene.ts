@@ -2,7 +2,6 @@ import { Container, Graphics, Loader } from "pixi.js";
 import { IScene, Manager } from "../Manager";
 import { assets } from "../assets";
 import { LoginScene as MainScene } from "./LoginScene";
-// import { GameScene as MainScene } from "./GameScene";
 
 export class LoaderScene extends Container implements IScene {
     public data: any;

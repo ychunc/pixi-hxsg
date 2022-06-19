@@ -1,15 +1,20 @@
 import { Container, Sprite, Texture } from "pixi.js";
 import gsap from "gsap";
 
+import { Button } from "../components/component";
 import { IScene, Manager } from "../Manager";
-import { PackScene } from "./PackScene"
-import { SortScene } from "./SortScene";
-import { LoginScene } from "./LoginScene";
+import { GameScene } from "../scenes/GameScene";
+import { PackScene } from "../scenes/PackScene"
+import { SortScene } from "../scenes/SortScene";
+import { AnimationScene } from "../examples/animation";
+import { Particles as ParticlesCene } from "../examples/particles";
+import { SpineScene } from "../examples/spine";
+import { Scroll } from "../examples/scroll";
+import { Input } from "../examples/input";
+import { LoginScene } from "../scenes/LoginScene";
 
-import { MainScene as MainSceneExa } from "../examples/MainScene"
-
-import { SlaveScene } from "./SlaveScene";
-import { UserScene } from "./UserScene";
+import { SlaveScene } from "../scenes/SlaveScene";
+import { UserScene } from "../scenes/UserScene";
 import { Header, StyleText } from "../components/component";
 import { ws } from "../components/websocket";
 import { Chat } from "../components/chat";
@@ -18,6 +23,7 @@ import { Location } from "../components/route";
 export class MainScene extends Container implements IScene {
     public static data: any;
 
+    public Time: number = 0;
     public update() { }
 
     /**
@@ -32,12 +38,65 @@ export class MainScene extends Container implements IScene {
 
         this.navigation();
 
+        this.addChild(new Chat());
+
+        this.addChild(new Header());
+
         this.changeNavPage(Manager.currentNavIndex);
 
         // app bakcgroupd
         Manager.backgroundColor(0x000);
 
-        this.addChild(new Header(), new Chat());
+        // text
+        var tip = new StyleText('测试界面', {
+            fontSize: 38,
+            fill: '#F7EDCA',
+            stroke: '#d3393c',
+            strokeThickness: 10,
+            lineJoin: "round",
+        });
+        tip.y = 635;
+        gsap.to(tip, { duration: 2, x: Manager.width - tip.width, repeat: -1, yoyo: true, ease: 'none' });
+        this.addChild(tip);
+
+        let data = [
+            { 'text': '状态', 'scene': UserScene, ease: "expo.out" },
+            { 'text': '副将', 'scene': SlaveScene, ease: "expo.out" },
+            { 'text': '排行', 'scene': SortScene, ease: "expo.out" },
+            { 'text': '匹配', 'scene': GameScene, ease: "expo.out" },
+            { 'text': '物品', 'scene': PackScene, ease: "expo.out" },
+            { 'text': 'Spine', 'scene': SpineScene, ease: "expo.out" },
+            { 'text': 'Animation', 'scene': AnimationScene, ease: "expo.out" },
+            { 'text': '粒子', 'scene': ParticlesCene, ease: "expo.out" },
+            { 'text': 'Scroll', 'scene': Scroll, ease: "expo.out" },
+            { 'text': 'TextInput', 'scene': Input, ease: "expo.out" },
+            { 'text': '退出登录', 'scene': LoginScene, ease: "expo.out" },
+        ]
+        let obj: Button[] = []
+        let x: number = 0;
+        let y: number = 500;
+
+        data.forEach((element, index) => {
+            obj[index] = new Button(element.text);
+            if (x + obj[index].getBounds().width > Manager.width) {
+                y += 100;
+                x = 0;
+            }
+            obj[index].x = x;
+            obj[index].y = y;
+            obj[index].alpha = 0;
+
+            x += obj[index].getBounds().width + 20;
+
+            this.addChild(obj[index])
+            obj[index].on("pointertap", () => Manager.changeScene(new element.scene), this);
+
+            gsap.to(obj[index], {
+                duration: 0.5,
+                y: Manager.height / 3 + y,
+                alpha: 1,
+            }).delay(index * 0.02);
+        });
     }
 
     /**
@@ -125,7 +184,7 @@ export class MainScene extends Container implements IScene {
             { 'name': '训练', 'calllback': () => { }, },
             { 'name': '宝库', 'calllback': () => { }, },
             { 'name': '公告', 'calllback': () => { }, },
-            { 'name': 'VIP', 'calllback': () => { Manager.changeScene(new MainSceneExa) }, },
+            { 'name': 'VIP', 'calllback': () => { }, },
             { 'name': '登出', 'calllback': () => { Manager.currentNavIndex = 0; Manager.changeScene(new LoginScene) }, },
         ];
 

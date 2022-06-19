@@ -7,7 +7,6 @@ import { Button, Frame, Header, StyleText } from "../components/component";
 export class SortScene extends Container implements IScene {
 
     public static data: any;
-
     public update(): void { }
 
     constructor() {
@@ -86,7 +85,7 @@ export class SortScene extends Container implements IScene {
 
             let no = new StyleText((index + 1 + '.').toString());
             let name = new StyleText(SortScene.data[index].nick, {
-                fontSize: 32,
+                fontSize: 36,
                 fill: '#F7EDCA',
                 stroke: '#D3393C',
                 strokeThickness: 6,

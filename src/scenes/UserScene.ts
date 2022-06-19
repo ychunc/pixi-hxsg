@@ -1,6 +1,6 @@
-import { Container, Sprite, Texture } from "pixi.js";
-import { IScene, Manager } from "../Manager";
-import { StyleText, Frame, Header, Button } from "../components/component";
+import { Sprite, Texture } from "pixi.js";
+import { IScene, Manager, Container } from "../Manager";
+import { StyleText, Frame, Header, Button, SceneTite } from "../components/component";
 import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
 import { Scrollbox } from "pixi-scrollbox";
@@ -9,9 +9,6 @@ import gsap from "gsap";
 
 export class UserScene extends Container implements IScene {
 
-    public static data: any;
-    public update() { }
-
     public scrollbox: Scrollbox;
 
     constructor() {
@@ -19,6 +16,8 @@ export class UserScene extends Container implements IScene {
 
         let header = new Header(true);
         let frame = new Frame();
+        let title = new SceneTite('赤壁区-' + UserScene.data.nick + '(10001)');
+
 
         // app bakcgroupd
         Manager.backgroundColor(0x010134);
@@ -26,19 +25,8 @@ export class UserScene extends Container implements IScene {
         // create the scrollbox
         this.scrollbox = new Scrollbox({
             boxWidth: Manager.width - frame.left.width * 2,
-            boxHeight: Manager.height + 100,
+            boxHeight: Manager.height + 500,
         })
-
-        let title = new StyleText('赤壁区-' + UserScene.data.nick + '(10001)', {
-            fontSize: 38,
-            fill: '#F7EDCA',
-            stroke: '#d3393c',
-            strokeThickness: 10,
-            lineJoin: "round",
-        })
-        title.y = 10;
-        title.x = this.scrollbox.boxWidth / 2 - title.width / 2;
-        this.scrollbox.content.addChild(title);
 
         const sprite = new Sprite(Texture.WHITE)
         sprite.alpha = 0;
@@ -58,7 +46,7 @@ export class UserScene extends Container implements IScene {
         this.addChild(this.scrollbox)
 
 
-        this.addChild(frame, header, new Back(MainScene));
+        this.addChild(frame, header, title, new Back(MainScene));
     }
 
     public infos() {
@@ -137,10 +125,8 @@ export class AttributeScene extends Container implements IScene {
 
         let header = new Header(true);
         let frame = new Frame();
+        let title = new SceneTite('分配属性点')
 
-        this.addChild(frame);
-        this.addChild(header);
-        this.addChild(new Back(UserScene));
+        this.addChild(frame, header, title, new Back(UserScene));
     }
-    public update() { }
 }

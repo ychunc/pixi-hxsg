@@ -37,7 +37,7 @@ export class PackScene extends Container implements IScene {
 
         const sprite = scrollbox.content.addChild(new Sprite(Texture.WHITE))
         sprite.width = Manager.width * 0.85;
-        sprite.height = Manager.height + 500;
+        sprite.height = Manager.height + 1000;
         sprite.tint = 0x010134;
         // sprite.tint = 0x000000;
 
@@ -45,7 +45,7 @@ export class PackScene extends Container implements IScene {
         // 我的装备
         var equipage = new Button('我的装备');
         equipage.x = 20;
-        equipage.y = 80;
+        equipage.y = 40;
         scrollbox.content.addChild(equipage);
 
         // 物品类型
@@ -56,7 +56,7 @@ export class PackScene extends Container implements IScene {
                 _this.butWidth *= 1.2;
             });
             button.x = width;
-            button.y = 150;
+            button.y = 120;
 
             width += button.width + 10;
             scrollbox.content.addChild(button);
@@ -68,7 +68,7 @@ export class PackScene extends Container implements IScene {
         let graphics = new Graphics();
         graphics.beginFill(0xFFFFFF, 0.8).drawRect(20, 0, Manager.width * 0.8, 6);
         graphics.endFill();
-        graphics.y = 225;
+        graphics.y = 200;
 
         scrollbox.content.addChild(graphics);
 
@@ -86,16 +86,17 @@ export class PackScene extends Container implements IScene {
     }
 
 
+    /**
+     * 物品列表
+     * @param scrollbox 
+     */
     public list(scrollbox: any) {
         var container = new Container();
-
-        // PackScene.data = PackScene.data.concat(PackScene.data)
-        // PackScene.data = PackScene.data.concat(PackScene.data)
 
         for (let index = 0; index < PackScene.data.length; index++) {
             var row = new Container();
             row.x = 20;
-            row.y = 300 + index * 70;
+            row.y = 250 + index * 70;
 
             let name = new StyleText(PackScene.data[index].name, {
                 fontSize: 34,
@@ -127,7 +128,5 @@ export class PackScene extends Container implements IScene {
         scrollbox.content.addChild(container);
     }
 
-    public update(framesPassed: number): void {
-        framesPassed
-    }
+    public update() { }
 }

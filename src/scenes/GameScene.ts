@@ -13,7 +13,6 @@ import { ws } from "../components/websocket"
 import { MainScene } from "./MainScene";
 import { Team } from "../components/game";
 import { Chat } from "../components/chat";
-// import { Particles } from "../examples/particles";
 
 interface ISkill {
     index: number;

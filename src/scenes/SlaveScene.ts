@@ -1,36 +1,21 @@
-import { Container, Graphics } from "pixi.js";
-import { IScene, Manager } from "../Manager";
+import { Graphics } from "pixi.js";
+import { IScene, Manager, Container } from "../Manager";
 import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
-import { Header, Frame, StyleText, Button } from "../components/component";
+import { Header, Frame, StyleText, Button, SceneTite, confirmBox } from "../components/component";
 import { ws } from "../components/websocket";
 
 export class SlaveScene extends Container implements IScene {
 
-    public static data: any;
-
-    public n: number = 0;
-    public back: Back;
-
     constructor() {
         super();
 
-        let header = new Header(false);
+        let header = new Header();
         let frame = new Frame();
+        let title = new SceneTite('副将')
 
         // app bakcgroupd
         Manager.backgroundColor(0x010134);
-
-        let title = new StyleText('副将', {
-            fontSize: 40,
-            fill: '#F7EDCA',
-            stroke: '#d3393c',
-            strokeThickness: 10,
-            lineJoin: "round",
-        })
-        title.y = 100;
-        title.x = Manager.width / 2 - title.width / 2;
-        this.addChild(title);
 
         let initY = 300;
         let initX = 80;
@@ -42,7 +27,6 @@ export class SlaveScene extends Container implements IScene {
         this.addChild(row);
 
         let list = SlaveScene.data.list;
-        console.log('ws', ws.data, 'list', list);
 
         for (let index = 0; index < list.length; index++) {
             let item = list[index];
@@ -54,7 +38,7 @@ export class SlaveScene extends Container implements IScene {
                 this.addChild(graphics);
             }
 
-            let but = new Button(item.up ? '休' : '战', { fontSize: 40 });
+            let but = new Button(item.up ? '休' : '战', { fontSize: 42 });
             but.y = initY + index * step;
             but.x = 550;
             this.addChild(but);
@@ -79,14 +63,43 @@ export class SlaveScene extends Container implements IScene {
             let row = new StyleText(txt, style)
             row.y = initY + index * step;
             row.x = initX;
+            row.on("pointertap", () => {
+                Manager.changeScene(new SlaveDetailScene(item));
+            });
+
             this.addChild(row);
         }
 
-
-        this.addChild(frame);
-        this.addChild(header);
-        this.addChild(this.back = new Back(MainScene));
+        this.addChild(frame, header, title, new Back(MainScene));
     }
 
-    public update() { }
+}
+
+export class SlaveDetailScene extends Container implements IScene {
+    public data: any;
+    constructor(slave: any) {
+        super();
+
+        let header = new Header(true);
+        let frame = new Frame();
+        let title = new SceneTite('副将:' + slave.slave.name);
+
+        console.log(slave);
+
+        let but = new Button('解雇副将', { fontSize: 42 });
+        but.x = 400;
+        but.y = Manager.height * 0.8;
+
+        but.on('pointertap', () => {
+            new confirmBox('确定要解雇副将吗?', {}, () => {
+                console.log('ws send');
+                
+                ws.send({ route: 'slave', uri: "del", id: slave.id })
+            })
+        })
+
+        this.addChild(but);
+
+        this.addChild(frame, header, title, new Back(SlaveScene));
+    }
 }

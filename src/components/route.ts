@@ -6,6 +6,7 @@ import { GameScene } from "../scenes/GameScene";
 import { UserScene } from "../scenes/UserScene";
 import { SortScene } from "../scenes/SortScene";
 import { PackScene } from "../scenes/PackScene";
+import { ws } from "./websocket";
 
 export class Route {
 
@@ -19,30 +20,36 @@ export class Route {
                 Manager.changeScene(new MainScene)
                 break;
             case 'map':
-                try {
-                    Manager.mapData = result.data
-                    Manager.currentScene.changeNavPage(0);
-                } catch (error) {
-
-                }
+                Manager.mapData = result.data
+                Manager.currentScene.changeNavPage(0);
                 break;
             case 'user':
                 switch (route[1]) {
                     case 'sort':
                         SortScene.data = result.data;
-                        Manager.changeScene(new SortScene)
+                        Location.to(SortScene);
                         break;
                 }
                 break;
             case 'slave':
-                SlaveScene.data = result.data;
-                Manager.changeScene(new SlaveScene)
+                switch (route[1]) {
+                    case 'list':
+                        SlaveScene.data = result.data;
+                        Manager.changeScene(new SlaveScene);
+                        break;
+                    case 'del':
+                        ws.send({ route: "slave", uri: "list" });
+                        break;
+                    default:
+                        break;
+                }
+
                 break;
             case 'goods':
                 switch (route[1]) {
                     case 'list':
                         PackScene.data = result.data;
-                        Manager.changeScene(new PackScene);
+                        Location.to(PackScene)
                         break;
                 }
                 break;
@@ -96,4 +103,26 @@ export class Route {
 
     }
 
+}
+
+
+
+type Target
+    = { route: 'goods', uri: 'list', type?: number }
+    | { route: 'slave', uri: 'list' }
+    | { route: 'user', uri: 'sort' }
+
+export class Location {
+    /**
+     * 跳转场景 缓存跳转或请求数据跳转
+     * @param Scene 场景
+     * @param route 请求的路由,只需切换场景时可以不传
+     */
+    public static to(Scene: any, route?: Target) {
+        if (Scene.data) {
+            Manager.changeScene(new Scene);
+        } else {
+            ws.send(route)
+        }
+    }
 }
