@@ -29,6 +29,9 @@ export class Route {
                         SortScene.data = result.data;
                         Location.to(SortScene);
                         break;
+                    case 'user':
+                        UserScene.data = result.data;
+                        break;
                 }
                 break;
             case 'slave':

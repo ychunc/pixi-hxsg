@@ -274,28 +274,28 @@ export class GameScene extends Container implements IScene {
         this.selectedContainer.addChild(bg);
 
         // rows
-        var text = new StyleText(skill.skill_name, { fontSize: 32, fill: 0xFFFF00 });
+        var text = new StyleText(skill.skill_name, { fontSize: 36, fill: 0xFFFF00 });
         text.x = this.selectedContainer.width / 2 - text.width / 2;
         text.y = 30;
         this.selectedContainer.addChild(text)
 
-        var text = new StyleText('独孤求败', { fontSize: 32, fill: 0xFFFFFF });
+        var text = new StyleText('独孤求败', { fontSize: 36, fill: 0xFFFFFF });
         text.x = this.selectedContainer.width / 2 - text.width / 2;
         text.y = 70;
         this.selectedContainer.addChild(text)
 
         // attrs
-        var text = new StyleText('血: ' + d.x, { fontSize: 32, fill: 0xFF0000 });
+        var text = new StyleText('血: ' + d.x, { fontSize: 36, fill: 0xFF0000 });
         text.x = 25;
         text.y = 130 + 46 * 0;
         this.selectedContainer.addChild(text)
 
-        var text = new StyleText('精: ' + d.j, { fontSize: 32, fill: 0x017ebf });
+        var text = new StyleText('精: ' + d.j, { fontSize: 36, fill: 0x017ebf });
         text.x = 25;
         text.y = 130 + 46 * 1;
         this.selectedContainer.addChild(text)
 
-        var text = new StyleText('速度: ' + d.s, { fontSize: 32, fill: 0x8a2be2 });
+        var text = new StyleText('速度: ' + d.s, { fontSize: 36, fill: 0x8a2be2 });
         text.x = 25;
         text.y = 130 + 46 * 2;
         this.selectedContainer.addChild(text)
@@ -449,7 +449,7 @@ export class GameScene extends Container implements IScene {
         for (let i = 0; i < team_data['p2'][this.current_select_action_index]['skill'].length; i++) {
             let item = team_data['p2'][this.current_select_action_index]['skill'][i];
             // 可选技能
-            let text_skill = new StyleText(item.skill_name, { fontSize: 36, fill: 0xFFFF00 });
+            let text_skill = new StyleText(item.skill_name, { fontSize: 40, fill: 0xFFFF00 });
             text_skill.x = skill_bg.width / 2 - text_skill.width / 2;
             text_skill.y = 70 + i * 60;
 

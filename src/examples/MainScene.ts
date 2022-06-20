@@ -56,7 +56,7 @@ export class MainScene extends Container implements IScene {
             lineJoin: "round",
         });
         tip.y = 635;
-        gsap.to(tip, { duration: 2, x: Manager.width - tip.width, repeat: -1, yoyo: true, ease: 'none' });
+        // gsap.to(tip, { duration: 2, x: Manager.width - tip.width, repeat: -1, yoyo: true, ease: 'none' });
         this.addChild(tip);
 
         let data = [

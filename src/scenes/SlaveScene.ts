@@ -85,6 +85,8 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
 
         let title = new SceneTite('副将:' + item.slave.name);
 
+        var attr_num = item.lv * 4 - item.attr_atk - item.attr_hp - item.attr_mp - item.attr_spd;
+
         let data = [
             [
                 { type: 'text', name: '头衔', value: '将才', style: {}, calllback: () => { } },
@@ -105,16 +107,18 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
                     }
                 }
             ],
-            [{ type: 'text', name: '气血', value: '12000', style: { stroke: '#d3393c', strokeThickness: 8 }, calllback: () => { } }],
-            [{ type: 'text', name: '精力', value: '8700', style: { stroke: '#346eed', strokeThickness: 8 }, calllback: () => { } }],
+            [{ type: 'text', name: '气血', value: item.d.x, style: { stroke: '#d3393c', strokeThickness: 8 }, calllback: () => { } }],
+            [{ type: 'text', name: '精力', value: item.d.j, style: { stroke: '#346eed', strokeThickness: 8 }, calllback: () => { } }],
             [
-                { type: 'text', name: '攻击', value: '5600', style: false, calllback: () => { } },
+                { type: 'text', name: '攻击', value: item.d.g, style: false, calllback: () => { } },
                 { type: 'text', name: '防御', value: '3200', style: false, calllback: () => { } },
             ],
-            [{ type: 'text', name: '速度', value: '156', style: false, calllback: () => { } }],
+            [{ type: 'text', name: '速度', value: item.d.s, style: false, calllback: () => { } }],
             [
-                { type: 'text', name: '属性点', value: '100', style: false, calllback: () => { } },
-                { type: 'button', name: '查看', value: '100', style: false, calllback: () => Manager.changeScene(new AttributeScene) },
+                { type: 'text', name: '属性点', value: attr_num, style: false, calllback: () => { } },
+                {
+                    type: 'button', name: attr_num > 0 ? '分配' : '查看', value: '100', style: false, calllback: () => Manager.changeScene(new AttributeScene)
+                },
             ],
             [
                 { type: 'button', name: '查看技能', value: '100', style: false, calllback: () => Manager.changeScene(new SkillScene) },

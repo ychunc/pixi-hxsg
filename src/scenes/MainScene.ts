@@ -14,6 +14,10 @@ import { Header, StyleText } from "../components/component";
 import { ws } from "../components/websocket";
 import { Chat } from "../components/chat";
 import { Location } from "../components/route";
+import { ArenaScene } from "./ArenaScene";
+import { TaskScene } from "./TaskScene";
+import { FriendScene } from "./FriendScene";
+import { TreasuryScene } from "./TreasuryScene";
 
 export class MainScene extends Container implements IScene {
     public static data: any;
@@ -122,13 +126,13 @@ export class MainScene extends Container implements IScene {
             { 'name': '副将', 'calllback': () => { Location.to(SlaveScene, { route: "slave", uri: 'list' }) }, },
             { 'name': '组队', 'calllback': () => { }, },
             { 'name': '排行', 'calllback': () => { Location.to(SortScene, { route: 'user', uri: 'sort' }) }, },
-            { 'name': '好友', 'calllback': () => { }, },
+            { 'name': '好友', 'calllback': () => { Manager.changeScene(new FriendScene) }, },
             { 'name': '邮件', 'calllback': () => { }, },
-            { 'name': '任务', 'calllback': () => { }, },
-            { 'name': '擂台', 'calllback': () => { }, },
+            { 'name': '任务', 'calllback': () => { Manager.changeScene(new TaskScene) }, },
+            { 'name': '擂台', 'calllback': () => { Manager.changeScene(new ArenaScene) }, },
             { 'name': '教派', 'calllback': () => { }, },
             { 'name': '训练', 'calllback': () => { }, },
-            { 'name': '宝库', 'calllback': () => { }, },
+            { 'name': '宝库', 'calllback': () => { Manager.changeScene(new TreasuryScene) }, },
             { 'name': '公告', 'calllback': () => { ws.close(); }, },
             { 'name': 'VIP', 'calllback': () => { Manager.changeScene(new MainSceneExa) }, },
             {
