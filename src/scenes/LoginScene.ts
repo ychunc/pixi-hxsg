@@ -93,11 +93,12 @@ export class LoginScene extends Container implements IScene {
         }, this);
 
         if (ws.action == 'AUTO') {
-            ws.connect();
+            this.login();
         }
     }
 
     public login() {
+        ws.action = 'ACTIVE';
         ws.connect();
     }
 

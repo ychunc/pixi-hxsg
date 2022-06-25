@@ -85,7 +85,7 @@ export class SortScene extends Container implements IScene {
 
             let no = new StyleText((index + 1 + '.').toString());
             let name = new StyleText(SortScene.data[index].nick, {
-                fontSize: 36,
+                fontSize: 40,
                 fill: '#F7EDCA',
                 stroke: '#D3393C',
                 strokeThickness: 6,
@@ -93,20 +93,17 @@ export class SortScene extends Container implements IScene {
             });
             name.x = no.width
 
-            let level = new StyleText('(' + SortScene.data[index].lv + '级)', {
-                fontSize: 32
-            });
+            let level = new StyleText('(' + SortScene.data[index].lv + '级)', { fontSize: 40 });
             level.x = no.width + name.width
 
             let cloumn = new Graphics();
             cloumn.beginFill(0xFFFFFF, 0.2).drawRect(-6, -6, Manager.width * 0.8, 60);
             cloumn.endFill();
-
-            row.addChild(no, name, level);
-
             if (index % 2 == 0) {
                 row.addChild(cloumn);
             }
+
+            row.addChild(no, name, level);
 
             container.addChild(row);
         }

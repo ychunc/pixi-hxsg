@@ -2,7 +2,7 @@ import { Container, Graphics } from "pixi.js";
 import { IScene, Manager, ManageContainer } from "../Manager";
 import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
-import { Header, Frame, StyleText, Button, SceneTite, confirmBox } from "../components/component";
+import { Header, Frame, StyleText, Button, SceneTite, confirmBox, Avatar } from "../components/component";
 import { ws } from "../components/websocket";
 
 export class SlaveScene extends ManageContainer implements IScene {
@@ -82,8 +82,11 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
         let frame = new Frame();
 
         var item = SlaveDetailScene.data
+        console.log(item);
 
         let title = new SceneTite('副将:' + item.slave.name);
+
+        this.addChild(new Avatar({ avatar: item.sid, y: 180 }));
 
         var attr_num = item.lv * 4 - item.attr_atk - item.attr_hp - item.attr_mp - item.attr_spd;
 
@@ -91,7 +94,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
             [
                 { type: 'text', name: '头衔', value: '将才', style: {}, calllback: () => { } },
                 {
-                    type: 'buttton', name: '休息', value: '将才', style: { x: -10 }, calllback: () => {
+                    type: 'buttton', name: '休息', value: '', style: { x: -150 }, calllback: () => {
                         ws.send({ route: 'slave', uri: 'up', sid: item.id, up: item.up })
                     }
                 },
@@ -101,7 +104,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
                 { type: 'text', name: '升级', value: '需' + item.exp + '经验', style: {}, calllback: () => { } },
                 {
                     type: 'button', name: '升级', value: '', style: {}, calllback: () => {
-                        this.addChild(new confirmBox('确定使用副将心法?', {}, () => {
+                        this.addChild(new confirmBox('确定使用副将心法?', () => {
                             ws.send({ route: 'goods', uri: "useVaria", id: item.id, type: 3, num: 1 })
                         }))
                     }
@@ -131,7 +134,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
                 { type: 'button', name: '副将生平', value: '100', style: false, calllback: () => { } },
                 {
                     type: 'button', name: '解雇副将', value: '100', style: false, calllback: () => {
-                        this.addChild(new confirmBox('确定要解雇副将吗?', {}, () => {
+                        this.addChild(new confirmBox('确定要解雇副将吗?', () => {
                             ws.send({ route: 'slave', uri: "del", id: item.id })
                         }))
                     }
@@ -158,6 +161,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
                     style.fontSize = 46;
                     row = new Button(item.name, style, 0x4e50b5);
                     row.y = -10;
+                    row.x = 'x' in style ? Number(style.x) : 0;
                 }
                 row.x += Number(line) * 370;
                 row.y += Number(key) * 85;
@@ -203,7 +207,6 @@ export class AttributeScene extends ManageContainer implements IScene {
     }
 }
 
-
 export class AbilityScene extends ManageContainer implements IScene {
     public data: any;
     constructor() {
@@ -212,6 +215,20 @@ export class AbilityScene extends ManageContainer implements IScene {
         let header = new Header(true);
         let frame = new Frame();
         let title = new SceneTite('战斗能力')
+
+        this.addChild(frame, header, title, new Back(SlaveDetailScene));
+    }
+}
+
+
+export class RecruitScene extends ManageContainer implements IScene {
+    public data: any;
+    constructor() {
+        super();
+
+        let header = new Header(true);
+        let frame = new Frame();
+        let title = new SceneTite('招贤馆')
 
         this.addChild(frame, header, title, new Back(SlaveDetailScene));
     }

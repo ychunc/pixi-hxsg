@@ -1,208 +1,308 @@
+import { Container, Graphics } from "pixi.js";
+
+import { Header, Frame, SceneTite, StyleText, SplitLine, Scrollbox, Button, Avatar, confirmBox } from "../components/component";
 import { IScene, Manager, ManageContainer } from "../Manager";
+
 import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
-import { Header, Frame, SceneTite, Button, confirmBox } from "../components/component";
-import { Container, Graphics } from "pixi.js";
 import { ws } from "../components/websocket";
-// import { ws } from "../components/websocket";
 
 export class TreasuryScene extends ManageContainer implements IScene {
 
+    public scrollbox: Scrollbox;
+
     constructor() {
         super();
-
-        let header = new Header();
+        let header = new Header(true);
         let frame = new Frame();
-        let title = new SceneTite('购买宝物')
+        let title = new SceneTite('宝物');
+        let splitLine = new SplitLine();
 
-        // app bakcgroupd
+        // app backgroundColor
         Manager.backgroundColor(0x360033);
 
-        // 物品类型
-        var data = ['宝物', '经验书', '副将'];
-        var width = 20;
-        var container = new Container;
-        container.x = 50;
-        container.y = 100;
-        data.forEach((element, index) => {
-            var button = new Button(element, { fontSize: 46 }, 0xdea500)
-            button.x = width;
-            button.y = 120;
+        // Scrollbox
+        this.scrollbox = new Scrollbox();
 
-            width += button.width + 10;
-            container.addChild(button);
-            if (index == 2) {
-                button.on('pointertap', () => Manager.changeScene(new SlaveScene));
-            } else {
-                button.on('pointertap', () => Manager.changeScene(new TreasuryScene));
-            }
-        });
-        this.addChild(container);
+        // list
+        this.infos();
+
+        // this addChild
+        this.addChild(this.scrollbox);
+        this.scrollbox.y = header.height + title.height;
+        this.scrollbox.x = Manager.width / 2 - this.scrollbox.width / 2;
 
         // 分割线
-        let graphics = new Graphics();
-        graphics.beginFill(0xFFFFFF, 0.8).drawRect(20, 0, Manager.width * 0.8, 6);
-        graphics.endFill();
-        graphics.y = 300;
-        graphics.x = 50;
-        this.addChild(graphics);
-
-        // let initY = 300;
-        // let initX = 80;
-        // let step = 80;
-
-        // let row = new StyleText("当前战斗力: 56000", {})
-        // row.y = 200;
-        // row.x = initX;
-        // this.addChild(row);
-
-        // let list = ArenaScene.data;
-
-        // for (let index = 0; index < list.length; index++) {
-        //     let item = list[index];
-
-        //     let graphics = new Graphics();
-        //     graphics.beginFill(0xFFFFFF, 0.14).drawRect(0, 0, Manager.width, 80);
-        //     graphics.y = (initY - 16) + index * step;
-        //     if (!(index % 2)) {
-        //         this.addChild(graphics);
-        //     }
-
-        //     let but = new Button(item.up ? '休' : '战', { fontSize: 46 }, 0x4e50b5);
-        //     but.y = initY + index * step - 4;
-        //     but.x = 550;
-        //     this.addChild(but);
-        //     but.on("pointertap", () => {
-        //         ws.send({ route: 'slave', uri: 'up', sid: item.id, up: item.up })
-        //     });
-
-        //     let style = {
-        //         fontSize: 40,
-        //         fill: '#f7edca',
-        //         lineJoin: "round",
-        //         stroke: item.up ? '#d3393c' : '#140fe1',
-        //         strokeThickness: 5,
-        //     };
-        //     let role = ['', '武', '文', '异']
-        //     let txt = "(" + item.lv + "级)" + item.slave.name + "." + role[item.js]
-        //     let row = new StyleText(txt, style)
-        //     row.y = initY + index * step;
-        //     row.x = initX;
-        //     row.on("pointertap", () => {
-        //         SlaveDetailScene.data = item;
-        //         SlaveDetailScene.selectedIndex = index;
-        //         Manager.changeScene(new SlaveDetailScene());
-        //     });
-
-        //     this.addChild(row);
-        // }
+        splitLine.x = this.scrollbox.width / 2 - splitLine.width / 2;
+        this.scrollbox.content.addChild(splitLine);
 
         this.addChild(frame, header, title, new Back(MainScene));
+    }
+
+    /**
+     * 构造界面器
+     * @param data 
+     * @returns 
+     */
+    public structure(data: any) {
+        let container = new Container();
+
+        for (const key in data) {
+            let lastX = 0
+            for (const line in data[key]) {
+                let item = data[key][line];
+                var row = null;
+                if (item.type == 'text') {
+                    let style = Object.assign({
+                        fontSize: 40,
+                    }, item.style);
+                    row = new StyleText(item.name + " : " + item.value, style)
+                } else {
+                    row = new Button(item.name, item.style, item.color);
+                }
+                row.x = 20 + lastX + Number(line);
+                row.y = 50 + Number(key) * 70;
+
+                lastX += row.width + 6;
+
+                row.on("pointertap", () => item.calllback(), this);
+                container.addChild(row);
+            }
+        }
+
+        return container;
+    }
+
+    /**
+     * 构造界面数据
+     */
+    public infos() {
+        let data = [
+            [
+                { type: 'button', name: '获取金砖', value: '', style: { fontSize: 46 }, color: 0xFF0000, calllback: () => { } },
+                { type: 'button', name: '求助帮助', value: '', style: { fontSize: 46 }, color: 0xC600C3, calllback: () => { } },
+            ],
+            [
+                { type: 'button', name: '宝物', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
+                { type: 'button', name: '经验书', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
+                { type: 'button', name: '副将', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { ws.send({ route: "slave", uri: "slave", attr: "up" }) } },
+            ],
+        ];
+        this.scrollbox.content.addChild(this.structure(data));
     }
 
 }
 
 export class SlaveScene extends ManageContainer implements IScene {
-    public static selectedIndex: number = 0;
 
+    public scrollbox: Scrollbox;
+
+    /**
+     * 历史副将列表
+     */
     constructor() {
         super();
-
         let header = new Header(true);
         let frame = new Frame();
-
-        var item = SlaveScene.data
-
-        console.log(item);
-
-
         let title = new SceneTite('招贤馆');
+        let splitLine = new SplitLine();
 
-        this.addChild(new confirmBox('确认招将?', {}, () => {
-            ws.send({ "route": "slave", "uri": "get" });
-            Manager.changeScene(new TreasuryScene);
-        }));
+        // app backgroundColor
+        Manager.backgroundColor(0x360033);
 
-        // let data = [
-        //     [
-        //         { type: 'text', name: '头衔', value: '将才', style: {}, calllback: () => { } },
-        //         {
-        //             type: 'buttton', name: '休息', value: '将才', style: { x: -10 }, calllback: () => {
-        //                 ws.send({ route: 'slave', uri: 'up', sid: item.id, up: item.up })
-        //             }
-        //         },
-        //     ],
-        //     [{ type: 'text', name: '等级', value: item.lv + '级武士', style: {}, calllback: () => { } }],
-        //     [
-        //         { type: 'text', name: '升级', value: '需' + item.exp + '经验', style: {}, calllback: () => { } },
-        //         {
-        //             type: 'button', name: '升级', value: '', style: {}, calllback: () => {
-        //                 this.addChild(new confirmBox('确定使用副将心法?', {}, () => {
-        //                     ws.send({ route: 'goods', uri: "useVaria", id: item.id, type: 3, num: 1 })
-        //                 }))
-        //             }
-        //         }
-        //     ],
-        //     [{ type: 'text', name: '气血', value: '12000', style: { stroke: '#d3393c', strokeThickness: 8 }, calllback: () => { } }],
-        //     [{ type: 'text', name: '精力', value: '8700', style: { stroke: '#346eed', strokeThickness: 8 }, calllback: () => { } }],
-        //     [
-        //         { type: 'text', name: '攻击', value: '5600', style: false, calllback: () => { } },
-        //         { type: 'text', name: '防御', value: '3200', style: false, calllback: () => { } },
-        //     ],
-        //     [{ type: 'text', name: '速度', value: '156', style: false, calllback: () => { } }],
-        //     [
-        //         { type: 'text', name: '属性点', value: '100', style: false, calllback: () => { } },
-        //         { type: 'button', name: '查看', value: '100', style: false, calllback: () => Manager.changeScene(new AttributeScene) },
-        //     ],
-        //     [
-        //         { type: 'button', name: '查看技能', value: '100', style: false, calllback: () => Manager.changeScene(new SkillScene) },
-        //     ],
-        //     [
-        //         { type: 'button', name: '战斗能力', value: '100', style: false, calllback: () => Manager.changeScene(new AbilityScene) },
-        //         { type: 'button', name: '初值培养', value: '100', style: false, calllback: () => { } },
-        //     ],
-        //     [
-        //         { type: 'button', name: '副将生平', value: '100', style: false, calllback: () => { } },
-        //         {
-        //             type: 'button', name: '解雇副将', value: '100', style: false, calllback: () => {
-        //                 this.addChild(new confirmBox('确定要解雇副将吗?', {}, () => {
-        //                     ws.send({ route: 'slave', uri: "del", id: item.id })
-        //                 }))
-        //             }
-        //         },
-        //     ],
-        // ];
+        // Scrollbox
+        this.scrollbox = new Scrollbox();
 
-        // var container = new Container();
-        // container.x = 80;
-        // container.y = 200;
+        // info
+        this.infos();
 
-        // for (const key in data) {
-        //     for (const line in data[key]) {
-        //         let item = data[key][line];
-        //         var row = null;
+        // list
+        this.lists();
 
-        //         let style = Object.assign({
-        //             fontSize: 40,
-        //         }, item.style);
-        //         if (item.type == 'text') {
-        //             style.fontSize = 40;
-        //             row = new StyleText(item.name + " : " + item.value, style)
-        //         } else {
-        //             style.fontSize = 46;
-        //             row = new Button(item.name, style, 0x4e50b5);
-        //             row.y = -10;
-        //         }
-        //         row.x += Number(line) * 370;
-        //         row.y += Number(key) * 85;
-        //         row.on("pointertap", () => item.calllback(), this);
-        //         container.addChild(row);
-        //     }
-        // }
+        // this addChild
+        this.addChild(this.scrollbox);
+        this.scrollbox.y = header.height + title.height;
+        this.scrollbox.x = Manager.width / 2 - this.scrollbox.width / 2;
 
-        // this.addChild(container);
+        // 分割线
+        splitLine.x = this.scrollbox.width / 2 - splitLine.width / 2;
+        splitLine.y = 280;
+        this.scrollbox.content.addChild(splitLine);
 
         this.addChild(frame, header, title, new Back(MainScene));
     }
 
+    public structure(data: any) {
+        let container = new Container();
+
+        for (const key in data) {
+            let lastX = 0
+            for (const line in data[key]) {
+                let item = data[key][line];
+                var row = null;
+                if (item.type == 'text') {
+                    let style = Object.assign({
+                        fontSize: 40,
+                    }, item.style);
+                    row = new StyleText(item.name + " : " + item.value, style)
+                } else {
+                    row = new Button(item.name, item.style, item.color);
+                }
+                row.x = 20 + lastX + Number(line);
+                row.y = 50 + Number(key) * 70;
+
+                lastX += row.width + 6;
+
+                row.on("pointertap", () => item.calllback(), this);
+                container.addChild(row);
+            }
+        }
+
+        return container;
+    }
+
+    public infos() {
+        let data = [
+            [{
+                type: 'button', name: '招募副将', value: '', style: { fontSize: 46 }, color: 0xC600C3, calllback: () => {
+                    Manager.currentScene.addChild(new confirmBox('确定招募副将?', () => {
+                        ws.send({ route: "slave", uri: "get" });
+                        Manager.changeScene(new SlaveScene);
+                    }))
+                }
+            },
+            { type: 'button', name: '猛将传介绍', value: '', style: { fontSize: 46 }, color: 0xC600C3, calllback: () => { } },
+            ],
+            [
+                { type: 'button', name: '常人', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
+                { type: 'button', name: '英才', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
+                { type: 'button', name: '将才', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
+            ],
+            [
+                { type: 'button', name: '成长', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
+                { type: 'button', name: '血', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
+                { type: 'button', name: '精', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
+                { type: 'button', name: '攻', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
+                { type: 'button', name: '速', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
+            ],
+        ];
+
+        this.scrollbox.content.addChild(this.structure(data));
+    }
+
+    public getSlave() {
+
+    }
+
+    public lists() {
+        var container = new Container();
+        let data = SlaveScene.data.list;
+
+        for (let index = 0; index < data.length; index++) {
+            var row = new Container();
+            row.x = 20;
+            row.y = 300 + index * 70;
+
+            let name = new StyleText(data[index].name, {
+                fontSize: 40,
+                fill: '#F7EDCA',
+                stroke: '#D3393C',
+                strokeThickness: 6,
+                lineJoin: "round",
+            });
+            name.on('pointertap', () => Manager.changeScene(new SlaveDetailScene(data[index])));
+
+            let level = new StyleText('  (0.85-' + data[index].up + ')', { fontSize: 40 });
+            level.x = name.width
+
+            let cloumn = new Graphics();
+            cloumn.beginFill(0xFFFFFF, 0.2).drawRect(-6, -6, Manager.width * 0.8, 60);
+            cloumn.endFill();
+            if (index % 2 == 0) {
+                row.addChild(cloumn);
+            }
+
+            row.addChild(name, level);
+
+            container.addChild(row);
+        }
+
+        this.scrollbox.content.addChild(container);
+    }
+
+}
+
+
+export class SlaveDetailScene extends ManageContainer implements IScene {
+
+    /**
+     * 副将详情
+     */
+    constructor(item: any) {
+        super();
+
+        console.log(item);
+
+        let header = new Header(true);
+        let frame = new Frame();
+        let title = new SceneTite(item.name);
+
+        this.lists(item);
+
+        this.addChild(new Avatar({ avatar: item.sid, y: 150 }));
+
+        // var avatar = Sprite.from(`./avatar/${item.sid}.png`);
+        // avatar.x = Manager.width;
+        // avatar.y = 150;
+        // this.addChild(avatar);
+        // gsap.to(avatar, { duration: 0.3, x: 500 });
+
+        this.addChild(frame, header, title, new Back(SlaveScene));
+    }
+
+    public structure(data: any) {
+        let container = new Container();
+
+        for (const key in data) {
+            let lastX = 0
+            for (const line in data[key]) {
+                let item = data[key][line];
+                var row = null;
+                if (item.type == 'text') {
+                    let style = Object.assign({
+                        fontSize: 40,
+                    }, item.style);
+                    row = new StyleText(item.name + " : " + item.value, style)
+                } else {
+                    row = new Button(item.name, item.style, item.color);
+                }
+                row.x = 80 + lastX + Number(line);
+                row.y = 170 + Number(key) * 80;
+
+                lastX += row.width + 6;
+
+                row.on("pointertap", () => item.calllback(), this);
+                container.addChild(row);
+            }
+        }
+
+        return container;
+    }
+
+    public lists(item: any) {
+        let data = [
+            [{ type: 'text', name: '头衔', value: '将才', style: {}, color: 0xC600C3, calllback: () => { } },],
+            [{ type: 'text', name: '成长率', value: item.up, style: {}, color: 0xC600C3, calllback: () => { } },],
+            [{ type: 'text', name: '气血初值', value: item.x, style: {}, color: 0xC600C3, calllback: () => { } },],
+            [{ type: 'text', name: '智力初值', value: item.j, style: {}, color: 0xC600C3, calllback: () => { } },],
+            [{ type: 'text', name: '攻击初值', value: item.g, style: {}, color: 0xC600C3, calllback: () => { } },],
+            [{ type: 'text', name: '敏捷初值', value: item.s, style: {}, color: 0xC600C3, calllback: () => { } },],
+            [
+                { type: 'button', name: '生平', value: '', style: {}, color: 0xC600C3, calllback: () => { } },
+                { type: 'button', name: '数据说明', value: '', style: {}, color: 0xC600C3, calllback: () => { } },
+            ],
+        ];
+
+        this.addChild(this.structure(data));
+    }
 }

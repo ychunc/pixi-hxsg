@@ -1,4 +1,5 @@
 import { Container, Sprite, Loader } from "pixi.js";
+import { Manager } from "../Manager";
 import { confirmBox } from "./component";
 
 export class Chat extends Container {
@@ -44,8 +45,7 @@ export class Chat extends Container {
                 this.currentIndex = index;
                 this.currentChatSprite.x = 344 + this.currentIndex * 100;
 
-                this.addChild(new confirmBox('确定要解雇副将吗?', {}, () => {
-                    console.log('ssss');
+                Manager.currentScene.addChild(new confirmBox('确定开启聊天?', () => {
                 }))
 
             });

@@ -2,7 +2,7 @@ import { Container, Sprite, Texture } from "pixi.js";
 import gsap from "gsap";
 
 import { Button } from "../components/component";
-import { IScene, Manager } from "../Manager";
+import { IScene, ManageContainer, Manager } from "../Manager";
 import { GameScene } from "../scenes/GameScene";
 import { PackScene } from "../scenes/PackScene"
 import { SortScene } from "../scenes/SortScene";
@@ -20,12 +20,7 @@ import { ws } from "../components/websocket";
 import { Chat } from "../components/chat";
 import { Location } from "../components/route";
 
-export class MainScene extends Container implements IScene {
-    public static data: any;
-
-    public Time: number = 0;
-    public update() { }
-
+export class MainScene extends ManageContainer implements IScene {
     /**
      * 当前navPage Container
      */
@@ -58,6 +53,7 @@ export class MainScene extends Container implements IScene {
         tip.y = 635;
         // gsap.to(tip, { duration: 2, x: Manager.width - tip.width, repeat: -1, yoyo: true, ease: 'none' });
         this.addChild(tip);
+        tip.on('pointertap', () => { });
 
         let data = [
             { 'text': '状态', 'scene': UserScene, ease: "expo.out" },
@@ -362,7 +358,7 @@ export class MainScene extends Container implements IScene {
         home_slave.y = 210;
         home_slave.interactive = true;
         this.addChild(home_slave);
-        home_slave.on("pointertap", () => Location.to(SlaveScene, { route: "slave", uri: "list" }));
+        home_slave.on("pointertap", () => Location.to(new SlaveScene, { route: "slave", uri: "list" }));
 
         let home_data = Sprite.from('home_data');
         home_data.x = home_bg.width / 2 - home_data.width / 2;

@@ -1,4 +1,4 @@
-import { Application, Container as Container, DisplayObject, Text } from 'pixi.js'
+import { Application, Container as Container, DisplayObject } from 'pixi.js'
 
 import { Particles } from "./components/particles";
 
@@ -11,11 +11,6 @@ export class Manager {
      */
     private static _width: number;
     private static _height: number;
-
-    /**
-     * public static rem: number = 1;
-     */
-    public static FPS: Text;
 
     /**
      * Particles
@@ -108,9 +103,7 @@ export class Manager {
 
         // Add the new one
         Manager.currentScene = newScene;
-        Manager.currentScene.zIndex = 100;
-
-        Manager.app.stage.addChild(Manager.currentScene);
+        Manager.app.stage.addChild(newScene);
     }
 
     public static resizeFixed(): void {

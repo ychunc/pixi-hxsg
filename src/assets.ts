@@ -70,7 +70,7 @@ let base = [
 
     { name: "confirm_box", url: "./ui/confirm_box.png" },
 
-
+    { name: "avatar", url: "./avatar/avatar.png" },
 ]
 data.push(base)
 export const assets = data

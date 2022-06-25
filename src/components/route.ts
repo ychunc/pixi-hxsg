@@ -6,6 +6,7 @@ import { GameScene } from "../scenes/GameScene";
 import { UserScene } from "../scenes/UserScene";
 import { SortScene } from "../scenes/SortScene";
 import { PackScene } from "../scenes/PackScene";
+import { SlaveScene as SlaveSlaveScene } from "../scenes/TreasuryScene";
 import { ws } from "./websocket";
 
 export class Route {
@@ -38,10 +39,14 @@ export class Route {
                 switch (route[1]) {
                     case 'list':
                         SlaveScene.data = result.data;
-                        Manager.changeScene(new SlaveScene);
+                        Location.to(SlaveScene);
                         break;
                     case 'del':
-                        ws.send({ route: "slave", uri: "list" });
+                        Location.to(SlaveScene, { route: "slave", uri: "list" });
+                        break;
+                    case 'slave':
+                        SlaveSlaveScene.data = result.data;
+                        Location.to(SlaveSlaveScene);
                         break;
                     case 'exp':
                         SlaveDetailScene.data = result.data;
@@ -57,7 +62,7 @@ export class Route {
                 switch (route[1]) {
                     case 'list':
                         PackScene.data = result.data;
-                        Location.to(PackScene)
+                        Location.to(PackScene);
                         break;
                 }
                 break;
@@ -113,24 +118,18 @@ export class Route {
 
 }
 
-
-
-type Target
-    = { route: 'goods', uri: 'list', type?: number }
-    | { route: 'slave', uri: 'list' }
-    | { route: 'user', uri: 'sort' }
-
 export class Location {
     /**
      * 跳转场景 缓存跳转或请求数据跳转
      * @param Scene 场景
      * @param route 请求的路由,只需切换场景时可以不传
      */
-    public static to(Scene: any, route?: Target) {
-        if (Scene.data) {
-            Manager.changeScene(new Scene);
+    public static to(Scene: any, route?: {}) {
+        console.log(route ? '发送请求:' : '开始跳转', new Date().getTime() / 1000);
+        if (route) {
+            ws.send(route);
         } else {
-            ws.send(route)
+            Manager.changeScene(new Scene);
         }
     }
 }

@@ -1,12 +1,11 @@
 import { Container, Graphics, Sprite, Texture } from "pixi.js";
-import { IScene, Manager } from "../Manager";
+import { IScene, ManageContainer, Manager } from "../Manager";
 import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
 import { Button, Frame, Header, StyleText } from "../components/component";
 import { Scrollbox } from "pixi-scrollbox";
 
-export class PackScene extends Container implements IScene {
-    public static data: any;
+export class PackScene extends ManageContainer implements IScene {
 
     constructor() {
         super();
@@ -47,12 +46,13 @@ export class PackScene extends Container implements IScene {
         equipage.x = 20;
         equipage.y = 40;
         scrollbox.content.addChild(equipage);
+        equipage.on('pointertap', () => { });
 
         // 物品类型
         var data = ['药品', '装备', '矿石', '杂物'];
         var width = 20;
         data.forEach((element) => {
-            var button = new Button(element, { fontSize: 46 }, 0xdea500, (_this) => {
+            var button = new Button(element, { fontSize: 46, fill: 0x63005d }, 0xdea500, (_this) => {
                 _this.butWidth *= 1.2;
             });
             button.x = width;
@@ -99,14 +99,14 @@ export class PackScene extends Container implements IScene {
             row.y = 250 + index * 70;
 
             let name = new StyleText(PackScene.data[index].name, {
-                fontSize: 34,
+                fontSize: 40,
                 fill: '#F7EDCA',
                 stroke: '#D3393C',
                 strokeThickness: 6,
                 lineJoin: "round",
             });
 
-            let num = new StyleText('(' + PackScene.data[index].num + ')', { fontSize: 32 });
+            let num = new StyleText('(' + PackScene.data[index].num + ')', { fontSize: 40 });
             num.x = name.width;
 
             let use = new Button('使用', { fontSize: 42 });
@@ -115,12 +115,11 @@ export class PackScene extends Container implements IScene {
             let cloumn = new Graphics();
             cloumn.beginFill(0xFFFFFF, 0.2).drawRect(-6, -8, Manager.width * 0.8, 70);
             cloumn.endFill();
-
-            row.addChild(name, num, use);
-
             if (index % 2 == 0) {
                 row.addChild(cloumn);
             }
+
+            row.addChild(name, num, use);
 
             container.addChild(row);
         }
@@ -128,5 +127,4 @@ export class PackScene extends Container implements IScene {
         scrollbox.content.addChild(container);
     }
 
-    public update() { }
 }

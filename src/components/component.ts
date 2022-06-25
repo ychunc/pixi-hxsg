@@ -1,11 +1,60 @@
+import { Container, Graphics, Text, TextStyle, Sprite, ITextStyle, Texture } from "pixi.js";
+import { Scrollbox as PIXIScrollbox } from "pixi-scrollbox";
 import gsap from "gsap";
-import { Container, Graphics, Text, TextStyle, Sprite, ITextStyle } from "pixi.js";
+
 import { Manager } from "../Manager";
 import { MainScene } from "../scenes/MainScene";
 
 type Callback = (...args: any[]) => void | null;
 
+export class Scrollbox extends PIXIScrollbox {
+
+    /**
+     * 滑动容器
+     */
+    constructor() {
+        super();
+        this.boxWidth = Manager.width * 0.85;
+        this.boxHeight = Manager.height;
+
+        const sprite = this.content.addChild(new Sprite(Texture.WHITE))
+        sprite.width = Manager.width * 0.85;
+        sprite.height = Manager.height + 1000;
+        sprite.tint = 0x360033;
+
+        // force an update of the scrollbox's calculations after updating the children
+        this.update();
+    }
+
+}
+
+export class Avatar extends Container {
+
+    /**
+     * 头像
+     */
+    constructor(item: { avatar: number, y: number }) {
+        super();
+
+        this.y = item.y;
+        this.x = Manager.width;
+        this.alpha = 0.5;
+
+        var avatar = Sprite.from(`./avatar/${item.avatar}.png`);
+        var avatars = Sprite.from('avatar');
+        avatars.scale.set(0.57);
+        this.addChild(avatars, avatar);
+        gsap.to(this, { duration: 0.3, alpha: 1, x: 500 });
+    }
+}
+
+
 export class SceneTite extends Container {
+
+    /**
+     * 标题
+     * @param text 
+     */
     constructor(text: string) {
         super();
 
@@ -19,6 +68,20 @@ export class SceneTite extends Container {
         title.y = 100;
         title.x = Manager.width / 2 - title.width / 2;
         this.addChild(title);
+    }
+}
+
+
+export class SplitLine extends Graphics {
+
+    /**
+     * 分割线
+     */
+    constructor() {
+        super();
+        this.beginFill(0xFFFFFF, 0.8).drawRect(0, 0, Manager.width * 0.8, 6);
+        this.endFill();
+        this.y = 200;
     }
 }
 
@@ -57,6 +120,10 @@ export class Header extends Container {
 export class Frame extends Container {
     public left: Sprite;
     public right: Sprite;
+
+    /**
+     * 双边框
+     */
     constructor() {
         super();
 
@@ -111,14 +178,13 @@ export class confirmBox extends Container {
 
     public text: Text;
 
-    public background: Sprite;
-
     /**
      * 确认弹框
      * @param txt 文本
-     * @param style 样式
+     * @param style 
+     * @param confirmCallback callback
      */
-    constructor(txt: string = '', style?: {} | ITextStyle, confirmCallback: Callback = () => { }) {
+    constructor(txt: string = '', confirmCallback: Callback = () => { }, cancelCallback: Callback = () => { }, style?: {} | ITextStyle) {
         super();
 
         // 黑色背景
@@ -130,13 +196,11 @@ export class confirmBox extends Container {
         graphics.on('pointertap', () => this.destroy());
 
         // 背景图
-        this.background = Sprite.from('confirm_box');
-        this.background.y = 500;
-        this.background.zIndex = 2;
-        this.background.x = Manager.width / 2;
-        graphics.on('pointertap', () => {
-            console.log('22');
-        });
+        let background = Sprite.from('confirm_box');
+        background.y = 500;
+        background.zIndex = 2;
+        background.x = Manager.width / 2;
+        background.interactive = true;
 
         // 提示文本
         let color = ['d3393c']; color;
@@ -155,39 +219,45 @@ export class confirmBox extends Container {
 
         // 按钮
         var cancel = new Button('取消', { fontSize: 46 }, 0xdea500);
-        cancel.x = -this.background.width / 2 + cancel.width;
-        cancel.y = this.background.height / 2 - 80;
-        cancel.on('pointertap', () => this.destroy());
-
-        var confirm = new Button('确定', { fontSize: 46 }, 0xdea500);
-        confirm.x = this.background.width / 2 - confirm.width * 2;
-        confirm.y = this.background.height / 2 - 80;
-        confirm.on('pointertap', () => {
-            confirmCallback();
-            // this.destroy(); // 不应该在这销毁
+        cancel.x = -background.width / 2 + cancel.width;
+        cancel.y = background.height / 2 - 80;
+        cancel.on('pointertap', () => {
+            this.destroy();
+            cancelCallback(this);
         });
 
+        var confirm = new Button('确定', { fontSize: 46 }, 0xdea500);
+        confirm.x = background.width / 2 - confirm.width * 2;
+        confirm.y = background.height / 2 - 80;
+        confirm.on('pointertap', () => confirmCallback(this));
 
         // 设置层次
         this.zIndex = 2000;
 
-        this.addChild(graphics, this.background);
+        this.addChild(graphics, background);
 
-        this.background.addChild(this.text);
-        this.background.addChild(cancel, confirm);
+        background.addChild(this.text);
+        background.addChild(cancel, confirm);
 
-        this.background.alpha = 0.5;
-        this.background.anchor.set(0.5);
-        this.background.scale.set(0.8);
+        background.alpha = 0.5;
+        background.anchor.set(0.5);
+        background.scale.set(0.8);
 
-        gsap.to(this.background, { duration: 0.3, alpha: 1, ease: "back.out(2)" });
-        gsap.to(this.background.scale, { duration: 0.3, x: 1, y: 1, ease: "back.out(2)" });
-
-        // Manager.app.stage.addChild(this);
+        gsap.to(background, { duration: 0.3, alpha: 1, ease: "back.out(2)" });
+        gsap.to(background.scale, { duration: 0.3, x: 1, y: 1, ease: "back.out(2)" });
     }
 }
 
 
+/**
+ * EventTypes
+ * @param pointertap click
+ * @param pointerdown mousedown
+ * @param pointerup mouseup
+ * @param pointermove mousemove
+ * @param pointerupoutside 弹起指针在外
+ */
+type EventTypes = 'pointertap' | 'mousedown' | 'pointerup' | 'pointerdown' | 'pointerupoutside'
 
 export class Button extends Container {
     public graphics: Graphics;
@@ -228,7 +298,7 @@ export class Button extends Container {
 
         // 文字
         let Textstyle = new TextStyle({
-            fontFamily: '9pxDemo',
+            // fontFamily: '9pxDemo',
             fontSize: 50,
             fill: ['#ffffff'],
             lineJoin: 'round',
@@ -267,6 +337,10 @@ export class Button extends Container {
         this.on("pointerup", this.flicker, this);
     }
 
+    /**
+     * 闪动 (需要优化)
+     * @returns 
+     */
     public flicker() {
         if (this.action == 'up') {
             return;
@@ -320,6 +394,25 @@ export class Button extends Container {
         this.graphics.beginFill(0xffffff, alpha).drawRect(width - border, border, border, height - border - border);
         // 下边框
         this.graphics.beginFill(0xffffff, alpha).drawRect(border, height - border, width - border, border);
+    }
+
+
+    /**
+     * on
+     * @param event 
+     * Event
+     * @text pointertap click(点击)
+     * @text pointerdown mousedown(按下)
+     * @text pointerup mouseup(弹起)
+     * @text pointermove mousemove(弹起在外)
+     * @text pointerupoutside(弹起指针在外)
+     * @param fn 
+     * @param context 
+     * @returns 
+    */
+    public override on(event: EventTypes, fn: Callback, context?: any) {
+        super.on(event, fn, context);
+        return this
     }
 
 }

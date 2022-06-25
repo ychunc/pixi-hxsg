@@ -2,7 +2,6 @@ import { Container, Sprite, Texture } from "pixi.js";
 import gsap from "gsap";
 
 import { IScene, Manager } from "../Manager";
-import { PackScene } from "./PackScene"
 import { SortScene } from "./SortScene";
 import { LoginScene } from "./LoginScene";
 
@@ -18,6 +17,7 @@ import { ArenaScene } from "./ArenaScene";
 import { TaskScene } from "./TaskScene";
 import { FriendScene } from "./FriendScene";
 import { TreasuryScene } from "./TreasuryScene";
+import { PackScene } from "./PackScene";
 
 export class MainScene extends Container implements IScene {
     public static data: any;
@@ -45,6 +45,11 @@ export class MainScene extends Container implements IScene {
 
         // app bakcgroupd
         Manager.backgroundColor(0x000);
+
+        this.interactive = true;
+        this.on('pointertap', () => {
+            // Manager.changeScene(new TreasuryScene);
+        })
 
         this.addChild(new Header(), new Chat());
     }
@@ -288,7 +293,7 @@ export class MainScene extends Container implements IScene {
         [home_avatar, username, avatar].forEach((object) => {
             object.interactive = true;
             object.on("pointertap", () => {
-                Manager.changeScene(new UserScene)
+                Manager.changeScene(new UserScene);
             });
         });
 
@@ -313,7 +318,9 @@ export class MainScene extends Container implements IScene {
         home_slave.y = 210;
         home_slave.interactive = true;
         this.addChild(home_slave);
-        home_slave.on("pointertap", () => Location.to(SlaveScene, { route: "slave", uri: "list" }));
+        home_slave.on("pointertap", () => {
+            Location.to(SlaveScene, { route: "slave", uri: "list" })
+        });
 
         let home_data = Sprite.from('home_data');
         home_data.x = home_bg.width / 2 - home_data.width / 2;

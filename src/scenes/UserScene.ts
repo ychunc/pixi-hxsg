@@ -45,7 +45,6 @@ export class UserScene extends ManageContainer implements IScene {
         this.scrollbox.x = frame.left.width;
         this.addChild(this.scrollbox)
 
-
         this.addChild(frame, header, title, new Back(MainScene));
     }
 
@@ -72,11 +71,6 @@ export class UserScene extends ManageContainer implements IScene {
             ],
         ];
 
-        let initY = 130;
-        let initX = 30;
-        let lastY = 150;
-        console.log(lastY);
-
         for (const key in data) {
             for (const line in data[key]) {
                 let item = data[key][line];
@@ -90,8 +84,8 @@ export class UserScene extends ManageContainer implements IScene {
                     row = new Button(item.name, false, 0x4e50b5);
                 }
 
-                row.x = initX + Number(line) * 300;
-                row.y = lastY = initY + Number(key) * 80;
+                row.x = 130 + Number(line) * 300;
+                row.y = 30 + Number(key) * 80;
                 row.on("pointertap", () => item.calllback(), this);
                 this.scrollbox.content.addChild(row);
             }
