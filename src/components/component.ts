@@ -293,7 +293,7 @@ export class Button extends Container {
      * @param text 文本 | 对象
      * @param style
      */
-    constructor(text: any, style?: {} | ITextStyle, butColor: number = 0xC600C3, callback: Callback = () => { }) {
+    constructor(text: any, style?: {} | ITextStyle, butColor: number = 0xC600C3, callback: Callback = () => { }, flicker: boolean = true) {
         super();
 
         // 文字
@@ -334,7 +334,7 @@ export class Button extends Container {
 
         this.on("pointerdown", this.down, this);
         this.on("pointerupoutside", this.up, this);
-        this.on("pointerup", this.flicker, this);
+        this.on("pointerup", flicker ? this.flicker : this.up, this);
     }
 
     /**
@@ -352,7 +352,7 @@ export class Button extends Container {
         });
     }
 
-    public up(): void {
+    public up() {
         if (this.action == 'up') {
             return;
         }
@@ -374,7 +374,7 @@ export class Button extends Container {
         this.graphics.beginFill(0x000000, alpha).drawRect(border, height - border, width - border, border);
     }
 
-    public down(): void {
+    public down() {
         if (this.action == 'down') {
             return;
         }

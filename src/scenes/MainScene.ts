@@ -327,8 +327,9 @@ export class MainScene extends Container implements IScene {
         home_data.y = 290;
         this.addChild(home_data);
 
+        var occ: any = { 1: '武士', 2: '文人', 3: '异人' }
         let texts = [
-            { name: '职业: ' + UserScene.data.lv + '武士', style: {} },
+            { name: '职业: ' + UserScene.data.lv + occ[UserScene.data.j], style: {} },
             { name: '金: ' + UserScene.data.gold, style: { fill: '#FFFF00' } },
             { name: '银: ' + UserScene.data.silver, style: {} },
             { name: '升级还需经验: ', style: {} },

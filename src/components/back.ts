@@ -38,6 +38,9 @@ export class Back extends Container {
         this.button.y = this.height / 2 - this.button.height / 2;
 
         this.scene = scene;
+
+        console.log('back', Manager.scenes);
+
         this.callback = beforeCallback;
 
         this.button.on("pointertap", this.doBack, this);
@@ -53,7 +56,14 @@ export class Back extends Container {
     public doBack() {
         // 返回之前做点什么
         if (this.callback) this.callback();
-        // 切换场景
+
+        // 切换场景 
         Manager.changeScene(new this.scene);
+
+        // 切换场景
+        // let scene = null;
+        // Manager.scenes.pop()
+        // Manager.changeScene(scene = Manager.scenes.pop());
+        // scene.visible = true;
     }
 }

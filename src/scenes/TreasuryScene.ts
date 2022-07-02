@@ -167,7 +167,7 @@ export class SlaveScene extends ManageContainer implements IScene {
                 type: 'button', name: '招募副将', value: '', style: { fontSize: 46 }, color: 0xC600C3, calllback: () => {
                     Manager.currentScene.addChild(new confirmBox('确定招募副将?', () => {
                         ws.send({ route: "slave", uri: "get" });
-                        Manager.changeScene(new SlaveScene);
+                        Manager.changeScene(new SlaveScene)
                     }))
                 }
             },
@@ -188,10 +188,6 @@ export class SlaveScene extends ManageContainer implements IScene {
         ];
 
         this.scrollbox.content.addChild(this.structure(data));
-    }
-
-    public getSlave() {
-
     }
 
     public lists() {
@@ -250,12 +246,6 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
         this.lists(item);
 
         this.addChild(new Avatar({ avatar: item.sid, y: 150 }));
-
-        // var avatar = Sprite.from(`./avatar/${item.sid}.png`);
-        // avatar.x = Manager.width;
-        // avatar.y = 150;
-        // this.addChild(avatar);
-        // gsap.to(avatar, { duration: 0.3, x: 500 });
 
         this.addChild(frame, header, title, new Back(SlaveScene));
     }

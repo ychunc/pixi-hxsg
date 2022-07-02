@@ -11,6 +11,8 @@ let base = [
     // animation
     { name: "huo", url: "./game/huo.json" },
     { name: "fg", url: "./game/fg.json" },
+    // { name: "fg_2", url: "./game/fg_2.json" },
+    { name: "fg_3", url: "./game/fg_3.json" },
 
     // game
     { name: "r1n", url: "./game/r1n.json" },
@@ -22,6 +24,7 @@ let base = [
     { name: "blood", url: "./game/blood.json" },
 
     { name: "skill_wlhd", url: "./game/wlhd.json" },
+    { name: "skill_hfhy", url: "./game/hfhy.json" },
 
     { name: "skill_pi", url: "./game/pi.json" },
 

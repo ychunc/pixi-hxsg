@@ -1,9 +1,9 @@
 import { Manager } from "../Manager";
 import { MainScene } from "../scenes/MainScene";
 import { LoginScene } from "../scenes/LoginScene";
-import { SlaveDetailScene, SlaveScene } from "../scenes/SlaveScene";
+import { AttributeScene, SkillScene, SlaveDetailScene, SlaveScene } from "../scenes/SlaveScene";
 import { GameScene } from "../scenes/GameScene";
-import { UserScene } from "../scenes/UserScene";
+import { UserScene, SkillScene as UserSkillScene, AttributeScene as UserAttributeScene } from "../scenes/UserScene";
 import { SortScene } from "../scenes/SortScene";
 import { PackScene } from "../scenes/PackScene";
 import { SlaveScene as SlaveSlaveScene } from "../scenes/TreasuryScene";
@@ -18,7 +18,7 @@ export class Route {
                 UserScene.data = result.data;
 
                 LoginScene.removeInput();
-                Manager.changeScene(new MainScene)
+                Manager.changeScene(new MainScene);
                 break;
             case 'map':
                 MainScene.mapData = result.data
@@ -33,6 +33,16 @@ export class Route {
                     case 'user':
                         UserScene.data = result.data;
                         break;
+                    case 'attr':
+                        UserScene.data = result.data;
+                        Manager.changeScene(new UserAttributeScene);
+                        break;
+                    case 'Upsld':
+                    case 'skillStudy':
+                        UserScene.data.struct.skill = result.data;
+                        Manager.changeScene(new UserSkillScene);
+                        break;
+
                 }
                 break;
             case 'slave':
@@ -53,6 +63,16 @@ export class Route {
                         SlaveScene.data.list[SlaveDetailScene.selectedIndex] = result.data;
                         Manager.changeScene(new SlaveDetailScene);
                         break;
+                    case 'attr':
+                        SlaveDetailScene.data = result.data;
+                        SlaveScene.data.list[SlaveDetailScene.selectedIndex] = result.data;
+                        Manager.changeScene(new AttributeScene);
+                        break;
+                    case 'Upsld':
+                    case 'skillStudy':
+                        SlaveScene.data.list[SlaveDetailScene.selectedIndex]['skill'] = result.data;
+                        Manager.changeScene(new SkillScene);
+                        break;
                     default:
                         break;
                 }
@@ -71,7 +91,7 @@ export class Route {
                 switch (route[1]) {
                     case 'start':
                         var Game = new GameScene();
-                        GameScene.game_type = result.data.game.type;
+                        GameScene.gameType = result.data.game.type.toLocaleUpperCase();
                         Game.team_data = result.data.team;
 
                         Manager.changeScene(Game);
@@ -97,7 +117,7 @@ export class Route {
                     case 'end':
                         console.log('game play run or end');
                         // 游戏状态
-                        GameScene.status = route[1]
+                        GameScene.GameOver = route[1];
 
                         // 运行前准备
                         Manager.currentScene.readyRunGame()

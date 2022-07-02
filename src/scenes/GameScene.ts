@@ -20,27 +20,44 @@ interface ISkill {
 }
 
 /**
+ * 游戏状态
+ */
+type GameOver = 'run' | 'end'
+
+/**
+ * 游戏模式
+ */
+type gameType = 'NPC' | 'PVP' | 'PVE'
+
+
+/**
  * Game
  */
 export class GameScene extends Container implements IScene {
+    /**
+     * 游戏人物数据
+     */
     public team_data: any = {};
 
-    public Time: number = 0;
+    /**
+     * 游戏状态 run end
+     */
+    public static GameOver: GameOver;
 
     /**
-     * 游戏状态 run / end
+     * 是否游戏播放中
      */
-    public static status: string;
+    public static Playing: boolean = false;
 
     /**
-     * 操作步骤 0: 选择功能 1: 选择技能 3: 选择对手
+     * 是否已选择功能
      */
-    public actionStep: number = 0;
+    public static selectedFunction: number | null = null;
 
     /**
      * 游戏类型 NPC PVP PVE
      */
-    public static game_type: string = '';
+    public static gameType: gameType;
 
     /**
      * 回合数据
@@ -50,16 +67,6 @@ export class GameScene extends Container implements IScene {
     public update(): void {
         // To be a scene we must have the update method even if we don't use it.
     }
-    // public update() {
-    //     var timeNow = (new Date()).getTime();
-    //     var timeDiff = timeNow - this.Time;
-    //     this.Time = timeNow;
-    //     var zhenlv = 1000 / timeDiff;
-    //     // Manager.FPS.text = String(Math.round(zhenlv * 100) / 100);
-    //     this.but5.text.text = String(parseInt((zhenlv).toString()));
-    // }
-
-    public but5: any;
 
     /**
      * 当前操作的角色
@@ -91,7 +98,6 @@ export class GameScene extends Container implements IScene {
 
         // 敌方光标
         GameScene.map_zz = Animation.map_zz();
-        GameScene.map_zz.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
         console.log(GameScene.map_zz);
 
         let T = new Team(this, { 'P1': ['r1n', 'n1', 'n1', 'n2'], 'P2': ['r1n', 'n1', 'n1', 'n2'] });
@@ -156,7 +162,8 @@ export class GameScene extends Container implements IScene {
         this.addChild(but10);
         but10.on("pointertap", () => {
 
-            GameScene.T.PP['P1'][0].setHPMask(0.2);
+
+            gsap.to(T, { duration: 10, x: -2000 });
 
         }, this);
 
@@ -176,7 +183,7 @@ export class GameScene extends Container implements IScene {
             let T = GameScene.T;
             T.x = 0;
             console.log(T);
-            var anim = Animation.dead();
+            var anim = Animation.fg_3();
 
             anim.scale.x = 2
             anim.scale.y = 2
@@ -202,11 +209,45 @@ export class GameScene extends Container implements IScene {
             }
         }, this);
 
+    }
 
-        this.but5 = new Button('00', { fontFamily: 'auto' });
-        this.but5.x = 50;
-        this.but5.y = Manager.height * 0.78;
-        this.addChild(this.but5);
+    /**
+   * 头部
+   */
+    public header() {
+        let container = new Container();
+
+        let game_title = Sprite.from('game_title');
+        game_title.scale.x = 1.18;
+        game_title.scale.y = 1.18;
+        container.addChild(game_title);
+
+        let addressName = new StyleText('许昌', { fontSize: 30 });
+        addressName.x = Manager.width / 2 - addressName.width / 2;
+        addressName.y = 8;
+        container.addChild(addressName);
+
+        let titleNameBg = Sprite.from('title_name');
+        titleNameBg.scale.y = 1.6;
+        titleNameBg.x = Manager.width / 2 - titleNameBg.width / 2;
+        titleNameBg.y = 45;
+        container.addChild(titleNameBg);
+
+        let TitleName = new StyleText('东方不败-出招(60)', { fontSize: 28 });
+        TitleName.x = Manager.width / 2 - TitleName.width / 2;
+        TitleName.y = 48;
+        container.addChild(TitleName);
+
+        let leftName = new StyleText('士兵群', { fontSize: 30 });
+        leftName.x = 20;
+        leftName.y = 50;
+        container.addChild(leftName);
+
+        let rightName = new StyleText('三国新人', { fontSize: 30 });
+        rightName.x = Manager.width - 170;
+        rightName.y = 50;
+        container.addChild(rightName);
+        return container;
     }
 
     /**
@@ -237,10 +278,16 @@ export class GameScene extends Container implements IScene {
     public static f_jt: Sprite;
 
     /**
+     * 当前选择的技能
+     */
+    public current_select_skill: { sk?: any, skill_name?: any } = {};
+
+    /**
      * 选择技能后
      * @param skill 技能详情
      */
-    public selected(skill: any): any {
+    public selectPeople() {
+        var skill = this.current_select_skill;
         console.log('selected', skill);
 
         this.skillContainer.visible = false;
@@ -273,7 +320,7 @@ export class GameScene extends Container implements IScene {
         bg.scale.x = bg.scale.y = 1.1;
         this.selectedContainer.addChild(bg);
 
-        // rows
+        // rowsf
         var text = new StyleText(skill.skill_name, { fontSize: 36, fill: 0xFFFF00 });
         text.x = this.selectedContainer.width / 2 - text.width / 2;
         text.y = 30;
@@ -320,6 +367,11 @@ export class GameScene extends Container implements IScene {
      * @param item 人物详情
      */
     public onSelected(item: any) {
+        // 播放中 [不能操作]
+        if (GameScene.Playing == true) return;
+        // 还没选择功能 [不能操作]
+        if (GameScene.selectedFunction == null) return;
+
         // 二次确认选择同一对手
         if (item.n == this.current_select_enemy_index) {
 
@@ -331,20 +383,17 @@ export class GameScene extends Container implements IScene {
 
         } else {
             // 更新对手名称
-            this.current_select_enemy_index = item.n
+            this.current_select_enemy_index = item.n;
             console.log('选择的对手index', item);
 
-            // 当前操作的只有p2
-            let skill = this.team_data['p2'][this.current_select_action_index]['skill'][this.current_select_skill_index];
-
             // 选择更新信息
-            this.selected(skill);
+            this.selectPeople();
         }
     }
 
     /**
      * 获取可攻击的目标
-     * @param P 
+     * @param P
      */
     public getAliveIndex(P: string): number {
         // P2默认0
@@ -364,21 +413,19 @@ export class GameScene extends Container implements IScene {
      */
     public select_skills: Array<ISkill> = [];
 
-    // 确认选择
+    /**
+     * 确认选择
+     */
     public ConfirmSelection() {
-        // 显示全部血条
-        this.bloodBarAll(true);
-
         // 保存选择的技能/目标
         this.select_skills.push({
             'index': this.current_select_enemy_index,
             'sikll': this.current_select_skill_no,
         })
 
-        console.log('skill alls', this.select_skills, this.select_skills.length);
-
+        // 选择完毕
         if (this.select_skills.length >= this.team_data['p2'].length) {
-
+            // 选择容器隐藏
             this.selectedContainer.visible = false;
 
             let data = []
@@ -393,13 +440,20 @@ export class GameScene extends Container implements IScene {
             return;
         }
 
+        // 销毁已选择功能
+        GameScene.selectedFunction = null;
+
         // 操作下个人物
         this.current_select_action_index++;
 
         if (this.team_data['p2'][this.current_select_action_index].d.x <= 0) {
             this.ConfirmSelection();
         } else {
+            // P2选择图标
             GameScene.T.PP['P2'][this.current_select_action_index].addChild(GameScene.f_jt)
+
+            // 显示全部血条
+            this.bloodBarAll(true);
 
             // 隐藏技能选择
             this.selectedContainer.visible = false;
@@ -423,7 +477,9 @@ export class GameScene extends Container implements IScene {
      * 技能选择
      */
     public skill() {
+        // 功能菜单隐藏
         this.menuContainer.visible = false;
+        // 血条隐藏
         this.bloodBarAll(false)
 
         // 重置选择敌人index
@@ -449,14 +505,19 @@ export class GameScene extends Container implements IScene {
         for (let i = 0; i < team_data['p2'][this.current_select_action_index]['skill'].length; i++) {
             let item = team_data['p2'][this.current_select_action_index]['skill'][i];
             // 可选技能
-            let text_skill = new StyleText(item.skill_name, { fontSize: 40, fill: 0xFFFF00 });
+            let text_skill = new StyleText(item.skill_name, { fontSize: 42, fill: 0xFFFF00 });
             text_skill.x = skill_bg.width / 2 - text_skill.width / 2;
             text_skill.y = 70 + i * 60;
 
             text_skill.on("pointertap", () => {
+                // 已选择功能
+                GameScene.selectedFunction = 1;
+
                 console.log('select sikll index', i);
+                // 当前选择的技能
                 this.current_select_skill_index = i;
-                this.selected(item);
+                this.current_select_skill = item;
+                this.selectPeople();
             });
             skills.push(text_skill)
         }
@@ -477,9 +538,6 @@ export class GameScene extends Container implements IScene {
      * 功能菜单
      */
     public menu() {
-
-        this.actionStep = 0;
-
         var butText = ['攻击', '技能', '招降', '物品', '招将', '逃跑', '防御'];
         for (let index = 0; index < butText.length; index++) {
             let ContainerRow = new Container();
@@ -501,9 +559,20 @@ export class GameScene extends Container implements IScene {
                 console.log('click skill', index);
                 switch (index) {
                     case 0:
+                        // 功能菜单隐藏
+                        this.menuContainer.visible = false;
+                        // 已选择功能
+                        GameScene.selectedFunction = 0;
+                        // 开始选择人物
+                        this.current_select_skill = { sk: 0, skill_name: '普通攻击' }
+                        this.selectPeople();
                         break;
                     case 1:
                         this.skill();
+                        break;
+                    case 6:
+                        this.current_select_skill_no = -1;
+                        this.ConfirmSelection();
                         break;
                     default:
                         break;
@@ -516,45 +585,6 @@ export class GameScene extends Container implements IScene {
         this.menuContainer.x = 300;
         this.menuContainer.y = 230;
         return this.menuContainer;
-    }
-
-    /**
-     * 头部
-     */
-    public header() {
-        let container = new Container();
-
-        let game_title = Sprite.from('game_title');
-        game_title.scale.x = 1.18;
-        game_title.scale.y = 1.18;
-        container.addChild(game_title);
-
-        let addressName = new StyleText('许昌', { fontSize: 30 });
-        addressName.x = Manager.width / 2 - addressName.width / 2;
-        addressName.y = 8;
-        container.addChild(addressName);
-
-        let titleNameBg = Sprite.from('title_name');
-        titleNameBg.scale.y = 1.6;
-        titleNameBg.x = Manager.width / 2 - titleNameBg.width / 2;
-        titleNameBg.y = 45;
-        container.addChild(titleNameBg);
-
-        let TitleName = new StyleText('东方不败-出招(60)', { fontSize: 28 });
-        TitleName.x = Manager.width / 2 - TitleName.width / 2;
-        TitleName.y = 48;
-        container.addChild(TitleName);
-
-        let leftName = new StyleText('士兵群', { fontSize: 30 });
-        leftName.x = 20;
-        leftName.y = 50;
-        container.addChild(leftName);
-
-        let rightName = new StyleText('三国新人', { fontSize: 30 });
-        rightName.x = Manager.width - 170;
-        rightName.y = 50;
-        container.addChild(rightName);
-        return container;
     }
 
     /**
@@ -627,6 +657,9 @@ export class GameScene extends Container implements IScene {
      * 运行战斗
      */
     public playGame() {
+        // 开始播放
+        GameScene.Playing = true;
+
         let T = GameScene.T
 
         var tl = gsap.timeline();
@@ -641,46 +674,37 @@ export class GameScene extends Container implements IScene {
 
             tl.add(gsap.to({}, { duration: 0.00001 }).eventCallback('onComplete', () => {
                 // 背景黑色
-                GameScene.GameBg.visible = false;
+                if (item.sk > 0) GameScene.GameBg.visible = false;
                 // 血条隐藏
                 this.bloodBarAll(false);
             }));
 
-            // 镜头X
-            this.runData.startX = (Manager.width / 2 - 100) * (PG == 'P1' ? 1 : -1)
+            // 镜头开始X
+            this.runData.startX = Skill.getStartX(PG, item.sk);
 
             // 起手方
-            tl.add(gsap.to(T, { duration: 0.45, ease: "none", x: this.runData.startX }).eventCallback('onComplete', () => {
-                let anim = Animation.fg();
-                anim.y = 18;
-                anim.x = PG == 'P1' ? 10 : -10;
-                T.PP[PG][item.pk_g.n].addChild(anim)
+            if (item.sk > 0) {
+                // 起手动画 [合并]
+                tl.add(Skill.skillStart(this.runData.startX, PG, item.pk_g.n));
+                // 等待时间 [合并]
+                tl.add(gsap.to({}, { duration: 0.45 }));
+            }
 
-                // 背景闪动
-                var tl = gsap.timeline();
-                tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
-                    GameScene.GameBg.visible = true;
-                }));
-                tl.add(gsap.to({}, { duration: 0.06 }).eventCallback('onComplete', () => {
-                    GameScene.GameBg.visible = false;
-                }));
-            }));
-
-            // 等待时间
-            tl.add(gsap.to({}, { duration: 0.45 }));
-
-            // item.sk = 6
             // 开始攻击 技能到敌方速度
             var duration = Skill.skillSpend[item.sk];
 
+            // 镜头返回X
             tl.add(gsap.to(T, { duration: duration, ease: 'none', x: this.runData.startX * -1 }));
 
             // 技能播放 [tl 追加skill 的 timeline]
-            tl.add(new Skill(item).timeline())
+            tl.add(new Skill(item).timeline());
 
         }
 
-        tl.add(gsap.to({}, { duration: 0.0001 }).eventCallback('onComplete', () => {
+        // 回合战斗播放完
+        tl.add(gsap.to({}, { duration: 0.1 }).eventCallback('onComplete', () => {
+            // 结束播放
+            GameScene.Playing = false;
             // 下回合准备
             this.readyNextRound();
         }));
@@ -705,10 +729,10 @@ export class GameScene extends Container implements IScene {
      * 下回合准备
      */
     public readyNextRound() {
-        console.log('下回合准备...', Date.now().toString());
+        console.log('下回合准备');
 
-        // 退出游戏
-        if (GameScene.status == 'end') {
+        // 游戏结束
+        if (GameScene.GameOver == 'end') {
             Manager.changeScene(new MainScene);
         }
 

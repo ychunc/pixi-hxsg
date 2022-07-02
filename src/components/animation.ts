@@ -1,4 +1,4 @@
-import { AnimatedSprite, Texture, Loader, Container, Sprite } from "pixi.js";
+import { AnimatedSprite, Texture, Loader, Container, Sprite, SCALE_MODES } from "pixi.js";
 import { gsap } from "gsap"
 
 export class Animation {
@@ -13,6 +13,7 @@ export class Animation {
             frames.push(Texture.from(data[i]));
         }
         const anim = new AnimatedSprite(frames);
+        anim.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
 
         anim.anchor.set(0.5);
         anim.animationSpeed = 0.3;
@@ -32,11 +33,12 @@ export class Animation {
             frames.push(Texture.from(data[i]));
         }
         const anim = new AnimatedSprite(frames);
+        anim.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
 
         anim.scale.x = anim.scale.y = 1.3;
 
         anim.anchor.set(0.5);
-        anim.animationSpeed = 0.3;
+        anim.animationSpeed = 0.23;
         anim.loop = false;
         anim.play();
         anim.onComplete = function () {
@@ -82,7 +84,31 @@ export class Animation {
         }
         const anim = new AnimatedSprite(frames);
 
+        anim.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
         anim.scale.x = anim.scale.y = 0.8;
+
+        anim.anchor.set(0.5);
+        anim.animationSpeed = 0.2;
+        anim.loop = false;
+        anim.play();
+        anim.onComplete = function () {
+            anim.destroy();
+        }
+
+        return anim;
+    }
+
+    public static hfhy() {
+        let data = Loader.shared.resources['skill_hfhy'].data.animations.skill_hfhy;
+
+        const frames = [];
+        for (let i = 0; i < data.length; i++) {
+            frames.push(Texture.from(data[i]));
+        }
+        const anim = new AnimatedSprite(frames);
+
+        anim.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+        anim.scale.x = anim.scale.y = 2;
 
         anim.anchor.set(0.5);
         anim.animationSpeed = 0.2;
@@ -104,6 +130,7 @@ export class Animation {
         }
         const anim = new AnimatedSprite(frames);
 
+        anim.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
         anim.scale.x = anim.scale.y = 1;
 
         anim.anchor.set(0.5);
@@ -123,8 +150,10 @@ export class Animation {
         for (let i = 0; i < data.length; i++) {
             frames.push(Texture.from(data[i]));
         }
+
         const anim = new AnimatedSprite(frames);
 
+        anim.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
         anim.scale.x = anim.scale.y = 1;
 
         anim.anchor.set(0.5);
@@ -144,6 +173,7 @@ export class Animation {
         }
         const anim = new AnimatedSprite(frames);
 
+        anim.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
         anim.scale.x = anim.scale.y = 1;
 
         anim.anchor.set(0.5);
@@ -152,6 +182,27 @@ export class Animation {
         anim.play();
         anim.x = P == 'P1' ? 10 : -10;
         anim.y = 20;
+        anim.onComplete = function () {
+            anim.destroy();
+        }
+        return anim;
+    }
+
+    public static fg_3() {
+        let data = Loader.shared.resources['fg_3'].data.animations.fg_3;
+        const frames = [];
+        for (let i = 0; i < data.length; i++) {
+            frames.push(Texture.from(data[i]));
+        }
+        const anim = new AnimatedSprite(frames);
+
+        anim.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+        anim.scale.x = anim.scale.y = 1;
+
+        anim.anchor.set(0.5);
+        anim.animationSpeed = 0.3;
+        anim.loop = false;
+        anim.play();
         anim.onComplete = function () {
             anim.destroy();
         }

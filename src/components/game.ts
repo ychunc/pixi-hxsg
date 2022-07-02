@@ -18,7 +18,7 @@ export interface IST {
 }
 
 export class People extends Container {
-    // 需要创建什么额外的配饰,可以继续添加子Container,然后set or get
+    // 需要创建什么额外的配饰,可以继续添加子Container,然后set/get
 
     public data: IST;
     public struct: any = {
@@ -53,13 +53,12 @@ export class People extends Container {
         this.scale.x *= this.zoom;
         this.scale.y *= this.zoom;
 
-        // 可点范围 [TEST]
+        // 可点范围
         const graphics = new Graphics();
-        graphics.beginFill(0xFFFFFF);
+        graphics.beginFill(0x00FFFF);
         graphics.drawRect(0, 0, 30, 40);
         graphics.endFill();
         graphics.alpha = 0;
-
         graphics.x = this.data.T == 'P1' ? -4 : -26;
         this.addChild(graphics);
 
@@ -214,19 +213,19 @@ export class Team extends Container {
             gsap.to(people, { duration: 0.35, ease: "back.out(1.7)", x: pos[Number(key)]['x'] });
 
             // 呼吸
-            var tl = gsap.timeline();
-            tl.to(people.struct.body.scale, {
-                y: people.struct.body.scale.y * 1.05,
-                duration: 0.25,
-                repeat: -1,
-                yoyo: true
-            });
-            tl.to(people.struct.body.scale, {
-                y: people.struct.body.scale.y,
-                duration: 0.3,
-                repeat: -1,
-                yoyo: true
-            });
+            // var tl = gsap.timeline();
+            // tl.to(people.struct.body.scale, {
+            //     y: people.struct.body.scale.y * 1.05,
+            //     duration: 0.25,
+            //     repeat: -1,
+            //     yoyo: true
+            // });
+            // tl.to(people.struct.body.scale, {
+            //     y: people.struct.body.scale.y,
+            //     duration: 0.3,
+            //     repeat: -1,
+            //     yoyo: true
+            // });
         }
 
         let P2X = Manager.width - Team.edgeX;;
@@ -259,20 +258,21 @@ export class Team extends Container {
 
             gsap.to(people, { duration: 0.35, ease: "back.out(1.7)", x: pos[Number(key)]['x'] });
 
-            var tl = gsap.timeline();
-            tl.to(people.struct.body.scale, {
-                y: people.struct.body.scale.y * 1.05,
-                duration: 0.25,
-                repeat: -1,
-                yoyo: true
-            });
+            // 呼吸
+            // var tl = gsap.timeline();
+            // tl.to(people.struct.body.scale, {
+            //     y: people.struct.body.scale.y * 1.05,
+            //     duration: 0.25,
+            //     repeat: -1,
+            //     yoyo: true
+            // });
 
-            tl.to(people.struct.body.scale, {
-                y: people.struct.body.scale.y,
-                duration: 0.3,
-                repeat: -1,
-                yoyo: true
-            });
+            // tl.to(people.struct.body.scale, {
+            //     y: people.struct.body.scale.y,
+            //     duration: 0.3,
+            //     repeat: -1,
+            //     yoyo: true
+            // });
 
         }
 

@@ -18,6 +18,11 @@ export class Manager {
     public static particles: Particles;
 
     /**
+     * back scenes
+     */
+    public static scenes: any = [];
+
+    /**
      * With getters but not setters, these variables become read-only
      */
     public static get width(): number {
@@ -99,7 +104,20 @@ export class Manager {
         if (Manager.currentScene) {
             Manager.app.stage.removeChild(Manager.currentScene);
             Manager.currentScene.destroy();
+            // Manager.currentScene.visible = false;
         }
+
+        // back list
+        // let isNewScene = true;
+        // for (let index = 0; index < Manager.scenes.length; index++) {
+        //     if (Manager.scenes[index].constructor.name == newScene.constructor.name) {
+        //         Manager.scenes[index] = newScene;
+        //         isNewScene = false
+        //     }
+        // }
+        // if (isNewScene) {
+        //     Manager.scenes.push(newScene);
+        // }
 
         // Add the new one
         Manager.currentScene = newScene;
