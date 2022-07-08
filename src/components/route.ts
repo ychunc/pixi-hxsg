@@ -90,10 +90,10 @@ export class Route {
 
                 switch (route[1]) {
                     case 'start':
-                        var Game = new GameScene();
+                        GameScene.gameUser = result.data.user;
                         GameScene.gameType = result.data.game.type.toLocaleUpperCase();
-                        Game.team_data = result.data.team;
 
+                        var Game = new GameScene(result.data.team);
                         Manager.changeScene(Game);
                         break;
                     case 'row':
@@ -105,12 +105,11 @@ export class Route {
                             currentGame.team_data = { 'p1': result.data.team.p2, 'p2': result.data.team.p1 };
                         }
 
-                        // // 更新血量百分比
+                        // 更新血量百分比
                         GameScene.bloodRate();
+
                         // // 更新buff [更新team,按情况显示]
                         // obj['Game'].buff(obj['Game'].runStatus == 1 ? false : true);
-                        // // 获取目标
-                        // obj['Game'].select_index_s = obj['Game'].getIndex('p1');
 
                         break;
                     case 'run':

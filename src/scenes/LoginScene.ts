@@ -1,10 +1,12 @@
-import { Container, TextStyle, Text } from "pixi.js";
+import { Container, TextStyle, Text, } from "pixi.js";
+import gsap from "gsap";
 import { IScene, Manager } from "../Manager";
 import { Spine } from "../components/spine";
 import { Button } from "../components/component";
 import { MainScene } from "./MainScene";
 import { ws } from "../components/websocket"
-import gsap from "gsap";
+import { Animation } from "../components/animation";
+import { TestScene } from "../examples/TestScene";
 
 export class LoginScene extends Container implements IScene {
     public static data: any;
@@ -16,6 +18,9 @@ export class LoginScene extends Container implements IScene {
 
     constructor() {
         super();
+
+        // app bakcgroupd
+        Manager.backgroundColor(0x66CCFF);
 
         let spine = new Spine();
         spine.x = -spine.width;
@@ -88,6 +93,10 @@ export class LoginScene extends Container implements IScene {
         button.y = Manager.height * 0.82;
         this.addChild(button)
         button.on("pointertap", () => {
+            var anim = Animation.dead_all();
+            anim.scale.x = anim.scale.y = 10;
+            button.addChild(anim);
+
             LoginScene.removeInput();
             Manager.changeScene(new MainScene);
         }, this);
@@ -95,6 +104,14 @@ export class LoginScene extends Container implements IScene {
         if (ws.action == 'AUTO') {
             this.login();
         }
+
+        setTimeout(() => {
+            LoginScene.removeInput();
+            TestScene
+            // Manager.changeScene(new TestScene)
+        }, 10);
+
+
     }
 
     public login() {

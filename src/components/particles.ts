@@ -54,7 +54,7 @@ export class Particles extends Container implements IScene {
                                 },
                                 {
                                     "time": 3,
-                                    "value": 0.5
+                                    "value": 0.8
                                 },
                                 {
                                     "time": 3.05,
@@ -109,7 +109,7 @@ export class Particles extends Container implements IScene {
                         "textures": [
                             "images/wu.png",
                             "images/hua.png",
-                            // "images/pp.png"
+                            // "images/pp.png",
                         ]
                     }
                 },
@@ -132,11 +132,11 @@ export class Particles extends Container implements IScene {
                             "list": [
                                 {
                                     "time": 0,
-                                    "value": "FFFFFF"
+                                    "value": "FF66CC"
                                 },
                                 {
                                     "time": 1,
-                                    "value": "FFB6C1"
+                                    "value": "FFCCCC"
                                 }
                             ]
                         }

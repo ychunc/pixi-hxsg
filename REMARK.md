@@ -40,3 +40,6 @@ x = 150|0
 y = 90*n
 
 LM18674868661WYR
+
+header y:0
+body y:0 + header.height

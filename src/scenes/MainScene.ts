@@ -9,7 +9,7 @@ import { MainScene as MainSceneExa } from "../examples/MainScene"
 
 import { SlaveScene } from "./SlaveScene";
 import { UserScene } from "./UserScene";
-import { Header, StyleText } from "../components/component";
+import { Header, Ready, StyleText } from "../components/component";
 import { ws } from "../components/websocket";
 import { Chat } from "../components/chat";
 import { Location } from "../components/route";
@@ -36,6 +36,9 @@ export class MainScene extends Container implements IScene {
 
     constructor() {
         super();
+
+        // 开启层级
+        this.sortableChildren = true;
 
         this.user();
 
@@ -114,6 +117,7 @@ export class MainScene extends Container implements IScene {
                 this.navPageContainer = new Container();
                 break;
         }
+        this.navPageContainer.zIndex = 0;
         this.addChild(this.navPageContainer);
     }
 
@@ -218,15 +222,23 @@ export class MainScene extends Container implements IScene {
             [but_bg, but_text].forEach((object) => {
                 object.interactive = true;
                 object.on("pointertap", () => {
+                    var ready = new Ready();
+                    ready.zIndex = 10;
+                    this.addChild(ready);
+
                     switch (data.npc[key].type) {
                         case 'plot':
                             console.log('message...');
                             break;
                         case 'game':
-                            ws.send({ "route": "game", "uri": "join" })
+                            setTimeout(() => {
+                                ws.send({ "route": "game", "uri": "join" });
+                            }, 500 + Math.random() * 1000);
                             break;
                         case 'npc':
-                            ws.send({ "route": "npc", "uri": "join" })
+                            setTimeout(() => {
+                                ws.send({ "route": "npc", "uri": "join" });
+                            }, 500 + Math.random() * 1000);
                             break;
                     }
                 });

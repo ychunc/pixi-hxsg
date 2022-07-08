@@ -52,8 +52,8 @@ export class SpineScene extends Container implements IScene {
 
         this.spine.state.setAnimation(0, this.animations[this.n], true);
 
-        gsap.to(this.spine, { duration: 1.5, yoyo: true, repeat: -1, ease: "power4.out", alpha: 0.1 });
-        gsap.to(this.spine.scale, { duration: 1.5, yoyo: true, repeat: -1, ease: "power4.out", x: Manager.ratio * 1.5, y: Manager.ratio * 1.5 });
+        gsap.to(this.spine, { duration: 1.5, yoyo: true, repeat: 600, ease: "power4.out", alpha: 0.1 });
+        gsap.to(this.spine.scale, { duration: 1.5, yoyo: true, repeat: 600, ease: "power4.out", x: Manager.ratio * 1.5, y: Manager.ratio * 1.5 });
 
         let back = new Back(MainScene, () => { }, (_this: any) => {
             gsap.to(_this, { alpha: 0, duration: 1 });

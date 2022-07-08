@@ -52,14 +52,18 @@ export class Animation {
         var nums = num.toString()
 
         const container = new Container;
+        if (num > 0) {
+            var PMAX: any = { 'P2': { 'max': -30, 'min': -15 }, 'P1': { 'max': -5, 'min': -4 } };
+        } else {
+            var PMAX: any = { 'P2': { 'max': -35, 'min': -15 }, 'P1': { 'max': -10, 'min': -4 } };
+        }
 
-        let PMAX: any = { 'P2': { 'max': -35, 'min': -15 }, 'P1': { 'max': -10, 'min': -4 } };
         container.x = PMAX[P].min + -Math.abs(PMAX[P].max - PMAX[P].min) / 6 * nums.length
         container.y = -6;
 
         for (let n = 0; n < nums.length; n++) {
 
-            let spine = Sprite.from(nums[n])
+            let spine = Sprite.from((num > 0 ? '+' : '-') + nums[n])
             spine.scale.x = spine.scale.y = 0.2;
             spine.x = 7.5 * n;
             spine.y = 0
@@ -121,6 +125,28 @@ export class Animation {
         return anim;
     }
 
+    public static psdh() {
+        let data = Loader.shared.resources['skill_psdh'].data.animations.psdh;
+
+        const frames = [];
+        for (let i = 0; i < data.length; i++) {
+            frames.push(Texture.from(data[i]));
+        }
+        const anim = new AnimatedSprite(frames);
+        anim.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+        anim.scale.x = 3;
+        anim.scale.y = 3.5;
+
+        anim.anchor.set(0.5);
+        anim.animationSpeed = 0.3;
+        anim.loop = false;
+        anim.play();
+        anim.onComplete = function () {
+            anim.destroy();
+        }
+        return anim;
+    }
+
     public static lphs() {
         let data = Loader.shared.resources['skill_pi'].data.animations.pi;
 
@@ -154,7 +180,7 @@ export class Animation {
         const anim = new AnimatedSprite(frames);
 
         anim.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-        anim.scale.x = anim.scale.y = 1;
+        anim.scale.set(1)
 
         anim.anchor.set(0.5);
         anim.animationSpeed = 0.2;
@@ -162,6 +188,7 @@ export class Animation {
         anim.play();
         anim.x = 26;
         anim.y = 26;
+
         return anim;
     }
 
@@ -188,8 +215,52 @@ export class Animation {
         return anim;
     }
 
+    public static dead_all(P: string = 'P1') {
+        let data = Loader.shared.resources['dead_all'].data.animations.dead_all;
+        const frames = [];
+        for (let i = 0; i < data.length; i++) {
+            frames.push(Texture.from(data[i]));
+        }
+        const anim = new AnimatedSprite(frames);
+
+        anim.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+        anim.scale.x = anim.scale.y = 0.85;
+
+        anim.anchor.set(0.5);
+        anim.animationSpeed = 0.5;
+        anim.loop = false;
+        anim.play();
+        anim.x = P == 'P1' ? 10 : -10;
+        anim.y = 20;
+        anim.onComplete = function () {
+            anim.destroy();
+        }
+        return anim;
+    }
+
     public static fg_3() {
         let data = Loader.shared.resources['fg_3'].data.animations.fg_3;
+        const frames = [];
+        for (let i = 0; i < data.length; i++) {
+            frames.push(Texture.from(data[i]));
+        }
+        const anim = new AnimatedSprite(frames);
+
+        anim.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+        anim.scale.x = anim.scale.y = 1;
+
+        anim.anchor.set(0.5);
+        anim.animationSpeed = 0.3;
+        anim.loop = false;
+        anim.play();
+        anim.onComplete = function () {
+            anim.destroy();
+        }
+        return anim;
+    }
+
+    public static fg_2() {
+        let data = Loader.shared.resources['fg_2'].data.animations.fg_2;
         const frames = [];
         for (let i = 0; i < data.length; i++) {
             frames.push(Texture.from(data[i]));

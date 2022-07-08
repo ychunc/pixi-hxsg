@@ -11,11 +11,14 @@ export interface IST {
     T: string,
     n: number,
     pe: {
-        header: string;
         body: string;
         foot: string;
+        header: string;
     }
 }
+
+// type Callback = (...args: any[]) => void | null;
+
 
 export class People extends Container {
     // 需要创建什么额外的配饰,可以继续添加子Container,然后set/get
@@ -37,7 +40,7 @@ export class People extends Container {
 
     public alive: boolean = true;
 
-    constructor(data: IST, GameScene: GameScene) {
+    constructor(data: IST, GameScene: GameScene | any = {}) {
         super();
 
         this.data = data;
@@ -48,6 +51,10 @@ export class People extends Container {
             this.addChild(this.struct[key]);
         }
 
+        // 定死规则 [body.y]
+        this.struct.body.y = this.struct.header.height;
+
+        // 血条
         this.addChild(this.bloodContainer(data.scale));
 
         this.scale.x *= this.zoom;
@@ -64,6 +71,8 @@ export class People extends Container {
 
         // 开启互动
         graphics.interactive = true;
+        // graphics.on("pointertap",()=>callback(this))
+
         graphics.on("pointertap", () => GameScene.onSelected(this.data), this);
     }
 
@@ -182,7 +191,7 @@ export class Team extends Container {
         let animX = 200;
 
         let P1X = Team.edgeX + 10;
-        var pos = [
+        var pos1 = [
             { 'x': P1X, 'y': y * 0 },
             { 'x': P1X + offset, 'y': y * 1 },
             { 'x': P1X, 'y': y * 2 },
@@ -203,33 +212,25 @@ export class Team extends Container {
                 }
             }, GameScene);
 
-            people.x = pos[Number(key)]['x'] - animX;
+            people.x = pos1[Number(key)]['x'] - animX;
             people.y = Number(key) * 80 + 50;
 
             this.PP['P1'][key] = people;
             this.addChild(people);
 
             // 入场动画
-            gsap.to(people, { duration: 0.35, ease: "back.out(1.7)", x: pos[Number(key)]['x'] });
+            setTimeout(() => {
+                gsap.to(people, { duration: 0.35, ease: "back.out(1.7)", x: pos1[Number(key)]['x'] });
+            }, 100);
 
             // 呼吸
-            // var tl = gsap.timeline();
-            // tl.to(people.struct.body.scale, {
-            //     y: people.struct.body.scale.y * 1.05,
-            //     duration: 0.25,
-            //     repeat: -1,
-            //     yoyo: true
-            // });
-            // tl.to(people.struct.body.scale, {
-            //     y: people.struct.body.scale.y,
-            //     duration: 0.3,
-            //     repeat: -1,
-            //     yoyo: true
-            // });
+            gsap.to(people.struct.body.scale,
+                { duration: 0.25, y: people.struct.body.scale.y * 1.2, ease: 'none', repeat: 100000, yoyo: true }
+            );
         }
 
         let P2X = Manager.width - Team.edgeX;;
-        var pos = [
+        var pos2 = [
             { 'x': P2X - offset, 'y': y * 0 },
             { 'x': P2X, 'y': y * 1 },
             { 'x': P2X - offset, 'y': y * 2 },
@@ -250,30 +251,21 @@ export class Team extends Container {
                 }
             }, GameScene);
 
-            people.x = pos[Number(key)]['x'] + animX;
+            people.x = pos2[Number(key)]['x'] + animX;
             people.y = Number(key) * 80 + 50;
 
             this.PP['P2'][key] = people;
             this.addChild(people);
 
-            gsap.to(people, { duration: 0.35, ease: "back.out(1.7)", x: pos[Number(key)]['x'] });
+            // 入场动画
+            setTimeout(() => {
+                gsap.to(people, { duration: 0.35, ease: "back.out(1.7)", x: pos2[Number(key)]['x'] });
+            }, 100);
 
             // 呼吸
-            // var tl = gsap.timeline();
-            // tl.to(people.struct.body.scale, {
-            //     y: people.struct.body.scale.y * 1.05,
-            //     duration: 0.25,
-            //     repeat: -1,
-            //     yoyo: true
-            // });
-
-            // tl.to(people.struct.body.scale, {
-            //     y: people.struct.body.scale.y,
-            //     duration: 0.3,
-            //     repeat: -1,
-            //     yoyo: true
-            // });
-
+            gsap.to(people.struct.body.scale,
+                { duration: 0.25, y: people.struct.body.scale.y * 1.2, ease: 'none', repeat: 100000, yoyo: true }
+            );
         }
 
         // 查看战场容器大小 [TEST]

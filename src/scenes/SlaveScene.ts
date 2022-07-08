@@ -4,6 +4,7 @@ import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
 import { Header, Frame, StyleText, Button, SceneTite, confirmBox, Avatar } from "../components/component";
 import { ws } from "../components/websocket";
+import { SlaveDetailScene as SlaveSlaveDetailScene } from "./TreasuryScene"
 
 export class SlaveScene extends ManageContainer implements IScene {
 
@@ -128,10 +129,10 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
             ],
             [
                 { type: 'button', name: '战斗能力', value: '100', style: false, calllback: () => Manager.changeScene(new AbilityScene) },
-                { type: 'button', name: '初值培养', value: '100', style: false, calllback: () => { } },
+                { type: 'button', name: '初值培养', value: '100', style: false, calllback: () => { Manager.changeScene(new SlaveSlaveDetailScene(item['slave'], SlaveDetailScene)) } },
             ],
             [
-                { type: 'button', name: '副将生平', value: '100', style: false, calllback: () => { } },
+                { type: 'button', name: '副将生平', value: '100', style: false, calllback: () => { Manager.changeScene(new SlaveSlaveDetailScene(item['slave'], SlaveDetailScene)) } },
                 {
                     type: 'button', name: '解雇副将', value: '100', style: false, calllback: () => {
                         this.addChild(new confirmBox('确定要解雇副将吗?', () => {

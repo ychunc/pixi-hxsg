@@ -7,6 +7,111 @@ import { MainScene } from "../scenes/MainScene";
 
 type Callback = (...args: any[]) => void | null;
 
+export class Ready extends Container {
+
+    /**
+     * 准备
+     */
+    constructor() {
+        super();
+
+        // 透明背景
+        let bgAll = new Graphics();
+        bgAll.beginFill(0x000, 0.00001).drawRect(0, 0, Manager.width, Manager.height);
+        bgAll.endFill();
+        bgAll.interactive = true;
+        bgAll.zIndex = 1;
+        this.addChild(bgAll);
+
+        var container = new Container();
+        container.y = 340;
+        this.addChild(container);
+
+        // 黑色栏背景
+        var alpha = 0.2;
+        let graphics = new Graphics();
+        graphics.beginFill(0x0b0908, alpha).drawRect(0, 0, Manager.width, 180);
+        graphics.beginFill(0xffffff, 0.6).drawRect(0, + 6, Manager.width, 4);
+        graphics.beginFill(0xffffff, 0.6).drawRect(0, 180 - 6, Manager.width, 4);
+        graphics.endFill();
+
+        let tween = gsap.to({}, { duration: 0.1, repeat: 30000 }).eventCallback('onRepeat', () => {
+            if (alpha >= 1) {
+                tween.pause();
+            }
+            graphics.clear();
+            graphics.beginFill(0x0b0908, alpha).drawRect(0, 0, Manager.width, 180);
+            graphics.beginFill(0xffffff, 0.6).drawRect(0, + 6, Manager.width, 4);
+            graphics.beginFill(0xffffff, 0.6).drawRect(0, 180 - 6, Manager.width, 4);
+            graphics.endFill();
+            alpha += 0.2;
+        })
+
+        container.addChild(graphics);
+
+        // 文字
+        let text = new StyleText('准备中,请稍后...', {
+            fontSize: 32,
+            stroke: '#FFF',
+            lineJoin: "round",
+        })
+        text.y = 20;
+        text.x = Manager.width / 2 - text.width / 2;
+        container.addChild(text);
+
+        // 动画条
+        var duration = 0.8;
+
+        var redLine1 = this.getGrd();
+        redLine1.y = 100;
+        var redLine2 = this.getGrd();
+        redLine2.y = 112;
+
+        gsap.to(redLine1, { duration: duration, x: Manager.width - redLine1.width, ease: 'none', repeat: 3000 })
+        gsap.to(redLine2, { duration: duration, x: Manager.width - redLine2.width, ease: 'none', repeat: 3000 })
+
+        container.addChild(redLine1, redLine2);
+
+        var redLine3 = this.getGrd();
+        redLine3.y = 100;
+        redLine3.scale.x = -1
+        redLine3.x = Manager.width;
+        var redLine4 = this.getGrd();
+        redLine4.y = 112;
+        redLine4.scale.x = -1
+        redLine4.x = Manager.width;
+
+        gsap.to(redLine3, { duration: duration, x: 0 + redLine3.width, ease: 'none', repeat: 3000 })
+        gsap.to(redLine4, { duration: duration, x: 0 + redLine4.width, ease: 'none', repeat: 3000 })
+
+        container.addChild(redLine3, redLine4);
+    }
+
+    public getGrd(): Sprite {
+        var texture = new Sprite
+
+        const quality = 100;
+        const canvas = document.createElement('canvas');
+        canvas.width = quality;
+        canvas.height = 8;
+
+        var ctx = canvas.getContext('2d');
+        if (ctx) {
+            const grd = ctx.createLinearGradient(0, 0, quality, 0);
+            grd.addColorStop(0, 'rgba(255, 100, 100, 0)');
+            grd.addColorStop(0.6, 'rgba(255, 50, 50, 1.0)');
+            grd.addColorStop(1, 'rgba(255, 0, 0, 1.0)');
+
+            ctx.fillStyle = grd;
+            ctx.fillRect(0, 0, quality, 100);
+
+            var texture = Sprite.from(Texture.from(canvas));
+        }
+        return texture;
+    }
+
+}
+
 export class Scrollbox extends PIXIScrollbox {
 
     /**
@@ -337,19 +442,21 @@ export class Button extends Container {
         this.on("pointerup", flicker ? this.flicker : this.up, this);
     }
 
+    public isFlicker: boolean = false;
+
     /**
      * 闪动 (需要优化)
      * @returns 
      */
     public flicker() {
-        if (this.action == 'up') {
+        if (this.action == 'up' || this.isFlicker) {
             return;
         }
-        gsap.to({}, { duration: 0.035 }).eventCallback("onComplete", () => {
+        this.isFlicker = true;
+        gsap.to({}, { duration: 0.035, repeat: 100000 }).eventCallback('onRepeat', () => {
             var color = this.text.style.fill == '#ffffff' ? '#ae87a0' : '#ffffff'
             this.text.style.fill = color;
-            this.flicker();
-        });
+        })
     }
 
     public up() {
@@ -412,7 +519,7 @@ export class Button extends Container {
     */
     public override on(event: EventTypes, fn: Callback, context?: any) {
         super.on(event, fn, context);
-        return this
+        return this;
     }
 
 }

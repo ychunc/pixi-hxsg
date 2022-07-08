@@ -11,28 +11,42 @@ let base = [
     // animation
     { name: "huo", url: "./game/huo.json" },
     { name: "fg", url: "./game/fg.json" },
-    // { name: "fg_2", url: "./game/fg_2.json" },
+    { name: "fg_2", url: "./game/fg_2.json" },
     { name: "fg_3", url: "./game/fg_3.json" },
 
+    // role
+    { name: "r1", url: "./game/roles/r1.json" },
+    { name: "r1n", url: "./game/roles/r1n.json" },
+    { name: "r1nz", url: "./game/roles/r1nz.json" },
+
+    { name: "r2n", url: "./game/roles/r2n.json" },
+
+    { name: "r2nz", url: "./game/roles/r2nz.json" },
+
+    { name: "r3nz", url: "./game/roles/r3nz.json" },
+
+    { name: "n1", url: "./game/roles/n1.json" },
+    { name: "n1n", url: "./game/roles/n1n.json" },
+    { name: "n3", url: "./game/roles/n3.json" },
+    { name: "n3n", url: "./game/roles/n3n.json" },
+    // { name: "n2", url: "./game/roles/n2.json" },
+
     // game
-    { name: "r1n", url: "./game/r1n.json" },
-    { name: "r2n", url: "./game/r2n.json" },
-
-    { name: "n1", url: "./game/n1.json" },
-    { name: "n2", url: "./game/n2.json" },
-
     { name: "blood", url: "./game/blood.json" },
 
     { name: "skill_wlhd", url: "./game/wlhd.json" },
     { name: "skill_hfhy", url: "./game/hfhy.json" },
+    { name: "skill_psdh", url: "./game/psdh.json" },
 
     { name: "skill_pi", url: "./game/pi.json" },
 
     { name: "map_zz", url: "./game/map_zz.json" },
 
     { name: "num1", url: "./game/num1.json" },
+    { name: "num2", url: "./game/num2.json" },
 
     { name: "dead_fl", url: "./game/dead_fl.json" },
+    { name: "dead_all", url: "./game/dead_all.json" },
 
     { name: "dead_1", url: "./game/dead_1.png" },
     { name: "dead_2", url: "./game/dead_2.png" },

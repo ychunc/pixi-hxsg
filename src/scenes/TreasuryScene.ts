@@ -206,7 +206,7 @@ export class SlaveScene extends ManageContainer implements IScene {
                 strokeThickness: 6,
                 lineJoin: "round",
             });
-            name.on('pointertap', () => Manager.changeScene(new SlaveDetailScene(data[index])));
+            name.on('pointertap', () => Manager.changeScene(new SlaveDetailScene(data[index], SlaveScene)));
 
             let level = new StyleText('  (0.85-' + data[index].up + ')', { fontSize: 40 });
             level.x = name.width
@@ -233,8 +233,10 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
 
     /**
      * 副将详情
+     * @param item 副将详情
+     * @param Scene 返回界面
      */
-    constructor(item: any) {
+    constructor(item: any, Scene: any) {
         super();
 
         console.log(item);
@@ -247,7 +249,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
 
         this.addChild(new Avatar({ avatar: item.sid, y: 150 }));
 
-        this.addChild(frame, header, title, new Back(SlaveScene));
+        this.addChild(frame, header, title, new Back(Scene));
     }
 
     public structure(data: any) {

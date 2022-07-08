@@ -1,5 +1,5 @@
-import { Container, Sprite, AnimatedSprite, SCALE_MODES } from "pixi.js";
-import { IScene, Manager } from "../Manager";
+import { Container, Sprite, AnimatedSprite, SCALE_MODES, Texture } from "pixi.js";
+import { IScene, Manager, ManageContainer } from "../Manager";
 import { Back } from "../components/back";
 import { LoginScene } from "./LoginScene";
 
@@ -33,7 +33,7 @@ type gameType = 'NPC' | 'PVP' | 'PVE'
 /**
  * Game
  */
-export class GameScene extends Container implements IScene {
+export class GameScene extends ManageContainer implements IScene {
     /**
      * 游戏人物数据
      */
@@ -52,7 +52,7 @@ export class GameScene extends Container implements IScene {
     /**
      * 是否已选择功能
      */
-    public static selectedFunction: number | null = null;
+    public static selectedFunctionIndex: number | null = null;
 
     /**
      * 游戏类型 NPC PVP PVE
@@ -60,13 +60,14 @@ export class GameScene extends Container implements IScene {
     public static gameType: gameType;
 
     /**
+    * 游戏用户
+    */
+    public static gameUser: any;
+
+    /**
      * 回合数据
      */
     public static round: any = {};
-
-    public update(): void {
-        // To be a scene we must have the update method even if we don't use it.
-    }
 
     /**
      * 当前操作的角色
@@ -75,7 +76,7 @@ export class GameScene extends Container implements IScene {
 
     public static T: Team;
 
-    constructor() {
+    constructor(team_data: any) {
         super();
 
         // GAME 背景
@@ -93,15 +94,45 @@ export class GameScene extends Container implements IScene {
         // 返回
         this.addChild(new Back(LoginScene));
 
-        // 粒子
-        // this.addChild(new Particles());
-
-        // 敌方光标
+        // 目标光标
         GameScene.map_zz = Animation.map_zz();
-        console.log(GameScene.map_zz);
 
-        let T = new Team(this, { 'P1': ['r1n', 'n1', 'n1', 'n2'], 'P2': ['r1n', 'n1', 'n1', 'n2'] });
+        // 我方指针
+        GameScene.f_jt = Sprite.from('f_jt');
+        GameScene.f_jt.position.x = 0 - GameScene.f_jt.width / 2;
+        GameScene.f_jt.scale.x *= -0.2;
+        GameScene.f_jt.scale.y *= 0.2;
+        GameScene.f_jt.y = 10;
+
+        // Team
+        this.team_data = team_data;
+        console.log('T = ', this.team_data);
+
+        var markTeam: any = { P1: [], P2: [] }
+
+
+        for (const p in this.team_data) {
+            var roles: any = []
+            for (let index = 0; index < this.team_data[p].length; index++) {
+                var item = this.team_data[p][index]
+
+                if (item.z) item.lv = ''
+                roles.push(item.c + item.j + item.sex + item.z + item.lv);
+            }
+            markTeam[p.toLocaleUpperCase()] = roles;
+        }
+
+        console.log('markTeam', markTeam);
+
+        // let T = new Team(this, { 'P1': ['n1', 'n1', 'n1', 'n1'], 'P2': ['r1n', 'n1', 'n1', 'n1'] });
+        let T = new Team(this, markTeam);
         GameScene.T = T;
+
+        T.y = 200;
+        this.addChild(T);
+
+        // 初始人物选择
+        GameScene.T.PP['P2'][this.current_select_action_index].addChild(GameScene.f_jt);
 
         // 必须让人物入场完成后再
         gsap.to({}, { duration: 0.2 }).eventCallback('onComplete', () => {
@@ -111,110 +142,39 @@ export class GameScene extends Container implements IScene {
         })
 
 
-        T.y = 200;
-        this.addChild(T);
-
-        // 我方指针
-        GameScene.f_jt = Sprite.from('f_jt');
-        GameScene.f_jt.position.x = 0 - GameScene.f_jt.width / 2;
-        GameScene.f_jt.scale.x *= -0.2;
-        GameScene.f_jt.scale.y *= 0.2;
-        GameScene.f_jt.y = 10;
-
-        // 初始人物选择
-        GameScene.T.PP['P2'][this.current_select_action_index].addChild(GameScene.f_jt)
-
-        let c, n, y;
-
-        // P2 移动到 P1[n]
-        c = 1;
-        n = 1;
-        y = 90;
-
-        console.log(T.PP['P2'][c]);
-        console.log(c, n, y);
-
-        // P1 移动到 P2[n]
-        c = 0;
-        n = 2;
-        y = 90;
-
-        console.log(c, n, y);
-
-        let buP2 = new Button('血条更新');
-        buP2.x = 50;
-        buP2.y = Manager.height * 0.7;
-        this.addChild(buP2);
-        buP2.on("pointertap", () => {
-        }, this);
-
-        let but3 = new Button('血条');
-        but3.x = 300;
-        but3.y = Manager.height * 0.7;
-        this.addChild(but3);
-        but3.on("pointertap", () => {
-            this.bloodBarAll(false)
-        }, this);
-
+        // TEST
         let but10 = new Button('test');
         but10.x = 50;
-        but10.y = Manager.height * 0.85;
+        but10.y = Manager.height * 0.92;
         this.addChild(but10);
+        var run = true;
         but10.on("pointertap", () => {
-
-
-            gsap.to(T, { duration: 10, x: -2000 });
-
-        }, this);
-
-        let but11 = new Button('震');
-        but11.x = 200;
-        but11.y = Manager.height * 0.85;
-        this.addChild(but11);
-        but11.on("pointertap", () => {
-            Skill.shock();
-        }, this);
-
-        let but7 = new Button('skill');
-        but7.x = 350;
-        but7.y = Manager.height * 0.78;
-        this.addChild(but7);
-        but7.on("pointertap", () => {
-            let T = GameScene.T;
-            T.x = 0;
-            console.log(T);
-            var anim = Animation.fg_3();
-
-            anim.scale.x = 2
-            anim.scale.y = 2
-            but7.addChild(anim)
+            var T = GameScene.T
+            console.log('p2====', T.PP['P2']);
+            for (let index = 0; index < T.PP['P2'].length; index++) {
+                var P = T.PP['P2'][index]
+                P.struct.foot.texture = Texture.from(P.data.pe.foot + (run ? '_run' : ''));
+                P.struct.body.texture = Texture.from(P.data.pe.body + (run ? '_run' : ''));
+            }
+            run = run ? false : true;
         }, this);
 
         let but9 = new Button('TL');
-        but9.x = 500;
-        but9.y = Manager.height * 0.78;
+        but9.x = 280;
+        but9.y = Manager.height * 0.92;
         this.addChild(but9);
         but9.on("pointertap", () => {
             this.playGame();
         }, this);
-
-        let but12 = new Button('血动画');
-        but12.x = 50;
-        but12.y = Manager.height * 0.92;
-        this.addChild(but12);
-        but12.on("pointertap", () => {
-            for (let index = 0; index < 4; index++) {
-                T.PP['P2'][index].addChild(Animation.bloodNumAnimation('P2', -1234567890 * (index + 1)));
-                T.PP['P1'][index].addChild(Animation.bloodNumAnimation('P1', -1234567890 * (index + 1)));
-            }
-        }, this);
-
     }
 
     /**
-   * 头部
-   */
+     * 头部
+     */
     public header() {
+        console.log('get user', GameScene.gameUser);
+
+
         let container = new Container();
 
         let game_title = Sprite.from('game_title');
@@ -238,14 +198,14 @@ export class GameScene extends Container implements IScene {
         TitleName.y = 48;
         container.addChild(TitleName);
 
-        let leftName = new StyleText('士兵群', { fontSize: 30 });
+        let leftName = new StyleText(GameScene.gameUser[0].nick, { fontSize: 30 });
         leftName.x = 20;
-        leftName.y = 50;
+        leftName.y = 52;
         container.addChild(leftName);
 
-        let rightName = new StyleText('三国新人', { fontSize: 30 });
-        rightName.x = Manager.width - 170;
-        rightName.y = 50;
+        let rightName = new StyleText(GameScene.gameUser[1].nick, { fontSize: 30 });
+        rightName.x = Manager.width - 170 + rightName.width / 2;
+        rightName.y = 52;
         container.addChild(rightName);
         return container;
     }
@@ -261,11 +221,19 @@ export class GameScene extends Container implements IScene {
     public current_select_skill_no: number = 0;
 
     /**
-     * 当前选择的敌方索引
+     * 当前选择的人物索引 index
      */
-    public current_select_enemy_index: number = 0;
+    public current_select_person_index: number = 0;
 
-    public selectedContainer: Container = new Container;
+    /**
+     * 当前选择的人物 P
+     */
+    public current_select_person_p: string = 'P1';
+
+    /**
+     * 选择容器
+     */
+    public selectedPersonContainer: Container = new Container;
 
     /**
      * 目标指针 [动画]
@@ -283,83 +251,95 @@ export class GameScene extends Container implements IScene {
     public current_select_skill: { sk?: any, skill_name?: any } = {};
 
     /**
-     * 选择技能后
-     * @param skill 技能详情
+     * 按技能返回P
+     * @param sk sk index
      */
-    public selectPeople() {
-        var skill = this.current_select_skill;
-        console.log('selected', skill);
-
-        this.skillContainer.visible = false;
-
-        this.selectedContainer.visible = false;
-
-        this.selectedContainer = new Container;
-
-        // 当前选择的技能
-        this.current_select_skill_no = skill.sk;
-
-        // 按技能选择p
+    public getSkillP(sk: number): string {
         var _p = 'P1';
-        switch (parseInt(skill.sk)) {
+        switch (sk) {
             // 增益技能
             case 10:
             case 11:
             case 12:
             case 13:
                 _p = 'P2'; // p2增益
-                this.current_select_enemy_index = 0; // 选择P2主角
                 break;
         }
+        return _p;
+    }
 
-        // 当前选择的敌人
-        var d = this.team_data[_p.toLocaleLowerCase()][this.current_select_enemy_index].d;
+    /**
+     * 选择人物
+     */
+    public selectPeople() {
+        // 技能
+        var skill = this.current_select_skill;
+        console.log('selected', skill);
+
+        this.skillContainer.visible = false;
+
+        // this.selectedPersonContainer.visible = false;
+        this.selectedPersonContainer.destroy();
+
+        this.selectedPersonContainer = new Container;
+        this.selectedPersonContainer.interactive = true;
+
+        // 确认选择技能
+        this.selectedPersonContainer.on('pointertap', () => this.ConfirmSelection());
+
+        // 当前选择的技能
+        this.current_select_skill_no = skill.sk;
+
+        // 当前选择的人物
+        console.log('当前选择的人物 =====', this.team_data, this.current_select_person_p, this.current_select_person_index);
+
+        var d = this.team_data[this.current_select_person_p.toLocaleLowerCase()][this.current_select_person_index].d;
 
         let bg = Sprite.from('row_skill');
         bg.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
         bg.scale.x = bg.scale.y = 1.1;
-        this.selectedContainer.addChild(bg);
+        this.selectedPersonContainer.addChild(bg);
 
-        // rowsf
+        // rows
         var text = new StyleText(skill.skill_name, { fontSize: 36, fill: 0xFFFF00 });
-        text.x = this.selectedContainer.width / 2 - text.width / 2;
+        text.x = this.selectedPersonContainer.width / 2 - text.width / 2;
         text.y = 30;
-        this.selectedContainer.addChild(text)
+        this.selectedPersonContainer.addChild(text)
 
         var text = new StyleText('独孤求败', { fontSize: 36, fill: 0xFFFFFF });
-        text.x = this.selectedContainer.width / 2 - text.width / 2;
+        text.x = this.selectedPersonContainer.width / 2 - text.width / 2;
         text.y = 70;
-        this.selectedContainer.addChild(text)
+        this.selectedPersonContainer.addChild(text)
 
         // attrs
         var text = new StyleText('血: ' + d.x, { fontSize: 36, fill: 0xFF0000 });
         text.x = 25;
         text.y = 130 + 46 * 0;
-        this.selectedContainer.addChild(text)
+        this.selectedPersonContainer.addChild(text)
 
         var text = new StyleText('精: ' + d.j, { fontSize: 36, fill: 0x017ebf });
         text.x = 25;
         text.y = 130 + 46 * 1;
-        this.selectedContainer.addChild(text)
+        this.selectedPersonContainer.addChild(text)
 
         var text = new StyleText('速度: ' + d.s, { fontSize: 36, fill: 0x8a2be2 });
         text.x = 25;
         text.y = 130 + 46 * 2;
-        this.selectedContainer.addChild(text)
+        this.selectedPersonContainer.addChild(text)
 
         // 选择的对手图表
         GameScene.map_zz.visible = true;
-        GameScene.T.PP[_p][this.current_select_enemy_index].addChild(GameScene.map_zz);
+        GameScene.map_zz.x = (this.current_select_person_p == 'P1' ? 26 : -30);
+        GameScene.map_zz.scale.x = (this.current_select_person_p == 'P1' ? 1 : -1);
+
+        GameScene.T.PP[this.current_select_person_p][this.current_select_person_index].addChild(GameScene.map_zz);
 
         // 显示血条
-        this.bloodBarOne(_p, this.current_select_enemy_index);
+        this.bloodBarOne(this.current_select_person_p, this.current_select_person_index);
 
-        this.selectedContainer.x = Manager.width / 2 - this.selectedContainer.width / 2;
-        this.selectedContainer.y = 270;
-        this.addChild(this.selectedContainer);
-
-        this.selectedContainer.interactive = true;
-        this.selectedContainer.on('pointertap', () => this.ConfirmSelection())
+        this.selectedPersonContainer.x = Manager.width / 2 - this.selectedPersonContainer.width / 2;
+        this.selectedPersonContainer.y = 270;
+        this.addChild(this.selectedPersonContainer);
     }
 
     /**
@@ -368,23 +348,19 @@ export class GameScene extends Container implements IScene {
      */
     public onSelected(item: any) {
         // 播放中 [不能操作]
-        if (GameScene.Playing == true) return;
+        if (GameScene.Playing == true) return console.log('播放中');
         // 还没选择功能 [不能操作]
-        if (GameScene.selectedFunction == null) return;
+        if (GameScene.selectedFunctionIndex == null) return console.log('还没选择功能');
+
+        console.log('确认选择index', item.n, this.current_select_person_index, item);
 
         // 二次确认选择同一对手
-        if (item.n == this.current_select_enemy_index) {
-
+        if (item.n == this.current_select_person_index) {
             // 确认选择
             this.ConfirmSelection();
-
-            // 为下个角色获取第一个活的敌人,默认是0
-            this.current_select_enemy_index = this.getAliveIndex('P1');
-
         } else {
             // 更新对手名称
-            this.current_select_enemy_index = item.n;
-            console.log('选择的对手index', item);
+            this.current_select_person_index = item.n;
 
             // 选择更新信息
             this.selectPeople();
@@ -392,12 +368,12 @@ export class GameScene extends Container implements IScene {
     }
 
     /**
-     * 获取可攻击的目标
+     * 获取可攻击的目标 P1/P2
      * @param P
      */
     public getAliveIndex(P: string): number {
         // P2默认0
-        if (P == 'P2') return 0
+        if (P.toLocaleUpperCase() == 'P2') return 0
         // P1 选择活的目标
         for (var n in this.team_data['p1']) {
             if (this.team_data['p1'][n].d.x > 0) {
@@ -419,14 +395,17 @@ export class GameScene extends Container implements IScene {
     public ConfirmSelection() {
         // 保存选择的技能/目标
         this.select_skills.push({
-            'index': this.current_select_enemy_index,
+            'index': this.current_select_person_index,
             'sikll': this.current_select_skill_no,
         })
+
+        // 销毁已选择功能
+        GameScene.selectedFunctionIndex = null;
 
         // 选择完毕
         if (this.select_skills.length >= this.team_data['p2'].length) {
             // 选择容器隐藏
-            this.selectedContainer.visible = false;
+            this.selectedPersonContainer.visible = false;
 
             let data = []
             let skill = []
@@ -436,12 +415,9 @@ export class GameScene extends Container implements IScene {
                 skill.push(row['sikll'].toString());
             }
 
-            ws.send({ "route": "npc", "uri": "row", "data": data, "skill": skill })
+            ws.send({ route: "npc", uri: "row", "data": data, "skill": skill })
             return;
         }
-
-        // 销毁已选择功能
-        GameScene.selectedFunction = null;
 
         // 操作下个人物
         this.current_select_action_index++;
@@ -456,8 +432,8 @@ export class GameScene extends Container implements IScene {
             this.bloodBarAll(true);
 
             // 隐藏技能选择
-            this.selectedContainer.visible = false;
-            this.selectedContainer.destroy();
+            this.selectedPersonContainer.visible = false;
+            this.selectedPersonContainer.destroy();
 
             // 显示技能菜单
             this.menuContainer.visible = true;
@@ -473,17 +449,15 @@ export class GameScene extends Container implements IScene {
      * 技能选择容器
      */
     public skillContainer: Container = new Container;
+
     /**
-     * 技能选择
+     * 选择技能
      */
     public skill() {
         // 功能菜单隐藏
         this.menuContainer.visible = false;
         // 血条隐藏
         this.bloodBarAll(false)
-
-        // 重置选择敌人index
-        this.current_select_enemy_index = this.getAliveIndex('P1');
 
         this.skillContainer = new Container;
 
@@ -511,12 +485,17 @@ export class GameScene extends Container implements IScene {
 
             text_skill.on("pointertap", () => {
                 // 已选择功能
-                GameScene.selectedFunction = 1;
-
+                GameScene.selectedFunctionIndex = 1;
                 console.log('select sikll index', i);
-                // 当前选择的技能
+                // 开始选择人物
                 this.current_select_skill_index = i;
                 this.current_select_skill = item;
+                // 当前技能选择的 P
+                this.current_select_person_p = this.getSkillP(item.sk);
+                // 当前技能 P 选择的 index
+                this.current_select_person_index = this.getAliveIndex(this.current_select_person_p);
+                console.log('当前默认p index', this.current_select_person_index);
+                // 人物选择
                 this.selectPeople();
             });
             skills.push(text_skill)
@@ -538,6 +517,8 @@ export class GameScene extends Container implements IScene {
      * 功能菜单
      */
     public menu() {
+
+
         var butText = ['攻击', '技能', '招降', '物品', '招将', '逃跑', '防御'];
         for (let index = 0; index < butText.length; index++) {
             let ContainerRow = new Container();
@@ -556,21 +537,22 @@ export class GameScene extends Container implements IScene {
 
             ContainerRow.addChild(but_bg, text);
             ContainerRow.on("pointertap", () => {
-                console.log('click skill', index);
+                console.log('func index====', index);
+                // skill index
                 switch (index) {
-                    case 0:
+                    case 0: // 普通攻击
                         // 功能菜单隐藏
                         this.menuContainer.visible = false;
                         // 已选择功能
-                        GameScene.selectedFunction = 0;
+                        GameScene.selectedFunctionIndex = 0;
                         // 开始选择人物
                         this.current_select_skill = { sk: 0, skill_name: '普通攻击' }
                         this.selectPeople();
                         break;
-                    case 1:
+                    case 1: // 技能
                         this.skill();
                         break;
-                    case 6:
+                    case 6: // 防御
                         this.current_select_skill_no = -1;
                         this.ConfirmSelection();
                         break;
@@ -675,26 +657,19 @@ export class GameScene extends Container implements IScene {
             tl.add(gsap.to({}, { duration: 0.00001 }).eventCallback('onComplete', () => {
                 // 背景黑色
                 if (item.sk > 0) GameScene.GameBg.visible = false;
-                // 血条隐藏
-                this.bloodBarAll(false);
             }));
 
             // 镜头开始X
             this.runData.startX = Skill.getStartX(PG, item.sk);
 
-            // 起手方
-            if (item.sk > 0) {
-                // 起手动画 [合并]
-                tl.add(Skill.skillStart(this.runData.startX, PG, item.pk_g.n));
-                // 等待时间 [合并]
-                tl.add(gsap.to({}, { duration: 0.45 }));
+            // 起手动画
+            if (item.sk > 0) tl.add(Skill.skillStart(this.runData.startX, PG, item.pk_g.n));
+
+            // 镜头进攻X
+            var duration = Skill.skillSpend[item.sk]
+            if (duration !== null) {
+                tl.add(gsap.to(T, { duration: duration, ease: 'none', x: this.runData.startX * -1 }));
             }
-
-            // 开始攻击 技能到敌方速度
-            var duration = Skill.skillSpend[item.sk];
-
-            // 镜头返回X
-            tl.add(gsap.to(T, { duration: duration, ease: 'none', x: this.runData.startX * -1 }));
 
             // 技能播放 [tl 追加skill 的 timeline]
             tl.add(new Skill(item).timeline());

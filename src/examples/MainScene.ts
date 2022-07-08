@@ -3,7 +3,6 @@ import gsap from "gsap";
 
 import { Button } from "../components/component";
 import { IScene, ManageContainer, Manager } from "../Manager";
-import { GameScene } from "../scenes/GameScene";
 import { PackScene } from "../scenes/PackScene"
 import { SortScene } from "../scenes/SortScene";
 import { AnimationScene } from "../examples/animation";
@@ -51,7 +50,6 @@ export class MainScene extends ManageContainer implements IScene {
             lineJoin: "round",
         });
         tip.y = 635;
-        // gsap.to(tip, { duration: 2, x: Manager.width - tip.width, repeat: -1, yoyo: true, ease: 'none' });
         this.addChild(tip);
         tip.on('pointertap', () => { });
 
@@ -59,7 +57,6 @@ export class MainScene extends ManageContainer implements IScene {
             { 'text': '状态', 'scene': UserScene, ease: "expo.out" },
             { 'text': '副将', 'scene': SlaveScene, ease: "expo.out" },
             { 'text': '排行', 'scene': SortScene, ease: "expo.out" },
-            { 'text': '匹配', 'scene': GameScene, ease: "expo.out" },
             { 'text': '物品', 'scene': PackScene, ease: "expo.out" },
             { 'text': 'Spine', 'scene': SpineScene, ease: "expo.out" },
             { 'text': 'Animation', 'scene': AnimationScene, ease: "expo.out" },

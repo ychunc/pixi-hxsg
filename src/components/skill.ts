@@ -11,10 +11,17 @@ export class Skill {
 
     public data: any;
 
-    // 技能镜头移动速度
+    /**
+     * 技能移动到敌方镜头速度 
+     * undefined,0 瞬间打对面
+     * number 时间
+     * nnull 不过去
+     */
     public static skillSpend: any = {
-        2: 0,
-        6: 0.5,
+        6: 0.5, // 雷
+        10: null, // 疗
+        11: null, // 疗
+        12: null, // 疗
     }
 
     /**
@@ -26,7 +33,6 @@ export class Skill {
     public static getStartX(PG: any, sk = 0): number {
         var startX = 0
         if (sk > 0) {
-            // |---|---| + 100 * +-1
             startX = (Manager.width / 2 - 100) * (PG == 'P1' ? 1 : -1)
         }
         return startX;
@@ -42,7 +48,7 @@ export class Skill {
                 this.ptgj();
                 break;
             case 1:
-                // this.psdh();
+                this.psdh();
                 break;
             case 2:
                 this.smyj();
@@ -55,6 +61,9 @@ export class Skill {
             case 6:
                 this.wlhd();
                 break;
+            case 7:
+                this.wgjd();
+                break;
             case 8:
                 this.hfhy();
                 break;
@@ -63,12 +72,14 @@ export class Skill {
                 break;
             case 10:
                 // this.grjt();
+                this.mshc();
                 break;
             case 11:
                 // this.lbwb();
+                this.mshc();
                 break;
             case 12:
-                // this.mshc();
+                this.mshc();
                 break;
                 defautl:
                 console.log("技能:" + data.sk);
@@ -85,7 +96,9 @@ export class Skill {
         return this.tl;
     }
 
-    // 还原镜头
+    /**
+     * 还原镜头
+     */
     public resetStage() {
         let T = GameScene.T;
 
@@ -93,20 +106,21 @@ export class Skill {
             // 背景恢复
             GameScene.GameBg.visible = true;
             // 扣血数字
-            this.bloodAnimation();
+            this.bloodAnimation(this.data['pk_s']);
+            this.bloodAnimation(this.data['pk_g']);
         }));
 
         this.tl.add(gsap.to({}, { duration: 0.35 }));
     }
 
     // 伤害动画
-    public bloodAnimation() {
+    public bloodAnimation(pk_row: any) {
         let T = GameScene.T;
 
-        for (const key in this.data['pk_s']['ps']) {
+        for (const key in pk_row['ps']) {
             // 扣血动画
-            var row = this.data['pk_s']['ps'][key];
-            let PS = this.data['pk_s']['p'].toLocaleUpperCase();
+            var row = pk_row['ps'][key];
+            let PS = pk_row['p'].toLocaleUpperCase();
 
             if (row.blood_hurt != 0) {
                 T.PP[PS][row['n']].addChild(Animation.bloodNumAnimation(PS, row.blood_hurt));
@@ -117,7 +131,7 @@ export class Skill {
                 // 人物死亡
                 T.PP[PS][row['n']].setVisible(false);
                 // 死亡动画
-                T.PP[PS][row['n']].addChild(Animation.dead(PS));
+                T.PP[PS][row['n']].addChild(Animation.dead_all(PS));
                 // 显示凉席 || 坟墓
                 if (GameScene.gameType == 'NPC' && PS == 'P1') {
                     var dead = Sprite.from('dead_2');
@@ -137,13 +151,162 @@ export class Skill {
 
     }
 
+    public static shock(tl = gsap.timeline(), t = 0.04) {
+        tl.add(gsap.to({}, { duration: t }).eventCallback('onComplete', () => {
+            Manager.currentScene.y += 6;
+        }));
+        tl.add(gsap.to({}, { duration: t }).eventCallback('onComplete', () => {
+            Manager.currentScene.y -= 6;
+        }));
+    }
+
+    public static bgShock(tl = gsap.timeline()) {
+        tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
+            GameScene.GameBg.visible = true;
+        }));
+        tl.add(gsap.to({}, { duration: 0.06 }).eventCallback('onComplete', () => {
+            GameScene.GameBg.visible = false;
+        }));
+    }
+
+    // 技能镜头移动速度
+    public static skillWait: any = {
+        0: 0,
+        6: 0.5,
+    }
+
+    public static skillStart(startX: number, PG: any, n: any) {
+        var T = GameScene.T;
+        var tl = gsap.timeline();
+
+        // 起手动画
+        tl.add(gsap.to(T, { duration: 0.45, ease: "none", x: startX }).eventCallback('onComplete', () => {
+            let anim = Animation.fg();
+            anim.y = 18;
+            anim.x = PG == 'P1' ? 10 : -10;
+            anim.zIndex = 10;
+            T.PP[PG][n].addChild(anim);
+            // 背景闪动
+            Skill.bgShock();
+        }));
+
+        // 等待时间
+        tl.add(gsap.to({}, { duration: 0.5 }));
+        return tl;
+    }
+
+    public ptgj() {
+        let T = GameScene.T;
+
+        let row = this.data;
+
+        let XB = (row['pk_g']['p'].toLocaleUpperCase() == 'P1' ? 1 : -1)
+
+        let PG = T.PP[row['pk_g']['p'].toLocaleUpperCase()][row['pk_g']['n']];
+        let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][row['pk_s']['n']];
+
+        let PGX = PG.x;
+        let PGY = PG.y;
+
+        // 攻击前
+        this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
+            // 攻击方人物变化
+            PG.struct.foot.texture = Texture.from(PG.data.pe.foot + '_run');
+        }));
+
+        // 人物移动
+        this.tl.add(gsap.to(PG, { duration: Math.abs(PS.x + 125 - PS.x) / 600, x: PS.x + 125 * -XB, y: PS.y, ease: 'none' },).eventCallback('onComplete', () => {
+            // 攻击方人物变化
+            PG.struct.body.texture = Texture.from(PG.data.pe.body + '_run');
+            // 防守方人物变化
+            PS.struct.header.x += 2 * XB;
+        }));
+
+        this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
+            // 血动画
+            let animPS = Animation.blood();
+            animPS.y = 18;
+            animPS.scale.x = XB;
+            PS.addChild(animPS);
+        }));
+
+        // 攻击后
+        this.tl.add(gsap.to({}, { duration: 0.25 }).eventCallback('onComplete', () => {
+            // 攻击方人物变化
+            PG.struct.body.texture = Texture.from(PG.data.pe.body);
+            // 防守方人物复位
+            PS.struct.header.x -= 2 * XB;
+        }));
+
+        // 人物复位
+        this.tl.add(gsap.to(PG, { duration: 0.00001 }).eventCallback('onComplete', () => {
+            // 攻击方人物复位
+            gsap.to(PG, { duration: 0.25, x: PGX, y: PGY, ease: 'none' });
+            // 攻击方人物复位
+            gsap.to(PG, { duration: 0.2 }).eventCallback('onComplete', () => {
+                PG.struct.foot.texture = Texture.from(PG.data.pe.foot);
+            })
+        }));
+    }
+
+    public wgjd() {
+        // 白绿~红绿~
+        // 绿~红白绿~
+        // let T = GameScene.T;
+
+        GameScene.GameBg.visible = false;
+        // 005300 ff1700 dedcdf
+
+        this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
+            Manager.backgroundColor(0x005300); // 绿~
+        }));
+        this.tl.add(gsap.to({}, { duration: 0.5 }).eventCallback('onComplete', () => {
+            Manager.backgroundColor(0xff1700); // 红
+        }));
+        this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
+            Manager.backgroundColor(0xdedcdf); // 白
+        }));
+
+        this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
+            Manager.backgroundColor(0x005300); // 绿~
+        }));
+
+        // 等待时间
+        this.tl.add(gsap.to({}, { duration: 0.5 }).eventCallback('onComplete', () => {
+            Manager.backgroundColor(0x000);
+        }));
+    }
+
+    public mshc() {
+        let T = GameScene.T;
+
+        let row = this.data;
+
+        let XB = (row['pk_g']['p'].toLocaleUpperCase() == 'P1' ? 1 : -1)
+
+        this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
+            // 技能动画
+            for (const key in this.data['pk_g']['ps']) {
+                var item = this.data['pk_g']['ps'][key];
+                let PS = T.PP[row['pk_g']['p'].toLocaleUpperCase()][item['n']];
+                let anim = Animation.fg_2();
+                anim.x = 10 * XB;
+                anim.y = 30;
+                PS.addChild(anim);
+            }
+        }));
+
+        // 等待时间
+        this.tl.add(gsap.to({}, { duration: 0.5 }));
+    }
+
     public hdwl() {
         let T = GameScene.T;
 
         let row = this.data;
 
         this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
-            // 血动画
+            // 技能动画
             for (const key in this.data['pk_s']['ps']) {
                 var item = this.data['pk_s']['ps'][key];
                 let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][item['n']];
@@ -276,7 +439,7 @@ export class Skill {
             PG.visible = false;
 
             // 震动
-            Skill.shock();
+            Skill.shock(gsap.timeline(), 0.08);
         }));
 
         // 人物进攻
@@ -306,55 +469,50 @@ export class Skill {
 
     }
 
-    public ptgj() {
+    public psdh() {
         let T = GameScene.T;
 
         let row = this.data;
 
         let XB = (row['pk_g']['p'].toLocaleUpperCase() == 'P1' ? 1 : -1)
 
-        let PG = T.PP[row['pk_g']['p'].toLocaleUpperCase()][row['pk_g']['n']];
-        let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][row['pk_s']['n']];
+        // 背景闪动
+        this.tl.add(gsap.to({}, { duration: 0.1 }).eventCallback('onComplete', () => { }));
 
-        let PGX = PG.x;
-        let PGY = PG.y;
+        this.tl.add(gsap.to({}, { duration: 0 },).eventCallback('onComplete', () => {
+            // 排动画
+            let anim = Animation.psdh();
+            anim.x = XB == 1 ? 300 : 380;
+            anim.scale.x *= -XB;
+            anim.y = 500;
+            Manager.currentScene.addChild(anim);
+            // 防守方 人物变化
+            for (const key in this.data['pk_s']['ps']) {
+                var item = this.data['pk_s']['ps'][key];
+                let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][item['n']];
 
-        // 攻击前
-        this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
-            // 攻击方人物变化
-            PG.struct.foot.texture = Texture.from(PG.data.pe.foot + '_run');
-        }));
-
-        // 人物移动
-        this.tl.add(gsap.to(PG, { duration: 0.25, x: PS.x + 125 * -XB, y: PS.y },).eventCallback('onComplete', () => {
-            // 攻击方人物变化
-            PG.struct.body.texture = Texture.from(PG.data.pe.body + '_run');
-            // 防守方人物变化
-            PS.struct.header.x += 2 * XB;
+                PS.struct.header.x += 2 * XB;
+                gsap.to(PS.struct.header, { duration: 0.05, x: PS.struct.header.x - 4 * XB, ease: "none", repeat: 5, yoyo: true }).eventCallback('onComplete', () => {
+                    PS.struct.header.x -= 2 * XB;
+                });
+            }
         }));
 
         this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
             // 血动画
-            let animPS = Animation.blood();
-            animPS.y = 18;
-            animPS.scale.x = XB;
-            PS.addChild(animPS);
+            for (const key in this.data['pk_s']['ps']) {
+                var item = this.data['pk_s']['ps'][key];
+                let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][item['n']];
+                let anim = Animation.blood();
+                anim.y = 14;
+                anim.x = 20 * -XB;
+                anim.scale.x = -XB;
+                PS.addChild(anim);
+            }
         }));
 
-        // 攻击后
-        this.tl.add(gsap.to({}, { duration: 0.25 }).eventCallback('onComplete', () => {
-            // 攻击方人物变化
-            PG.struct.body.texture = Texture.from(PG.data.pe.body);
-        }));
-        // 人物复位
-        this.tl.add(gsap.to(PG, { duration: 0.25, x: PGX, y: PGY }).eventCallback('onComplete', () => {
-            // 攻击方人物复位
-            PG.struct.foot.texture = Texture.from(PG.data.pe.foot);
-            // 防守方人物复位
-            PS.struct.header.x -= 2 * XB;
-        }));
-
-        console.log('普通攻击');
+        // 等待时间
+        this.tl.add(gsap.to({}, { duration: 0.68 }));
     }
 
     public hfhy() {
@@ -413,13 +571,8 @@ export class Skill {
         let T = GameScene.T;
 
         let row = this.data;
-
         let XB = (row['pk_g']['p'].toLocaleUpperCase() == 'P1' ? 1 : -1)
-
-        let PG = T.PP[row['pk_g']['p'].toLocaleUpperCase()][row['pk_g']['n']];
         let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][row['pk_s']['n']];
-        console.log(XB, PG, PS);
-        console.log(PS.struct.header.x);
 
         let an = [
             { t: 0.0001, x: 10 * XB * -1, y: 10 }, // 正中间
@@ -456,37 +609,6 @@ export class Skill {
         this.tl.add(gsap.to({}, { duration: 0.3 }));
     }
 
-    public static shock(tl = gsap.timeline()) {
-        tl.add(gsap.to({}, { duration: 0.04 }).eventCallback('onComplete', () => {
-            Manager.currentScene.y += 6;
-        }));
-        tl.add(gsap.to({}, { duration: 0.04 }).eventCallback('onComplete', () => {
-            Manager.currentScene.y -= 6;
-        }));
-    }
-
-    public static bgShock(tl = gsap.timeline()) {
-        tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
-            GameScene.GameBg.visible = true;
-        }));
-        tl.add(gsap.to({}, { duration: 0.06 }).eventCallback('onComplete', () => {
-            GameScene.GameBg.visible = false;
-        }));
-    }
-
-    public static skillStart(startX: number, PG: any, n: any) {
-        var T = GameScene.T;
-        var tl = gsap.timeline();
-        tl.add(gsap.to(T, { duration: 0.45, ease: "none", x: startX }).eventCallback('onComplete', () => {
-            // 起手动画
-            let anim = Animation.fg();
-            anim.y = 18;
-            anim.x = PG == 'P1' ? 10 : -10;
-            T.PP[PG][n].addChild(anim)
-            // 背景闪动
-            Skill.bgShock();
-        }));
-        return tl;
-    }
 
 }
+
