@@ -24,6 +24,12 @@ export class ws {
     public static connect(url: string = '') {
         ws.close();
 
+        switch (window.location.host.split('.')[0]) {
+            case "ychunc":
+                url = "ws://g.o0ooo0ooo0oo.xyz"
+                break;
+        }
+
         ws.websocket = new WebSocket(url || ws.url);
         ws.websocket.onopen = ws.onOpen;
         ws.websocket.onmessage = ws.onMessage;
