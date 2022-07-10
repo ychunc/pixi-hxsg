@@ -2,7 +2,7 @@ import { IScene, Manager, ManageContainer } from "../Manager";
 import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
 import { Header, Frame, SceneTite } from "../components/component";
-// import { ws } from "../components/websocket";
+import { ws } from "../components/websocket";
 
 export class TaskScene extends ManageContainer implements IScene {
 
@@ -15,6 +15,8 @@ export class TaskScene extends ManageContainer implements IScene {
 
         // app bakcgroupd
         Manager.backgroundColor(0x360033);
+
+        ws.send({ route: 'task', 'id': 3 });
 
         // let initY = 300;
         // let initX = 80;
