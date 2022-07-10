@@ -97,20 +97,14 @@ export class Route {
                         Manager.changeScene(Game);
                         break;
                     case 'row':
-                        console.log('teamdata-', result, UserScene.data);
                         var currentGame = Manager.currentScene;
                         // 改变team数据内容,不刷新容器
                         currentGame.team_data = result.data.team;
                         if (UserScene.data.user == result.data.user[0].user) {
                             currentGame.team_data = { 'p1': result.data.team.p2, 'p2': result.data.team.p1 };
                         }
-
                         // 更新血量百分比
                         GameScene.bloodRate();
-
-                        // // 更新buff [更新team,按情况显示]
-                        // obj['Game'].buff(obj['Game'].runStatus == 1 ? false : true);
-
                         break;
                     case 'run':
                     case 'end':

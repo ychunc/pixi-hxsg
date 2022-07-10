@@ -56,7 +56,7 @@ export class Skill {
             case 3:
             case 4:
             case 5:
-                this.hdwl();
+                this.fg3();
                 break;
             case 6:
                 this.wlhd();
@@ -71,18 +71,10 @@ export class Skill {
                 this.lphs();
                 break;
             case 10:
-                // this.grjt();
-                this.mshc();
-                break;
             case 11:
-                // this.lbwb();
-                this.mshc();
-                break;
             case 12:
-                this.mshc();
-                break;
-                defautl:
-                console.log("技能:" + data.sk);
+            case 13:
+                this.fg2();
                 break;
         }
 
@@ -113,7 +105,28 @@ export class Skill {
         this.tl.add(gsap.to({}, { duration: 0.35 }));
     }
 
-    // 伤害动画
+    /**
+     * 技能图标
+     * @param sk 
+     * @returns 
+     */
+    public static skillBuff(sk: number) {
+        var buffs: any = {
+            3: 0,
+            4: 3,
+            5: 1,
+            7: 4,
+            10: 7,
+            11: 6,
+        }
+        if (sk in buffs) return buffs[sk];
+        return 0;
+    }
+
+    /**
+     * 伤害动画
+     * @param pk_row 
+     */
     public bloodAnimation(pk_row: any) {
         let T = GameScene.T;
 
@@ -250,13 +263,15 @@ export class Skill {
     }
 
     public wgjd() {
-        // 白绿~红绿~
-        // 绿~红白绿~
-        // let T = GameScene.T;
+        let T = GameScene.T;
+
+        let row = this.data;
+
+        let XB = (row['pk_g']['p'].toLocaleUpperCase() == 'P1' ? 1 : -1)
 
         GameScene.GameBg.visible = false;
-        // 005300 ff1700 dedcdf
 
+        // 绿~红白绿~
         this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
             Manager.backgroundColor(0x005300); // 绿~
         }));
@@ -269,15 +284,86 @@ export class Skill {
 
         this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
             Manager.backgroundColor(0x005300); // 绿~
+
+            // 防守方人物变化
+            for (const key in this.data['pk_s']['ps']) {
+                var item = this.data['pk_s']['ps'][key];
+                let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][item['n']];
+                PS.struct.header.x += 2 * -XB;
+                PS.struct.body.x -= 2 * -XB;
+            }
         }));
 
         // 等待时间
         this.tl.add(gsap.to({}, { duration: 0.5 }).eventCallback('onComplete', () => {
             Manager.backgroundColor(0x000);
         }));
+
+        // 人物复位
+        this.tl.add(gsap.to({}, { duration: 0 }).eventCallback('onComplete', () => {
+            // 防守方人物复位
+            for (const key in this.data['pk_s']['ps']) {
+                var item = this.data['pk_s']['ps'][key];
+                let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][item['n']];
+                PS.struct.header.x -= 2 * -XB;
+                PS.struct.body.x += 2 * -XB;
+            }
+        }));
     }
 
-    public mshc() {
+    public hfhy() {
+        let T = GameScene.T;
+
+        let row = this.data;
+
+        let XB = (row['pk_g']['p'].toLocaleUpperCase() == 'P1' ? 1 : -1)
+
+        // 背景闪动
+        this.tl.add(gsap.to({}, { duration: 0.1 }).eventCallback('onComplete', () => { }));
+
+        this.tl.add(gsap.to({}, { duration: 0 },).eventCallback('onComplete', () => {
+            // 雨动画
+            let anim = Animation.hfhy();
+            anim.x = XB == 1 ? 300 : 380;
+            anim.scale.x *= -XB;
+            anim.y = 400;
+            Manager.currentScene.addChild(anim);
+            // 防守方 人物变化
+            for (const key in this.data['pk_s']['ps']) {
+                var item = this.data['pk_s']['ps'][key];
+                let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][item['n']];
+                PS.struct.header.x += 2 * XB;
+            }
+        }));
+
+        this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
+            // 血动画
+            for (const key in this.data['pk_s']['ps']) {
+                var item = this.data['pk_s']['ps'][key];
+                let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][item['n']];
+                let anim = Animation.blood();
+                anim.y = 14;
+                anim.x = 20 * -XB;
+                anim.scale.x = -XB;
+                PS.addChild(anim);
+            }
+        }));
+
+        // 等待时间
+        this.tl.add(gsap.to({}, { duration: 0.68 }));
+
+        // 人物复位
+        this.tl.add(gsap.to({}, { duration: 0 }).eventCallback('onComplete', () => {
+            // 防守方人物复位
+            for (const key in this.data['pk_s']['ps']) {
+                var item = this.data['pk_s']['ps'][key];
+                let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][item['n']];
+                PS.struct.header.x -= 2 * XB;
+            }
+        }));
+    }
+
+    public fg2() {
         let T = GameScene.T;
 
         let row = this.data;
@@ -286,9 +372,9 @@ export class Skill {
 
         this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
             // 技能动画
-            for (const key in this.data['pk_g']['ps']) {
-                var item = this.data['pk_g']['ps'][key];
-                let PS = T.PP[row['pk_g']['p'].toLocaleUpperCase()][item['n']];
+            for (const key in this.data['pk_s']['ps']) {
+                var item = this.data['pk_s']['ps'][key];
+                let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][item['n']];
                 let anim = Animation.fg_2();
                 anim.x = 10 * XB;
                 anim.y = 30;
@@ -300,7 +386,7 @@ export class Skill {
         this.tl.add(gsap.to({}, { duration: 0.5 }));
     }
 
-    public hdwl() {
+    public fg3() {
         let T = GameScene.T;
 
         let row = this.data;
@@ -513,58 +599,6 @@ export class Skill {
 
         // 等待时间
         this.tl.add(gsap.to({}, { duration: 0.68 }));
-    }
-
-    public hfhy() {
-        let T = GameScene.T;
-
-        let row = this.data;
-
-        let XB = (row['pk_g']['p'].toLocaleUpperCase() == 'P1' ? 1 : -1)
-
-        // 背景闪动
-        this.tl.add(gsap.to({}, { duration: 0.1 }).eventCallback('onComplete', () => { }));
-
-        this.tl.add(gsap.to({}, { duration: 0 },).eventCallback('onComplete', () => {
-            // 雨动画
-            let anim = Animation.hfhy();
-            anim.x = XB == 1 ? 300 : 380;
-            anim.scale.x *= -XB;
-            anim.y = 400;
-            Manager.currentScene.addChild(anim);
-            // 防守方 人物变化
-            for (const key in this.data['pk_s']['ps']) {
-                var item = this.data['pk_s']['ps'][key];
-                let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][item['n']];
-                PS.struct.header.x += 2 * XB;
-            }
-        }));
-
-        this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
-            // 血动画
-            for (const key in this.data['pk_s']['ps']) {
-                var item = this.data['pk_s']['ps'][key];
-                let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][item['n']];
-                let anim = Animation.blood();
-                anim.y = 14;
-                anim.x = 20 * -XB;
-                anim.scale.x = -XB;
-                PS.addChild(anim);
-            }
-        }));
-
-        // 等待时间
-        this.tl.add(gsap.to({}, { duration: 0.68 }));
-
-        // 人物复位
-        this.tl.add(gsap.to({}, { duration: 0 }).eventCallback('onComplete', () => {
-            // 防守方人物复位
-            for (const key in this.data['pk_s']['ps']) {
-                var item = this.data['pk_s']['ps'][key];
-                let PS = T.PP[row['pk_s']['p'].toLocaleUpperCase()][item['n']];
-                PS.struct.header.x -= 2 * XB;
-            }
-        }));
     }
 
     public wlhd() {

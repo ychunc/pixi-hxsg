@@ -155,6 +155,8 @@ export class GameScene extends ManageContainer implements IScene {
                 var P = T.PP['P2'][index]
                 P.struct.foot.texture = Texture.from(P.data.pe.foot + (run ? '_run' : ''));
                 P.struct.body.texture = Texture.from(P.data.pe.body + (run ? '_run' : ''));
+
+                P.struct.header.x += 5 * (run ? -1 : 1);
             }
             run = run ? false : true;
         }, this);
@@ -369,7 +371,8 @@ export class GameScene extends ManageContainer implements IScene {
 
     /**
      * 获取可攻击的目标 P1/P2
-     * @param P
+     * @param P 
+     * @returns index
      */
     public getAliveIndex(P: string): number {
         // P2默认0
@@ -545,6 +548,10 @@ export class GameScene extends ManageContainer implements IScene {
                         this.menuContainer.visible = false;
                         // 已选择功能
                         GameScene.selectedFunctionIndex = 0;
+                        // 当前技能选择的 P
+                        this.current_select_person_p = this.getSkillP(-1);
+                        // 当前技能 P 选择的 index
+                        this.current_select_person_index = this.getAliveIndex(this.current_select_person_p);
                         // 开始选择人物
                         this.current_select_skill = { sk: 0, skill_name: '普通攻击' }
                         this.selectPeople();
@@ -626,6 +633,41 @@ export class GameScene extends ManageContainer implements IScene {
     }
 
     /**
+     * 显示增益/控制图标, 开始运行隐藏,结束运行显示buff
+     * @param show 
+     */
+    public buff(show: boolean = true) {
+        console.log("显示buff", show, this.team_data);
+        for (const P in this.team_data) {
+            for (let n = 0; n < this.team_data[P].length; n++) {
+                let PS = this.team_data[P][n];
+
+                // 移除buff
+                for (let index = 0; index < GameScene.T.PP[P.toLocaleUpperCase()][n].buff.children.length; index++) {
+                    var child = GameScene.T.PP[P.toLocaleUpperCase()][n].buff.children[index];
+                    GameScene.T.PP[P.toLocaleUpperCase()][n].buff.removeChild(child);
+                }
+                // 是否显示
+                if (show == false) {
+                    continue;
+                }
+
+                for (const index in PS.buff) {
+                    var buff = Sprite.from('buff' + Skill.skillBuff(PS.buff[index].sk));
+                    if (P == 'p2') {
+                        buff.scale.x = -1;
+                        buff.x = 5 + 12 * Number(index);
+                    } else {
+                        buff.scale.x = 1;
+                        buff.x = -8 - 12 * Number(index);
+                    }
+                    GameScene.T.PP[P.toLocaleUpperCase()][n].buff.addChild(buff);
+                }
+            }
+        }
+    }
+
+    /**
      * 运行数据
      * @param startX 开始x
      * @param startDuration 开始持续时间
@@ -692,9 +734,13 @@ export class GameScene extends ManageContainer implements IScene {
     public readyRunGame() {
         // 清空当前队员指针
         this.current_select_action_index = 0;
-        GameScene.f_jt.visible = false;
 
+        // 隐藏选择动画
+        GameScene.f_jt.visible = false;
         GameScene.map_zz.visible = false;
+
+        // 隐藏buff
+        this.buff(false);
 
         // 清空上次选择数据
         this.select_skills = [];
@@ -721,15 +767,12 @@ export class GameScene extends ManageContainer implements IScene {
         // 显示血量
         this.bloodBarAll(true);
 
-        // // 显示战斗菜单
-        // _this.menu();
-        // // 显示全部血条
-        // _this.bloodBarAll_hide_all(true);
-        // // 显示控制/增益图标 [准备前显示]
-        // _this.buff();
-        // // 倒计时重置
+        // 显示控制/增益图标 
+        this.buff();
+
+        // 倒计时重置
         // game_timer = 60;
-        // // 自动战斗
+        // 自动战斗
         // _this.autoPk();
     }
 

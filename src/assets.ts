@@ -33,6 +33,7 @@ let base = [
 
     // game
     { name: "blood", url: "./game/blood.json" },
+    { name: "buff", url: "./game/buff.json" },
 
     { name: "skill_wlhd", url: "./game/wlhd.json" },
     { name: "skill_hfhy", url: "./game/hfhy.json" },

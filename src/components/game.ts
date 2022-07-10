@@ -40,6 +40,11 @@ export class People extends Container {
 
     public alive: boolean = true;
 
+    /**
+     * buff 容器
+     */
+    public buff: Container = new Container;
+
     constructor(data: IST, GameScene: GameScene | any = {}) {
         super();
 
@@ -56,6 +61,9 @@ export class People extends Container {
 
         // 血条
         this.addChild(this.bloodContainer(data.scale));
+
+        // buff
+        this.addChild(this.buffContainer());
 
         this.scale.x *= this.zoom;
         this.scale.y *= this.zoom;
@@ -94,6 +102,12 @@ export class People extends Container {
         blood.y = -12;
         this.blood = blood;
         return blood;
+    }
+
+    public buffContainer() {
+        this.buff.scale.set(0.8);
+        gsap.to(this.buff, { duration: 0.25, y: this.buff.y + 3, ease: 'none', repeat: 100000, yoyo: true });
+        return this.buff;
     }
 
     public bloodBg() {
@@ -276,4 +290,5 @@ export class Team extends Container {
         graphics.alpha = 0.5;
         // this.addChild(graphics);
     }
+
 }
