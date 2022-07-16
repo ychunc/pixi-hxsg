@@ -2,7 +2,11 @@
 
 "r1_b":
 {
-	"frame": {"x":3,"y":2,"w":21,"h":15}
+	"frame": {"x":2,"y":2,"w":21,"h":15},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":-2,"y":0,"w":21,"h":15},
+	"sourceSize": {"w":21,"h":15}
 },
 "r1_b_run":
 {

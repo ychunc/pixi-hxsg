@@ -68,6 +68,7 @@ export class Manager {
         Manager.app.stage.sortableChildren = true;
 
         Manager.resizeFixed();
+        // Manager.resizeRelative();
 
         // particles
         Manager.particles = new Particles();
@@ -135,6 +136,8 @@ export class Manager {
         else {
             stageScale = stageWidth / (Manager.width / 2);
             Manager.app.view.style.marginLeft = '0px';
+            let marginTop = (stageHeight - Manager.height / 2 * stageScale) / 2;
+            Manager.app.view.style.marginTop = (marginTop > 0 ? marginTop : 0) + 'px';
         }
         Manager.app.view.style.width = Manager.width / 2 * stageScale + 'px';
         Manager.app.view.style.height = Manager.height / 2 * stageScale + 'px';

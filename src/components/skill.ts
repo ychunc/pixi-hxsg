@@ -19,6 +19,7 @@ export class Skill {
      */
     public static skillSpend: any = {
         6: 0.5, // 雷
+        8: 0.5, // 雨
         10: null, // 疗
         11: null, // 疗
         12: null, // 疗
@@ -26,13 +27,13 @@ export class Skill {
 
     /**
      * 获取起手X
-     * @param PG 
-     * @param sk
+     * @param item 
      * @returns startX
      */
-    public static getStartX(PG: any, sk = 0): number {
+    public static getStartX(item: any): number {
+        let PG = item.pk_g.p.toLocaleUpperCase();
         var startX = 0
-        if (sk > 0) {
+        if (item.sk > 0) {
             startX = (Manager.width / 2 - 100) * (PG == 'P1' ? 1 : -1)
         }
         return startX;
@@ -182,18 +183,29 @@ export class Skill {
         }));
     }
 
-    // 技能镜头移动速度
-    public static skillWait: any = {
-        0: 0,
-        6: 0.5,
+    /**
+     * 技能起手速度
+     */
+    public static sikllWait: any = {
+        // 6: 0.0,
+        // 8: 0.0,
     }
 
-    public static skillStart(startX: number, PG: any, n: any) {
+    /**
+     * 技能起手动画
+     * @param startX 
+     * @param item 
+     * @returns 
+     */
+    public static skillStart(startX: number, item: any) {
+        let PG = item.pk_g.p.toLocaleUpperCase();
+        let n = item.pk_g.n;
+
         var T = GameScene.T;
         var tl = gsap.timeline();
 
         // 起手动画
-        tl.add(gsap.to(T, { duration: 0.45, ease: "none", x: startX }).eventCallback('onComplete', () => {
+        tl.add(gsap.to(T, { duration: 0.4, ease: "none", x: startX }).eventCallback('onComplete', () => {
             let anim = Animation.fg();
             anim.y = 18;
             anim.x = PG == 'P1' ? 10 : -10;
@@ -203,8 +215,8 @@ export class Skill {
             Skill.bgShock();
         }));
 
-        // 等待时间
-        tl.add(gsap.to({}, { duration: 0.5 }));
+        // 起手等待时间
+        tl.add(gsap.to({}, { duration: item.sk in Skill.sikllWait ? Skill.sikllWait[item.sk] : 0.5 }));
         return tl;
     }
 

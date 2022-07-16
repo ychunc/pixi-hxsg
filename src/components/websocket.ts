@@ -89,13 +89,16 @@ export class ws {
         console.log('%c ws %c onError',
             'background:#35495e ; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff',
             'background:#FF0000 ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff');
-        ws.reConnect();
+        ws.reConnect('服务器未响应');
     }
 
-    public static reConnect() {
-        console.log(ws.action);
+    public static confirmBox: confirmBox;
+
+    public static reConnect(mes: string = '已断开连接,是否重新连接?') {
+        // 自动断开提示
         if (ws.action == 'AUTO') {
-            Manager.currentScene.addChild(new confirmBox('已断开连接,是否重新连接?',
+            if (this.confirmBox) this.confirmBox.destroy();
+            Manager.currentScene.addChild(this.confirmBox = new confirmBox(mes,
                 () => ws.connect(),
                 () => Manager.changeScene(new LoginScene))
             );

@@ -1,6 +1,6 @@
 let data: any[] = [];
 let base = [
-    { name: "spine", url: "./spine/girl07_2da7002/girl07_2da7022.json" },
+    { name: "star", url: "./images/star.png" },
 
     { name: "role06", url: "./images/pp.png" },
     { name: "leg", url: "./girl/leg.jpeg" },
@@ -30,6 +30,10 @@ let base = [
     { name: "n3", url: "./game/roles/n3.json" },
     { name: "n3n", url: "./game/roles/n3n.json" },
     // { name: "n2", url: "./game/roles/n2.json" },
+
+    // spine
+    { name: "spine", url: "./spine/girl07_2da7002/girl07_2da7022.json" },
+    { name: "spine2", url: "./spine/yc_a_09tuziguniang/YC_A_13.json" },
 
     // game
     { name: "blood", url: "./game/blood.json" },

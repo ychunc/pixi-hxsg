@@ -53,7 +53,7 @@ export class UserScene extends ManageContainer implements IScene {
         var user = UserScene.data
         var occ: any = { 1: '武士', 2: '文人', 3: '异人' }
         var attr_num = user.lv * 4 - user.attr_atk - user.attr_hp - user.attr_mp - user.attr_spd;
-        let display = [
+        let display: any = [
             [{ type: 'text', name: '职业', value: user.lv + '级' + occ[user.j], style: {}, calllback: () => { } }],
             [{ type: 'text', name: '经验', value: '还需' + user.exp + '经验升级', style: {}, calllback: () => { } }],
             [{ type: 'text', name: '称号', value: '独孤求败', style: { fill: '#D4AF37' }, calllback: () => { } }],
@@ -68,7 +68,7 @@ export class UserScene extends ManageContainer implements IScene {
             [{ type: 'text', name: '速度', value: user.struct.d.s, style: false, calllback: () => { } }],
             [
                 { type: 'text', name: '属性点', value: attr_num, style: false, calllback: () => { } },
-                { type: 'button', name: '查看', value: '', style: false, calllback: () => Manager.changeScene(new AttributeScene) },
+                { type: 'button', name: attr_num > 0 ? '分配' : '查看', value: '', style: { butColor: attr_num > 0 ? 0xFF0000 : 0x4e50b5 }, calllback: () => Manager.changeScene(new AttributeScene) },
             ],
             [
                 { type: 'button', name: '查看技能', value: '', style: false, calllback: () => Manager.changeScene(new SkillScene) },
@@ -85,7 +85,7 @@ export class UserScene extends ManageContainer implements IScene {
                     }, item.style);
                     row = new StyleText(item.name + " : " + item.value, style)
                 } else {
-                    row = new Button(item.name, false, 0x4e50b5);
+                    row = new Button(item.name, false, item.style.butColor ? item.style.butColor : 0x4e50b5);
                 }
 
                 row.x = 30 + Number(line) * 300;

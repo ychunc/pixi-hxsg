@@ -146,7 +146,7 @@ export class GameScene extends ManageContainer implements IScene {
         let but10 = new Button('test');
         but10.x = 50;
         but10.y = Manager.height * 0.92;
-        this.addChild(but10);
+        // this.addChild(but10);
         var run = true;
         but10.on("pointertap", () => {
             var T = GameScene.T
@@ -164,7 +164,7 @@ export class GameScene extends ManageContainer implements IScene {
         let but9 = new Button('TL');
         but9.x = 280;
         but9.y = Manager.height * 0.92;
-        this.addChild(but9);
+        // this.addChild(but9);
         but9.on("pointertap", () => {
             this.playGame();
         }, this);
@@ -618,7 +618,7 @@ export class GameScene extends ManageContainer implements IScene {
      */
     public bloodBarAll(visible: boolean = false) {
         for (const P in GameScene.T.PP) {
-            for (let n = 0; n < GameScene.T.PP.P1.length; n++) {
+            for (let n = 0; n < GameScene.T.PP[P].length; n++) {
                 GameScene.T.PP[P][n].blood.visible = visible;
             }
         }
@@ -693,8 +693,8 @@ export class GameScene extends ManageContainer implements IScene {
         this.bloodBarAll(false);
 
         for (let index = 0; index < GameScene.round.length; index++) {
-            let item = GameScene.round[index]
-            let PG = item.pk_g.p.toLocaleUpperCase();
+            // 每回合数据
+            let item = GameScene.round[index];
 
             tl.add(gsap.to({}, { duration: 0.00001 }).eventCallback('onComplete', () => {
                 // 背景黑色
@@ -702,10 +702,10 @@ export class GameScene extends ManageContainer implements IScene {
             }));
 
             // 镜头开始X
-            this.runData.startX = Skill.getStartX(PG, item.sk);
+            this.runData.startX = Skill.getStartX(item);
 
             // 起手动画
-            if (item.sk > 0) tl.add(Skill.skillStart(this.runData.startX, PG, item.pk_g.n));
+            if (item.sk > 0) tl.add(Skill.skillStart(this.runData.startX, item));
 
             // 镜头进攻X
             var duration = Skill.skillSpend[item.sk]

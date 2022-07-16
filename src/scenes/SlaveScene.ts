@@ -91,7 +91,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
 
         var attr_num = item.lv * 4 - item.attr_atk - item.attr_hp - item.attr_mp - item.attr_spd;
 
-        let data = [
+        let data: any = [
             [
                 { type: 'text', name: '头衔', value: '将才', style: {}, calllback: () => { } },
                 {
@@ -120,9 +120,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
             [{ type: 'text', name: '速度', value: item.d.s, style: false, calllback: () => { } }],
             [
                 { type: 'text', name: '属性点', value: attr_num, style: false, calllback: () => { } },
-                {
-                    type: 'button', name: attr_num > 0 ? '分配' : '查看', value: '100', style: false, calllback: () => Manager.changeScene(new AttributeScene)
-                },
+                { type: 'button', name: attr_num > 0 ? '分配' : '查看', value: '100', style: { butColor: attr_num > 0 ? 0xFF0000 : 0x4e50b5 }, calllback: () => Manager.changeScene(new AttributeScene) },
             ],
             [
                 { type: 'button', name: '查看技能', value: '100', style: false, calllback: () => Manager.changeScene(new SkillScene) },
@@ -153,14 +151,13 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
                 var row = null;
 
                 let style = Object.assign({
-                    fontSize: 40,
+                    fontSize: 40
                 }, item.style);
                 if (item.type == 'text') {
-                    style.fontSize = 40;
-                    row = new StyleText(item.name + " : " + item.value, style)
+                    row = new StyleText(item.name + " : " + item.value, style);
                 } else {
                     style.fontSize = 46;
-                    row = new Button(item.name, style, 0x4e50b5);
+                    row = new Button(item.name, style, style.butColor ? style.butColor : 0x4e50b5);
                     row.y = -10;
                     row.x = 'x' in style ? Number(style.x) : 0;
                 }

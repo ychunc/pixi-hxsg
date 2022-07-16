@@ -234,8 +234,8 @@ export class Team extends Container {
 
             // 入场动画
             setTimeout(() => {
-                gsap.to(people, { duration: 0.35, ease: "back.out(1.7)", x: pos1[Number(key)]['x'] });
-            }, 100);
+                gsap.to(people, { duration: 0.25, ease: "back.out(1.7)", x: pos1[Number(key)]['x'] });
+            }, 10);
 
             // 呼吸
             gsap.to(people.struct.body.scale,
@@ -273,8 +273,8 @@ export class Team extends Container {
 
             // 入场动画
             setTimeout(() => {
-                gsap.to(people, { duration: 0.35, ease: "back.out(1.7)", x: pos2[Number(key)]['x'] });
-            }, 100);
+                gsap.to(people, { duration: 0.25, ease: "back.out(1.7)", x: pos2[Number(key)]['x'] });
+            }, 10);
 
             // 呼吸
             gsap.to(people.struct.body.scale,

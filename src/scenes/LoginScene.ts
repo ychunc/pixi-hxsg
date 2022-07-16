@@ -1,12 +1,10 @@
-import { Container, TextStyle, Text, } from "pixi.js";
+import { Container, TextStyle, Text } from "pixi.js";
 import gsap from "gsap";
 import { IScene, Manager } from "../Manager";
 import { Spine } from "../components/spine";
 import { Button } from "../components/component";
 import { MainScene } from "./MainScene";
 import { ws } from "../components/websocket"
-import { Animation } from "../components/animation";
-import { TestScene } from "../examples/TestScene";
 
 export class LoginScene extends Container implements IScene {
     public static data: any;
@@ -32,7 +30,8 @@ export class LoginScene extends Container implements IScene {
         gsap.to(spine, { duration: 0.5, ease: "power2.out", x: Manager.width * 0.1 })
 
         const skewStyle = new TextStyle({
-            fontFamily: 'Arial',
+            // fontFamily: 'Arial',
+            fontFamily: '9pxDemo',
             dropShadow: true,
             dropShadowAlpha: 0.8,
             dropShadowAngle: 2.1,
@@ -47,7 +46,7 @@ export class LoginScene extends Container implements IScene {
             strokeThickness: 12,
         });
 
-        const skewText = new Text('', skewStyle);
+        const skewText = new Text('PixiGame', skewStyle);
         skewText.alpha = 0.8;
         skewText.anchor.set(0.5, 0.5);
         skewText.x = Manager.width / 2;
@@ -93,10 +92,6 @@ export class LoginScene extends Container implements IScene {
         button.y = Manager.height * 0.82;
         this.addChild(button)
         button.on("pointertap", () => {
-            var anim = Animation.dead_all();
-            anim.scale.x = anim.scale.y = 10;
-            button.addChild(anim);
-
             LoginScene.removeInput();
             Manager.changeScene(new MainScene);
         }, this);
@@ -104,14 +99,6 @@ export class LoginScene extends Container implements IScene {
         if (ws.action == 'AUTO') {
             this.login();
         }
-
-        setTimeout(() => {
-            LoginScene.removeInput();
-            TestScene
-            // Manager.changeScene(new TestScene)
-        }, 10);
-
-
     }
 
     public login() {
