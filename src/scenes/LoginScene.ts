@@ -1,14 +1,13 @@
-import { Container, TextStyle, Text } from "pixi.js";
+import { TextStyle, Text } from "pixi.js";
 import gsap from "gsap";
-import { IScene, Manager } from "../Manager";
+import { IScene, ManageContainer, Manager } from "../Manager";
 import { Spine } from "../components/spine";
 import { Button } from "../components/component";
-import { MainScene } from "./MainScene";
+// import { MainScene } from "./MainScene";
 import { ws } from "../components/websocket"
+import { GameOver } from "./GameScene";
 
-export class LoginScene extends Container implements IScene {
-    public static data: any;
-
+export class LoginScene extends ManageContainer implements IScene {
     public static username: HTMLInputElement
     public static password: HTMLInputElement
     public button: Button
@@ -88,17 +87,20 @@ export class LoginScene extends Container implements IScene {
         this.button.on("pointertap", this.login, this);
 
         let button = new Button('游客登录');
+
         button.x = Manager.width / 2 - this.button.width / 2
         button.y = Manager.height * 0.82;
         this.addChild(button)
         button.on("pointertap", () => {
-            LoginScene.removeInput();
-            Manager.changeScene(new MainScene);
-        }, this);
+            // LoginScene.removeInput();
+            // Manager.changeScene(new MainScene);
+            Manager.changeScene(new GameOver);
+        });
 
         if (ws.action == 'AUTO') {
-            this.login();
+            // this.login();
         }
+
     }
 
     public login() {
@@ -114,5 +116,4 @@ export class LoginScene extends Container implements IScene {
         }
     }
 
-    public update(): void { }
 }

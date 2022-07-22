@@ -11,12 +11,18 @@ export class TaskScene extends ManageContainer implements IScene {
 
         let header = new Header();
         let frame = new Frame();
-        let title = new SceneTite('剧情任务')
+        let title = new SceneTite('剧情任务');
 
         // app bakcgroupd
         Manager.backgroundColor(0x360033);
 
         ws.send({ route: 'task', 'id': 3 });
+
+        this.interactive = true;
+        this.on('pointertap', () => {
+            console.log('ok');
+
+        })
 
         // let initY = 300;
         // let initX = 80;

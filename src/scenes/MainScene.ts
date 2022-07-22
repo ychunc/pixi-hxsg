@@ -1,7 +1,17 @@
 import { Container, Sprite, Texture } from "pixi.js";
+import * as PIXI from "pixi.js";
+
 import gsap from "gsap";
 
-import { IScene, Manager } from "../Manager";
+import { PixiPlugin } from "gsap/PixiPlugin";
+
+// register the plugin
+gsap.registerPlugin(PixiPlugin);
+
+// give the plugin a reference to the PIXI object
+PixiPlugin.registerPIXI(PIXI);
+
+import { IScene, ManageContainer, Manager } from "../Manager";
 import { SortScene } from "./SortScene";
 import { LoginScene } from "./LoginScene";
 
@@ -19,11 +29,7 @@ import { FriendScene } from "./FriendScene";
 import { TreasuryScene } from "./TreasuryScene";
 import { PackScene } from "./PackScene";
 
-export class MainScene extends Container implements IScene {
-    public static data: any;
-
-    public update() { }
-
+export class MainScene extends ManageContainer implements IScene {
     /**
      * 当前navPage Container
      */
@@ -292,7 +298,8 @@ export class MainScene extends Container implements IScene {
         this.addChild(home_avatar);
 
         let username = new StyleText(UserScene.data.nick, { fontSize: 38 });
-        username.x = 120;
+        username.text.anchor.x = 0.5;
+        username.x = 215
         username.y = 100;
         this.addChild(username);
 
@@ -301,6 +308,10 @@ export class MainScene extends Container implements IScene {
         avatar.y = 118;
         avatar.scale.x = avatar.scale.y = 2.5;
         this.addChild(avatar);
+
+        gsap.to(avatar, {
+            pixi: { tint: 'red' }, duration: 0.5, repeat: -1, yoyo: true,
+        });
 
         [home_avatar, username, avatar].forEach((object) => {
             object.interactive = true;

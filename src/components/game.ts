@@ -200,6 +200,12 @@ export class Team extends Container {
         // 开启层级
         this.sortableChildren = true;
 
+        // 入场缓动
+        let ease = "back.Out";
+
+        // 入场速度
+        let time = 0.3;
+
         let y = 80;
         let offset = 120;
         let animX = 200;
@@ -234,7 +240,7 @@ export class Team extends Container {
 
             // 入场动画
             setTimeout(() => {
-                gsap.to(people, { duration: 0.25, ease: "back.out(1.7)", x: pos1[Number(key)]['x'] });
+                gsap.to(people, { duration: time, ease: ease, x: pos1[Number(key)]['x'] });
             }, 10);
 
             // 呼吸
@@ -273,7 +279,7 @@ export class Team extends Container {
 
             // 入场动画
             setTimeout(() => {
-                gsap.to(people, { duration: 0.25, ease: "back.out(1.7)", x: pos2[Number(key)]['x'] });
+                gsap.to(people, { duration: time, ease: ease, x: pos2[Number(key)]['x'] });
             }, 10);
 
             // 呼吸

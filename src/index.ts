@@ -3,6 +3,7 @@ import { LoaderScene } from './scenes/LoaderScene';
 
 // const height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 // Manager.initialize(750, height * Manager.ratio, 0x010134);
+// Manager.initialize(window.innerWidth, window.innerHeight);
 Manager.initialize(750, 1334);
 
 // With getters but not setters, these variables become read-only

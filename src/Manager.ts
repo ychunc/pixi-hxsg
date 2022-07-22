@@ -1,6 +1,8 @@
-import { Application, Container as Container, DisplayObject } from 'pixi.js'
+import { Application, Container as Container, DisplayObject, InteractionEvent, Sprite } from 'pixi.js'
 
 import { Particles } from "./components/particles";
+
+import gsap from 'gsap';
 
 export class Manager {
     public static app: Application;
@@ -74,6 +76,9 @@ export class Manager {
         Manager.particles = new Particles();
         Manager.particles.zIndex = 500;
         Manager.app.stage.addChild(Manager.particles);
+
+        // ClickEffect
+        Manager.app.renderer.plugins.interaction.on("pointerdown", (event: InteractionEvent) => Manager.ClickEffect(event))
     }
 
     public static backgroundColor(color: number = 0x000) {
@@ -166,12 +171,42 @@ export class Manager {
         Manager.app.view.style.marginTop = Manager.app.view.style.marginBottom = `${verticalMargin}px`;
     }
 
+    public static ClickEffect(event: any) {
+        let scale = 0.3;
+
+        var c1 = Sprite.from('c1');
+        var c2 = Sprite.from('c2');
+        var c3 = Sprite.from('c3');
+        Manager.app.stage.addChild(c1, c2, c3);
+
+        c1.tint = 0xFFFFFF;
+        c2.tint = 0xFF3399;
+        c3.tint = 0xFFFFFF;
+
+        [c1, c2, c3].forEach((obj) => {
+            obj.zIndex = 500;
+            obj.scale.set(0.1);
+            obj.anchor.set(0.5);
+            obj.x = event.data.global.x;
+            obj.y = event.data.global.y;
+        });
+
+        gsap.to(c1.scale, { duration: 0.3, x: scale, y: scale });
+        gsap.to(c2.scale, { duration: 0.3, x: scale, y: scale });
+        gsap.to(c3.scale, { delay: 0.1, duration: 0.3, x: scale, y: scale });
+
+        gsap.to(c1, { delay: 0.2, duration: 0.3, tint: 0xFF3399, alpha: 0 });
+        gsap.to(c2, { delay: 0.1, duration: 0.3, alpha: 0 });
+        gsap.to(c3, { delay: 0.3, duration: 0.3, alpha: 0 });
+    }
 }
+
 
 export interface IScene extends DisplayObject {
     [x: string]: any;
     update(framesPassed: number): void;
 }
+
 
 export class ManageContainer extends Container implements IScene {
     public static data: any;

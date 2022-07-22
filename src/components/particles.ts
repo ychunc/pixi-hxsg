@@ -151,10 +151,8 @@ export class Particles extends Container implements IScene {
             container,
             data
         );
-        console.log(data);
 
         this.elapsed = Date.now();
-
         this.emitter.emit = true;
     }
 

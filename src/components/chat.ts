@@ -1,6 +1,6 @@
 import { Container, Sprite, Loader } from "pixi.js";
-import { Manager } from "../Manager";
-import { confirmBox } from "./component";
+// import { Manager } from "../Manager";
+// import { confirmBox } from "./component";
 import { ws } from "./websocket";
 
 export class Chat extends Container {
@@ -46,10 +46,10 @@ export class Chat extends Container {
                 this.currentIndex = index;
                 this.currentChatSprite.x = 344 + this.currentIndex * 100;
 
-                Manager.currentScene.addChild(new confirmBox('确定开启聊天?', (_this) => {
-                    ws.send({ "route": "chat", "msg": "转" })
-                    _this.destroy();
-                }))
+                // Manager.currentScene.addChild(new confirmBox('确定开启聊天?', (_this) => {
+                ws.send({ "route": "chat", "msg": "转" })
+                //     _this.destroy();
+                // }))
 
             });
 

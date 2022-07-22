@@ -3,12 +3,13 @@ import { IScene, Manager } from "../Manager";
 import { assets } from "../assets";
 import gsap from "gsap";
 import { LoginScene } from "./LoginScene";
+// import { SpineTest as LoginScene } from "../components/spineTest";
+
 
 export class LoaderScene extends Container implements IScene {
     public data: any;
 
     private loaderBar: Container;
-    private loaderBarBoder: Graphics;
     private loaderBarFill: Graphics;
 
     private text: Text;
@@ -17,26 +18,20 @@ export class LoaderScene extends Container implements IScene {
 
         const loaderBarWidth = Manager.width * 1;
 
+        // 进度条
         this.loaderBarFill = new Graphics();
         this.loaderBarFill.beginFill(0xfb7299, 1)
         this.loaderBarFill.drawRect(0, 0, loaderBarWidth, 50);
         this.loaderBarFill.endFill();
         this.loaderBarFill.scale.x = 0;
 
-        this.loaderBarBoder = new Graphics();
-        this.loaderBarBoder.lineStyle(10, 0x0, 1);
-        this.loaderBarBoder.drawRect(0, 0, loaderBarWidth, 50);
-
         this.loaderBar = new Container();
         this.loaderBar.addChild(this.loaderBarFill);
-        this.loaderBar.addChild(this.loaderBarBoder);
-        this.loaderBar.position.x = (Manager.width - this.loaderBar.width) / 2;
-        // this.loaderBar.position.y = (Manager.height - this.loaderBar.height) / 2;
-        this.loaderBar.position.y = (Manager.height - this.loaderBar.height);
+        this.loaderBar.position.y = (Manager.height * 0.9);
 
         this.text = new Text('资源加载中...' + 0, { fill: ['#ffffff'] });
         this.text.y = this.loaderBar.height / 2 - this.text.height / 2;
-        this.text.x = this.loaderBar.width / 2 - this.text.width / 2;
+        this.text.x = Manager.width / 2 - this.text.width / 2;
         this.loaderBar.addChild(this.text);
 
         this.addChild(this.loaderBar);
@@ -48,17 +43,13 @@ export class LoaderScene extends Container implements IScene {
 
         Loader.shared.load();
 
-
         // Get the texture for rope.
-        const starTexture = Texture.from('/images/star.png');
+        const starTexture = Texture.from('./images/star.png');
         // Create the stars
-        // const stars = [];
         for (let i = 0; i < this.starAmount; i++) {
             const star = {
                 sprite: new Sprite(starTexture),
-                z: 0,
-                x: 0,
-                y: 0,
+                z: 0, x: 0, y: 0,
             };
             star.sprite.anchor.x = 0.5;
             star.sprite.anchor.y = 0.7;
@@ -79,18 +70,37 @@ export class LoaderScene extends Container implements IScene {
     public starStretch = 5;
     public starBaseSize = 0.05;
 
+    public tl = gsap.timeline();
+
     private downloadProgress(loader: Loader): void {
         const progressRatio = loader.progress / 100;
-        this.loaderBarFill.scale.x = progressRatio;
+        // this.loaderBarFill.scale.x = progressRatio;
+
+        this.tl.add(gsap.to(this.loaderBarFill.scale, { duration: progressRatio / 80, x: progressRatio }));
+
         this.text.text = '资源加载中...' + (progressRatio * 100).toFixed(0) + '%';
         this.warpSpeed = progressRatio;
     }
 
     private gameLoaded(): void {
-        this.loaderBar.visible = false;
-        gsap.to(this, { duration: 0.25, warpSpeed: 2, /**y: -500**/ }).eventCallback('onComplete', () => {
+        // this.loaderBar.visible = false;
+        // Loader.shared.add('spine1', './spine/yc_a_01nvpu/YC18.json', { metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } })
+        // Loader.shared.add('spine2', './spine/yc_a_02lvyejingling/YC19.json', { metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } })
+        // Loader.shared.add('spine3', './spine/yc_a_03xxnvpu/YC_A_03.json', { metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } })
+        // Loader.shared.add('spine4', './spine/yc_a_04wujin/YC_A_04.json', { metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } })
+        // Loader.shared.add('spine5', './spine/yc_a_05shujianvpu/YC_A_05.json', { metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } })
+        // Loader.shared.add('spine6', './spine/yc_a_06luolita/YC_A_06.json', { metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } })
+        // Loader.shared.add('spine7', './spine/yc_a_07weilaijingcha/YC_A_07.json', { metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } })
+        // Loader.shared.add('spine8', './spine/yc_a_8hefushaonv/YC_A_12.json', { metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } })
+        // Loader.shared.add('spine9', './spine/yc_a_09tuziguniang/YC_A_13.json', { metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } })
+        // Loader.shared.add('spine10', './spine/yc_a_10xiaohua/YC_A_14.json', { metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } })
+        // Loader.shared.add('spine11', './spine/yc_a_11mofagongzhu/YC_A_09jinglijingcha.json', { metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } })
+        // Loader.shared.add('spine12', './spine/yc_a_12mofagongzhu/YC_A_16.json', { metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } })
+
+        this.tl.add(gsap.to(this.loaderBar, { duration: 0.1, alpha: 0, /**y: -500**/ }).eventCallback('onComplete', () => {
+
             Manager.changeScene(new LoginScene());
-        });
+        }));
     }
 
     public randomizeStar(star: any, initial: any = null) {

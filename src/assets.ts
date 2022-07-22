@@ -1,3 +1,5 @@
+// import { ALPHA_MODES } from "pixi.js";
+
 let data: any[] = [];
 let base = [
     { name: "star", url: "./images/star.png" },
@@ -13,6 +15,10 @@ let base = [
     { name: "fg", url: "./game/fg.json" },
     { name: "fg_2", url: "./game/fg_2.json" },
     { name: "fg_3", url: "./game/fg_3.json" },
+
+    { name: "c1", url: "./game/c1.png" },
+    { name: "c2", url: "./game/c2.png" },
+    { name: "c3", url: "./game/c3.png" },
 
     // role
     { name: "r1", url: "./game/roles/r1.json" },
@@ -32,8 +38,19 @@ let base = [
     // { name: "n2", url: "./game/roles/n2.json" },
 
     // spine
-    { name: "spine", url: "./spine/girl07_2da7002/girl07_2da7022.json" },
-    { name: "spine2", url: "./spine/yc_a_09tuziguniang/YC_A_13.json" },
+    { name: "spine", url: "./spine/girl127_2da01/jiabo.json" },
+    // { name: "spine1", url: "./spine/yc_a_01nvpu/YC18.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },
+    // { name: "spine2", url: "./spine/yc_a_02lvyejingling/YC19.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },
+    // { name: "spine3", url: "./spine/yc_a_03xxnvpu/YC_A_03.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },
+    // { name: "spine4", url: "./spine/yc_a_04wujin/YC_A_04.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },
+    // { name: "spine5", url: "./spine/yc_a_05shujianvpu/YC_A_05.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },
+    // { name: "spine6", url: "./spine/yc_a_06luolita/YC_A_06.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },
+    // { name: "spine7", url: "./spine/yc_a_07weilaijingcha/YC_A_07.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },
+    // { name: "spine8", url: "./spine/yc_a_8hefushaonv/YC_A_12.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },
+    // { name: "spine9", url: "./spine/yc_a_09tuziguniang/YC_A_13.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },
+    // { name: "spine10", url: "./spine/yc_a_10xiaohua/YC_A_14.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },
+    // { name: "spine11", url: "./spine/yc_a_11mofagongzhu/YC_A_09jinglijingcha.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },
+    // { name: "spine12", url: "./spine/yc_a_12mofagongzhu/YC_A_16.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },
 
     // game
     { name: "blood", url: "./game/blood.json" },
@@ -56,6 +73,9 @@ let base = [
     { name: "dead_1", url: "./game/dead_1.png" },
     { name: "dead_2", url: "./game/dead_2.png" },
 
+    { name: 'game_win', url: "./game/win.png" },
+    { name: 'game_fail', url: "./game/fail.png" },
+    { name: 'game_row', url: "./game/row.png" },
 
     // ui
     { name: "home_nav", url: "./ui/home_nav.json" },
@@ -93,6 +113,7 @@ let base = [
     { name: "confirm_box", url: "./ui/confirm_box.png" },
 
     { name: "avatar", url: "./avatar/avatar.png" },
+
 ]
 data.push(base)
 export const assets = data

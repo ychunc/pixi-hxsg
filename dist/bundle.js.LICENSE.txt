@@ -5,6 +5,16 @@ object-assign
 */
 
 /*!
+ * @pixi-spine/base - v3.0.13
+ * Compiled Mon, 13 Sep 2021 16:46:30 UTC
+ *
+ * @pixi-spine/base is licensed under the MIT License.
+ * http://www.opensource.org/licenses/mit-license
+ * 
+ * Copyright 2019-2020, Ivan Igorevich Popelyshev <ivan.popelyshev@gmail.com>, All Rights Reserved
+ */
+
+/*!
  * @pixi-spine/loader-base - v3.0.13
  * Compiled Mon, 13 Sep 2021 16:46:34 UTC
  *
@@ -162,6 +172,16 @@ object-assign
 
 /*!
  * GSAP 3.9.1
+ * https://greensock.com
+ *
+ * @license Copyright 2008-2021, GreenSock. All rights reserved.
+ * Subject to the terms at https://greensock.com/standard-license or for
+ * Club GreenSock members, the agreement issued with that membership.
+ * @author: Jack Doyle, jack@greensock.com
+*/
+
+/*!
+ * PixiPlugin 3.9.1
  * https://greensock.com
  *
  * @license Copyright 2008-2021, GreenSock. All rights reserved.

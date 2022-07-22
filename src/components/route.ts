@@ -112,6 +112,9 @@ export class Route {
                         // 游戏状态
                         GameScene.GameOver = route[1];
 
+                        // 游戏结果
+                        GameScene.isWin = result.msg;
+
                         // 运行前准备
                         Manager.currentScene.readyRunGame()
 

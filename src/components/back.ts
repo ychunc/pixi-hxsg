@@ -39,8 +39,6 @@ export class Back extends Container {
 
         this.scene = scene;
 
-        console.log('back', Manager.scenes);
-
         this.callback = beforeCallback;
 
         this.button.on("pointertap", this.doBack, this);

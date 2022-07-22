@@ -1,19 +1,24 @@
-import { Container, Sprite, AnimatedSprite, SCALE_MODES, Texture } from "pixi.js";
-import { IScene, Manager, ManageContainer } from "../Manager";
-import { Back } from "../components/back";
-import { LoginScene } from "./LoginScene";
-
-import { Animation } from "../components/animation"
-import { Skill } from "../components/skill";
+import { Container, Sprite, AnimatedSprite, SCALE_MODES, Texture, Rectangle } from "pixi.js";
 
 import { gsap } from "gsap"
-import { StyleText, Button } from "../components/component";
 
+import { IScene, Manager, ManageContainer } from "../Manager";
+
+import { StyleText, Button, Frame, Header, SceneTite } from "../components/component";
+import { Animation } from "../components/animation"
+import { Skill } from "../components/skill";
+import { Back } from "../components/back";
 import { ws } from "../components/websocket"
-import { MainScene } from "./MainScene";
 import { Team } from "../components/game";
 import { Chat } from "../components/chat";
 
+import { MainScene } from "./MainScene";
+import { LoginScene } from "./LoginScene";
+
+
+/**
+ * 技能数据
+ */
 interface ISkill {
     index: number;
     sikll: number;
@@ -22,7 +27,7 @@ interface ISkill {
 /**
  * 游戏状态
  */
-type GameOver = 'run' | 'end'
+type GameStatus = 'run' | 'end'
 
 /**
  * 游戏模式
@@ -40,14 +45,19 @@ export class GameScene extends ManageContainer implements IScene {
     public team_data: any = {};
 
     /**
+    * 游戏结果
+    */
+    public static isWin: boolean | number | string;
+
+    /**
      * 游戏状态 run end
      */
-    public static GameOver: GameOver;
+    public static GameOver: GameStatus;
 
     /**
      * 是否游戏播放中
      */
-    public static Playing: boolean = false;
+    public static Playing: boolean;
 
     /**
      * 是否已选择功能
@@ -174,9 +184,6 @@ export class GameScene extends ManageContainer implements IScene {
      * 头部
      */
     public header() {
-        console.log('get user', GameScene.gameUser);
-
-
         let container = new Container();
 
         let game_title = Sprite.from('game_title');
@@ -201,12 +208,14 @@ export class GameScene extends ManageContainer implements IScene {
         container.addChild(TitleName);
 
         let leftName = new StyleText(GameScene.gameUser[0].nick, { fontSize: 30 });
-        leftName.x = 20;
+        leftName.text.anchor.x = 0.5;
+        leftName.x = 90;
         leftName.y = 52;
         container.addChild(leftName);
 
         let rightName = new StyleText(GameScene.gameUser[1].nick, { fontSize: 30 });
-        rightName.x = Manager.width - 170 + rightName.width / 2;
+        rightName.text.anchor.x = 0.5;
+        rightName.x = Manager.width - 90;
         rightName.y = 52;
         container.addChild(rightName);
         return container;
@@ -752,11 +761,6 @@ export class GameScene extends ManageContainer implements IScene {
     public readyNextRound() {
         console.log('下回合准备');
 
-        // 游戏结束
-        if (GameScene.GameOver == 'end') {
-            Manager.changeScene(new MainScene);
-        }
-
         // 当前队员指标
         GameScene.f_jt.visible = true;
         GameScene.T.PP['P2'][this.current_select_action_index].addChild(GameScene.f_jt)
@@ -774,6 +778,62 @@ export class GameScene extends ManageContainer implements IScene {
         // game_timer = 60;
         // 自动战斗
         // _this.autoPk();
+
+        // 游戏结束
+        if (GameScene.GameOver == 'end') Manager.changeScene(new GameOver);
     }
 
+}
+
+
+export class GameOver extends ManageContainer implements IScene {
+    constructor() {
+        super();
+
+        let header = new Header();
+        let frame = new Frame();
+        let title = new SceneTite('按任意键返回');
+        title.y = Manager.height * 0.85;
+
+        let status = { color: 0x5e5f5e, image: 'game_fail' };
+        if (GameScene.isWin > 0) {
+            status = { color: 0xdeb973, image: 'game_win' };
+        }
+        Manager.backgroundColor(status.color);
+
+        let image = Sprite.from(status.image);
+        image.anchor.set(0.5);
+        image.scale.set(0.3);
+        image.alpha = 0.5;
+        image.y = 200;
+        image.x = Manager.width / 2;
+        gsap.to(image, { duration: 0.35, pixi: { scaleX: 0.7, scaleY: 0.7, alpha: 1 }, ease: "back.out(1.7)" })
+
+        console.log(status, GameScene.isWin);
+        console.log(GameScene.T);
+
+        let container = new Container();
+        let P = GameScene.T.PP['P2']
+        for (let index = 0; index < P.length; index++) {
+            let rowContainer = new Container();
+            rowContainer.y = index * 120;
+
+            let rowBg = Sprite.from('game_row');
+            console.log(P);
+            let PN = P[index];
+            PN.x = 0;
+
+            // rowBg.addChild(PN);
+            rowContainer.addChild(rowBg);
+            container.addChild(rowContainer)
+        }
+        container.y = 500;
+        container.x = Manager.width / 2 - container.width / 2;
+
+        this.interactive = true;
+        this.hitArea = new Rectangle(0, 0, Manager.width, Manager.height);
+        this.on("pointertap", () => Manager.changeScene(new MainScene));
+
+        this.addChild(frame, header, title, image, container);
+    }
 }

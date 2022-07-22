@@ -7,10 +7,11 @@ import { MainScene } from "../scenes/MainScene";
 
 type Callback = (...args: any[]) => void | null;
 
+
 export class Ready extends Container {
 
     /**
-     * 准备
+     * 准备动画
      */
     constructor() {
         super();
@@ -156,22 +157,25 @@ export class Avatar extends Container {
 
 export class SceneTite extends Container {
 
+    public text: StyleText;
     /**
      * 标题
      * @param text 
      */
-    constructor(text: string) {
+    constructor(text: string, style?: {} | ITextStyle) {
         super();
 
-        let title = new StyleText(text, {
+        let title = new StyleText(text, Object.assign({
             fontSize: 40,
             fill: '#F7EDCA',
             stroke: '#d3393c',
             strokeThickness: 10,
             lineJoin: "round",
-        })
+        }, style));
+
         title.y = 100;
         title.x = Manager.width / 2 - title.width / 2;
+        this.text = title;
         this.addChild(title);
     }
 }
