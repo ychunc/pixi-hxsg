@@ -79,9 +79,11 @@ export class People extends Container {
 
         // 开启互动
         graphics.interactive = true;
-        // graphics.on("pointertap",()=>callback(this))
 
         graphics.on("pointertap", () => GameScene.onSelected(this.data), this);
+
+        // this.hitArea = new Rectangle(0, 0, 30, 40);
+        // this.on("pointertap", () => GameScene.onSelected(this.data), this);
     }
 
     public from(name: string, scale: any): Sprite {

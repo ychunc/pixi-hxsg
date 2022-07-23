@@ -2,8 +2,6 @@
 
 let data: any[] = [];
 let base = [
-    { name: "star", url: "./images/star.png" },
-
     { name: "role06", url: "./images/pp.png" },
     { name: "leg", url: "./girl/leg.jpeg" },
     { name: "q", url: "./images/q.png" },
@@ -38,7 +36,7 @@ let base = [
     // { name: "n2", url: "./game/roles/n2.json" },
 
     // spine
-    { name: "spine", url: "./spine/girl127_2da01/jiabo.json" },
+    { name: "spine", url: "./spine/girl07_2da7002/girl07_2da7022.json" },
     // { name: "spine1", url: "./spine/yc_a_01nvpu/YC18.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },
     // { name: "spine2", url: "./spine/yc_a_02lvyejingling/YC19.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },
     // { name: "spine3", url: "./spine/yc_a_03xxnvpu/YC_A_03.json", metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } },

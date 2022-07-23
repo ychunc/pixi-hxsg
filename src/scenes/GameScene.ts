@@ -717,7 +717,7 @@ export class GameScene extends ManageContainer implements IScene {
             if (item.sk > 0) tl.add(Skill.skillStart(this.runData.startX, item));
 
             // 镜头进攻X
-            var duration = Skill.skillSpend[item.sk]
+            var duration = Skill.skillSpend[item.sk];
             if (duration !== null) {
                 tl.add(gsap.to(T, { duration: duration, ease: 'none', x: this.runData.startX * -1 }));
             }

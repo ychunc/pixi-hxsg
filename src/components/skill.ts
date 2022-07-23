@@ -11,34 +11,6 @@ export class Skill {
 
     public data: any;
 
-    /**
-     * 技能移动到敌方镜头速度 
-     * undefined,0 瞬间打对面
-     * number 时间
-     * nnull 不过去
-     */
-    public static skillSpend: any = {
-        6: 0.5, // 雷
-        8: 0.5, // 雨
-        10: null, // 疗
-        11: null, // 疗
-        12: null, // 疗
-    }
-
-    /**
-     * 获取起手X
-     * @param item 
-     * @returns startX
-     */
-    public static getStartX(item: any): number {
-        let PG = item.pk_g.p.toLocaleUpperCase();
-        var startX = 0
-        if (item.sk > 0) {
-            startX = (Manager.width / 2 - 100) * (PG == 'P1' ? 1 : -1)
-        }
-        return startX;
-    }
-
     constructor(data: any) {
 
         this.tl = gsap.timeline();;
@@ -90,6 +62,20 @@ export class Skill {
     }
 
     /**
+     * 获取起手X
+     * @param item 
+     * @returns startX
+     */
+    public static getStartX(item: any): number {
+        let PG = item.pk_g.p.toLocaleUpperCase();
+        var startX = 0
+        if (item.sk > 0) {
+            startX = (Manager.width / 2 - 100) * (PG == 'P1' ? 1 : -1)
+        }
+        return startX;
+    }
+
+    /**
      * 还原镜头
      */
     public resetStage() {
@@ -111,7 +97,7 @@ export class Skill {
      * @param sk 
      * @returns 
      */
-    public static skillBuff(sk: number) {
+    public static skillBuff(sk: number): number {
         var buffs: any = {
             3: 0,
             4: 3,
@@ -184,11 +170,25 @@ export class Skill {
     }
 
     /**
+     * 技能移动到敌方镜头速度 
+     * undefined,0 瞬间打对面
+     * number 时间
+     * nnull 不过去
+     */
+    public static skillSpend: any = {
+        6: 0.55, // 雷
+        8: 0.4, // 雨
+        10: null, // 疗
+        11: null, // 疗
+        12: null, // 疗
+    }
+
+    /**
      * 技能起手速度
      */
     public static sikllWait: any = {
-        // 6: 0.0,
-        // 8: 0.0,
+        6: 0.0,
+        8: 0.0,
     }
 
     /**
@@ -204,19 +204,23 @@ export class Skill {
         var T = GameScene.T;
         var tl = gsap.timeline();
 
-        // 起手动画
-        tl.add(gsap.to(T, { duration: 0.4, ease: "none", x: startX }).eventCallback('onComplete', () => {
-            let anim = Animation.fg();
-            anim.y = 18;
-            anim.x = PG == 'P1' ? 10 : -10;
-            anim.zIndex = 10;
-            T.PP[PG][n].addChild(anim);
-            // 背景闪动
-            Skill.bgShock();
+        tl.add(gsap.to({}, { duration: 0.00001 }).eventCallback('onComplete', () => {
+            // 镜头运动
+            gsap.to(T, { duration: 0.4, ease: "none", x: startX });
+            // 起手动画 [等待时间]
+            gsap.to({}, { delay: item.sk in Skill.sikllWait ? 0.3 : 0.4, duration: 0.00001 }).eventCallback('onComplete', () => {
+                let anim = Animation.fg();
+                anim.y = 18;
+                anim.x = PG == 'P1' ? 10 : -10;
+                anim.zIndex = 10;
+                T.PP[PG][n].addChild(anim);
+                // 背景闪动
+                Skill.bgShock();
+            })
         }));
 
-        // 起手等待时间
-        tl.add(gsap.to({}, { duration: item.sk in Skill.sikllWait ? Skill.sikllWait[item.sk] : 0.5 }));
+        // 起手等待时间 [普通技能] +0.4(镜头运动) +  +0.5(技能起手动画) [雷雨] +0.4(镜头运动) +  +0.5(技能起手动画)
+        tl.add(gsap.to({}, { duration: item.sk in Skill.sikllWait ? 0.5 : 0.9 }));
         return tl;
     }
 

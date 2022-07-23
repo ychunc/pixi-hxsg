@@ -92,13 +92,13 @@ export class LoginScene extends ManageContainer implements IScene {
         button.y = Manager.height * 0.82;
         this.addChild(button)
         button.on("pointertap", () => {
-            // LoginScene.removeInput();
+            LoginScene.removeInput();
             // Manager.changeScene(new MainScene);
             Manager.changeScene(new GameOver);
         });
 
         if (ws.action == 'AUTO') {
-            // this.login();
+            this.login();
         }
 
     }
