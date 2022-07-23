@@ -25,8 +25,8 @@ export class ws {
         ws.close();
 
         switch (window.location.host.split('.')[0]) {
-            case "ychunc":
-                url = "wss://g.o0ooo0ooo0oo.xyz:8950"
+            case "hxsg":
+                url = "ws://47.100.109.35:8950"
                 break;
         }
 
