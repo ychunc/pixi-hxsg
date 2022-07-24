@@ -26,7 +26,6 @@ export class Spine extends Container {
         this.spine.y = Manager.height / 2;
         this.spine.scale.set(2);
 
-        // this.spine.y += 100;
         // this.spine.y -= 200;
 
         this.addChild(this.spine);
