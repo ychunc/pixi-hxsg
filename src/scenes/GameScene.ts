@@ -1,20 +1,13 @@
 import { Container, Sprite, AnimatedSprite, SCALE_MODES, Texture, Rectangle } from "pixi.js";
-
 import { gsap } from "gsap"
-
 import { IScene, Manager, ManageContainer } from "../Manager";
-
 import { StyleText, Button, Frame, Header, SceneTite } from "../components/component";
 import { Animation } from "../components/animation"
 import { Skill } from "../components/skill";
-import { Back } from "../components/back";
 import { ws } from "../components/websocket"
 import { Team } from "../components/game";
 import { Chat } from "../components/chat";
-
 import { MainScene } from "./MainScene";
-import { LoginScene } from "./LoginScene";
-
 
 /**
  * 技能数据
@@ -60,7 +53,7 @@ export class GameScene extends ManageContainer implements IScene {
     public static Playing: boolean;
 
     /**
-     * 是否已选择功能
+     * 是否已选择功能 0:功能,1技能
      */
     public static selectedFunctionIndex: number | null = null;
 
@@ -95,14 +88,14 @@ export class GameScene extends ManageContainer implements IScene {
         // GAME 头部
         this.addChild(this.header());
 
+        // GAME 返回按钮
+        this.addChild(this.back());
+
         // GAME 菜单
         this.addChild(this.menu());
 
         // 聊天框
         this.addChild(new Chat());
-
-        // 返回
-        this.addChild(new Back(LoginScene));
 
         // 目标光标
         GameScene.map_zz = Animation.map_zz();
@@ -218,6 +211,10 @@ export class GameScene extends ManageContainer implements IScene {
         rightName.x = Manager.width - 90;
         rightName.y = 52;
         container.addChild(rightName);
+
+        rightName.interactive = true;
+        rightName.on("pointertap", () => Manager.changeScene(new MainScene));
+
         return container;
     }
 
@@ -289,7 +286,6 @@ export class GameScene extends ManageContainer implements IScene {
 
         this.skillContainer.visible = false;
 
-        // this.selectedPersonContainer.visible = false;
         this.selectedPersonContainer.destroy();
 
         this.selectedPersonContainer = new Container;
@@ -395,6 +391,7 @@ export class GameScene extends ManageContainer implements IScene {
         return 0; // 默认值
     }
 
+
     /**
      * 已选择的技能
      * @type Array
@@ -413,6 +410,9 @@ export class GameScene extends ManageContainer implements IScene {
 
         // 销毁已选择功能
         GameScene.selectedFunctionIndex = null;
+
+        // 隐藏返回按钮
+        this.backButton.visible = false;
 
         // 选择完毕
         if (this.select_skills.length >= this.team_data['p2'].length) {
@@ -451,11 +451,53 @@ export class GameScene extends ManageContainer implements IScene {
             this.menuContainer.visible = true;
 
             // 敌方光标隐藏
-            console.log(GameScene.map_zz);
-
             GameScene.map_zz.visible = false;
         }
     }
+
+    /**
+ * 返回按钮
+ */
+    public backButton: Sprite = Sprite.from('but');
+
+    /**
+     * 返回按钮
+     */
+    public back() {
+        this.backButton.x = 28;
+        this.backButton.y = 630;
+        this.backButton.scale.set(1.2);
+        this.backButton.visible = false;
+        let text = new StyleText('返回', { 'fill': [0x000], fontSize: 34 });
+        text.x = 10;
+        text.y = 8;
+        this.backButton.addChild(text);
+
+        this.backButton.interactive = true;
+        this.backButton.on('pointertap', () => {
+            // P2选择图标
+            GameScene.T.PP['P2'][this.current_select_action_index].addChild(GameScene.f_jt)
+
+            // 显示全部血条
+            this.bloodBarAll(true);
+
+            // 隐藏技能选择
+            this.selectedPersonContainer.visible = false;
+            this.selectedPersonContainer.destroy();
+
+            // 显示技能菜单
+            this.menuContainer.visible = true;
+
+            // 敌方光标隐藏
+            GameScene.map_zz.visible = false;
+
+            // 返回隐藏
+            this.backButton.visible = false;
+        });
+
+        return this.backButton;
+    }
+
 
     /**
      * 技能选择容器
@@ -496,7 +538,7 @@ export class GameScene extends ManageContainer implements IScene {
             text_skill.y = 70 + i * 60;
 
             text_skill.on("pointertap", () => {
-                // 已选择功能
+                // 已选择技能
                 GameScene.selectedFunctionIndex = 1;
                 console.log('select sikll index', i);
                 // 开始选择人物
@@ -540,7 +582,6 @@ export class GameScene extends ManageContainer implements IScene {
             ContainerRow.y = index * 46;
 
             let but_bg = Sprite.from('home_button');
-            but_bg.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
             but_bg.scale.x = 1.2
             but_bg.scale.y = 1.2
             let text = new StyleText(butText[index], { fontSize: 35 });
@@ -549,7 +590,11 @@ export class GameScene extends ManageContainer implements IScene {
 
             ContainerRow.addChild(but_bg, text);
             ContainerRow.on("pointertap", () => {
+                // 选择的功能
                 console.log('func index====', index);
+                // 显示返回按钮
+                this.backButton.visible = true;
+                console.log('显示返回按钮');
                 // skill index
                 switch (index) {
                     case 0: // 普通攻击
@@ -588,7 +633,7 @@ export class GameScene extends ManageContainer implements IScene {
     /**
      * 游戏背景容器
      */
-    public static GameBg: Sprite = new Sprite;
+    public static GameBg: Sprite;
 
     /**
      * 显示游戏背景
@@ -793,7 +838,7 @@ export class GameOver extends ManageContainer implements IScene {
         let header = new Header();
         let frame = new Frame();
         let title = new SceneTite('按任意键返回');
-        title.y = Manager.height * 0.85;
+        title.y = Manager.height * 0.70;
 
         let status = { color: 0x5e5f5e, image: 'game_fail' };
         if (GameScene.isWin > 0) {
@@ -805,7 +850,7 @@ export class GameOver extends ManageContainer implements IScene {
         image.anchor.set(0.5);
         image.scale.set(0.3);
         image.alpha = 0.5;
-        image.y = 200;
+        image.y = 250;
         image.x = Manager.width / 2;
         gsap.to(image, { duration: 0.35, pixi: { scaleX: 0.7, scaleY: 0.7, alpha: 1 }, ease: "back.out(1.7)" })
 
@@ -816,10 +861,9 @@ export class GameOver extends ManageContainer implements IScene {
         let P = GameScene.T.PP['P2']
         for (let index = 0; index < P.length; index++) {
             let rowContainer = new Container();
-            rowContainer.y = index * 120;
+            rowContainer.y = index * 135;
 
             let rowBg = Sprite.from('game_row');
-            console.log(P);
             let PN = P[index];
             PN.x = 0;
 
@@ -827,7 +871,7 @@ export class GameOver extends ManageContainer implements IScene {
             rowContainer.addChild(rowBg);
             container.addChild(rowContainer)
         }
-        container.y = 500;
+        container.y = 420;
         container.x = Manager.width / 2 - container.width / 2;
 
         this.interactive = true;

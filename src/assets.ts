@@ -86,6 +86,7 @@ let base = [
     { name: "edge", url: "./ui/edge.png" },
     { name: "home_title", url: "./ui/home_title.png" },
     { name: "home_map", url: "./ui/home_map.png" },
+    { name: "but", url: "./ui/but.png" },
 
     { name: "home_bg", url: "./ui/home_bg.png" },
     { name: "home_avatar", url: "./ui/home_avatar.png" },

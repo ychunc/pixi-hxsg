@@ -132,11 +132,15 @@ export class Particles extends Container implements IScene {
                             "list": [
                                 {
                                     "time": 0,
-                                    "value": "FF66CC"
+                                    "value": "ffb6c1"
                                 },
                                 {
                                     "time": 1,
                                     "value": "FFCCCC"
+                                },
+                                {
+                                    "time": 2,
+                                    "value": "00ffa1"
                                 }
                             ]
                         }
