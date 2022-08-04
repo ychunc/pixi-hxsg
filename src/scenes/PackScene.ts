@@ -36,10 +36,8 @@ export class PackScene extends ManageContainer implements IScene {
 
         const sprite = scrollbox.content.addChild(new Sprite(Texture.WHITE))
         sprite.width = Manager.width * 0.85;
-        sprite.height = Manager.height + 1000;
+        sprite.height = Manager.height + 200;
         sprite.tint = 0x010134;
-        // sprite.tint = 0x000000;
-
 
         // 我的装备
         var equipage = new Button('我的装备');

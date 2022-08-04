@@ -63,7 +63,7 @@ export class People extends Container {
         this.addChild(this.bloodContainer(data.scale));
 
         // buff
-        this.addChild(this.buffContainer());
+        this.setBuffContainer();
 
         this.scale.x *= this.zoom;
         this.scale.y *= this.zoom;
@@ -106,10 +106,11 @@ export class People extends Container {
         return blood;
     }
 
-    public buffContainer() {
+    public setBuffContainer() {
+        this.buff = new Container();
         this.buff.scale.set(0.8);
         gsap.to(this.buff, { duration: 0.25, y: this.buff.y + 3, ease: 'none', repeat: 100000, yoyo: true });
-        return this.buff;
+        this.addChild(this.buff);
     }
 
     public bloodBg() {

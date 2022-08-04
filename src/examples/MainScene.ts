@@ -16,7 +16,6 @@ import { SlaveScene } from "../scenes/SlaveScene";
 import { UserScene } from "../scenes/UserScene";
 import { Header, StyleText } from "../components/component";
 import { ws } from "../components/websocket";
-import { Chat } from "../components/chat";
 import { Location } from "../components/route";
 
 export class MainScene extends ManageContainer implements IScene {
@@ -31,8 +30,6 @@ export class MainScene extends ManageContainer implements IScene {
         this.user();
 
         this.navigation();
-
-        this.addChild(new Chat());
 
         this.addChild(new Header());
 

@@ -1,7 +1,11 @@
 import { Container, Graphics } from "pixi.js";
 
-import { Header, Frame, SceneTite, StyleText, SplitLine, Scrollbox, Button, Avatar, confirmBox } from "../components/component";
-import { IScene, Manager, ManageContainer } from "../Manager";
+import { ManageContainer, IScene, Manager } from "../Manager";
+
+import {
+    Header, Frame, SceneTite, StyleText, SplitLine,
+    Scrollbox, Button, Avatar, confirmBox
+} from "../components/component";
 
 import { Back } from "../components/back";
 import { MainScene } from "./MainScene";

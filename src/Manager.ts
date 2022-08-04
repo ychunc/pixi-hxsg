@@ -1,8 +1,9 @@
-import { Application, Container as Container, DisplayObject, InteractionEvent, Sprite } from 'pixi.js'
-
-import { Particles } from "./components/particles";
+import { Application, Container, DisplayObject, InteractionEvent, Sprite, Ticker, UPDATE_PRIORITY } from 'pixi.js'
 
 import gsap from 'gsap';
+
+import { Particles } from "./components/particles";
+import { addStats } from 'pixi-stats';
 
 export class Manager {
     public static app: Application;
@@ -18,6 +19,11 @@ export class Manager {
      * Particles
      */
     public static particles: Particles;
+
+    /**
+     * Chat Container
+     */
+    public static chat: any;
 
     /**
      * back scenes
@@ -50,7 +56,7 @@ export class Manager {
         // Create our pixi app
         const options: any = {
             view: document.getElementById("pixi-canvas") as HTMLCanvasElement,
-            // resolution: window.devicePixelRatio || 1, // [别开了,开了可能会很卡]
+            // resolution: window.devicePixelRatio || 1, // [开了可能会很卡]
             autoDensity: true,
             backgroundColor: background,
             width: width,
@@ -61,21 +67,25 @@ export class Manager {
 
         Manager.app.ticker.add(Manager.update)
 
-        // listen for the browser telling us that the screen size changed
-        // window.addEventListener("resize", Manager.resizeFixed);
-
-        // call it manually once so we are sure we are the correct size after starting
-        // Manager.resizeFixed();
-
         Manager.app.stage.sortableChildren = true;
 
-        Manager.resizeFixed();
+        // listen for the browser telling us that the screen size changed
+        window.addEventListener("resize", Manager.resizeRelative);
+
+        // call it manually once so we are sure we are the correct size after starting
+        Manager.resizeRelative();
+
         // Manager.resizeRelative();
 
         // particles
         Manager.particles = new Particles();
         Manager.particles.zIndex = 500;
         Manager.app.stage.addChild(Manager.particles);
+
+        // FPS
+        const stats = addStats(document, Manager.app);
+        const ticker: Ticker = Ticker.shared;
+        ticker.add(stats.update, stats, UPDATE_PRIORITY.UTILITY);
 
         // ClickEffect
         Manager.app.renderer.plugins.interaction.on("pointerdown", (event: InteractionEvent) => Manager.ClickEffect(event))
@@ -111,6 +121,8 @@ export class Manager {
             Manager.app.stage.removeChild(Manager.currentScene);
             Manager.currentScene.destroy();
             // Manager.currentScene.visible = false;
+
+            gsap.killTweensOf('*');
         }
 
         // back list

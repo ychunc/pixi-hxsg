@@ -6,7 +6,6 @@ import { Animation } from "../components/animation"
 import { Skill } from "../components/skill";
 import { ws } from "../components/websocket"
 import { Team } from "../components/game";
-import { Chat } from "../components/chat";
 import { MainScene } from "./MainScene";
 
 /**
@@ -95,7 +94,7 @@ export class GameScene extends ManageContainer implements IScene {
         this.addChild(this.menu());
 
         // 聊天框
-        this.addChild(new Chat());
+        this.addChild(Manager.chat);
 
         // 目标光标
         GameScene.map_zz = Animation.map_zz();
@@ -427,7 +426,7 @@ export class GameScene extends ManageContainer implements IScene {
                 skill.push(row['sikll'].toString());
             }
 
-            ws.send({ route: "npc", uri: "row", "data": data, "skill": skill })
+            ws.send({ route: GameScene.gameType == 'NPC' ? 'npc' : 'game', uri: "row", "data": data, "skill": skill });
             return;
         }
 
@@ -464,7 +463,7 @@ export class GameScene extends ManageContainer implements IScene {
      * 返回按钮
      */
     public back() {
-        this.backButton.x = 28;
+        this.backButton.x = 20;
         this.backButton.y = 630;
         this.backButton.scale.set(1.2);
         this.backButton.visible = false;
@@ -490,6 +489,9 @@ export class GameScene extends ManageContainer implements IScene {
 
             // 敌方光标隐藏
             GameScene.map_zz.visible = false;
+
+            // 技能菜单隐藏
+            this.skillContainer.visible = false;
 
             // 返回隐藏
             this.backButton.visible = false;
@@ -658,9 +660,7 @@ export class GameScene extends ManageContainer implements IScene {
             for (var n = 0; n < team_data[P].length; n++) {
                 let ps = team_data[P][n];
                 // 更新血蓝条
-
                 console.log(GameScene.T.PP, P, n);
-
                 GameScene.T.PP[P.toLocaleUpperCase()][n].setHPMask(ps.d.x / ps.d.x_)
             }
         }
@@ -691,23 +691,23 @@ export class GameScene extends ManageContainer implements IScene {
      * @param show 
      */
     public buff(show: boolean = true) {
-        console.log("显示buff", show, this.team_data);
         for (const P in this.team_data) {
             for (let n = 0; n < this.team_data[P].length; n++) {
                 let PS = this.team_data[P][n];
 
-                // 移除buff
-                for (let index = 0; index < GameScene.T.PP[P.toLocaleUpperCase()][n].buff.children.length; index++) {
-                    var child = GameScene.T.PP[P.toLocaleUpperCase()][n].buff.children[index];
-                    GameScene.T.PP[P.toLocaleUpperCase()][n].buff.removeChild(child);
-                }
+                // 移除 Buff
+                gsap.killTweensOf(GameScene.T.PP[P.toLocaleUpperCase()][n].buff);
+                GameScene.T.PP[P.toLocaleUpperCase()][n].buff.destroy();
+
                 // 是否显示
                 if (show == false) {
                     continue;
                 }
 
+                // 添加 Buff
+                GameScene.T.PP[P.toLocaleUpperCase()][n].setBuffContainer();
                 for (const index in PS.buff) {
-                    var buff = Sprite.from('buff' + Skill.skillBuff(PS.buff[index].sk));
+                    let buff = Sprite.from('buff' + Skill.skillBuff(PS.buff[index].sk));
                     if (P == 'p2') {
                         buff.scale.x = -1;
                         buff.x = 5 + 12 * Number(index);
@@ -715,6 +715,7 @@ export class GameScene extends ManageContainer implements IScene {
                         buff.scale.x = 1;
                         buff.x = -8 - 12 * Number(index);
                     }
+
                     GameScene.T.PP[P.toLocaleUpperCase()][n].buff.addChild(buff);
                 }
             }

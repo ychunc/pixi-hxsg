@@ -1,22 +1,26 @@
+import { ws } from "./websocket";
 import { Manager } from "../Manager";
 import { MainScene } from "../scenes/MainScene";
 import { LoginScene } from "../scenes/LoginScene";
-import { AttributeScene, SkillScene, SlaveDetailScene, SlaveScene } from "../scenes/SlaveScene";
-import { GameScene } from "../scenes/GameScene";
-import { UserScene, SkillScene as UserSkillScene, AttributeScene as UserAttributeScene } from "../scenes/UserScene";
 import { SortScene } from "../scenes/SortScene";
-import { PackScene } from "../scenes/PackScene";
+import { UserScene, SkillScene as UserSkillScene, AttributeScene as UserAttributeScene } from "../scenes/UserScene";
+import { AttributeScene, SkillScene, SlaveDetailScene, SlaveScene } from "../scenes/SlaveScene";
 import { SlaveScene as SlaveSlaveScene } from "../scenes/TreasuryScene";
-import { ws } from "./websocket";
+import { PackScene } from "../scenes/PackScene";
+import { GameScene } from "../scenes/GameScene";
 
 export class Route {
 
     constructor(result: any, route: any[]) {
-        console.log("Route :", route, result);
+        console.log("Route :", route, result, result.msg);
+
         switch (route[0]) {
+            case 'chat':
+                let time = new Date(result.time * 1000 + 8 * 60 * 60 * 1000).toJSON().substr(11, 5).replace('T', ' ');
+                Manager.chat.message(time, result.data.msg, result.data.user.nick);
+                break;
             case 'login':
                 UserScene.data = result.data;
-
                 LoginScene.removeInput();
                 Manager.changeScene(new MainScene);
                 break;
@@ -87,7 +91,6 @@ export class Route {
                 }
                 break;
             case 'game':
-
                 switch (route[1]) {
                     case 'start':
                         GameScene.gameUser = result.data.user;

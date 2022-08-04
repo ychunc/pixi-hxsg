@@ -1,5 +1,6 @@
 import { Container, Graphics } from "pixi.js";
 import { IScene, Manager, ManageContainer } from "../Manager";
+
 import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
 import { Header, Frame, StyleText, Button, SceneTite, confirmBox, Avatar } from "../components/component";

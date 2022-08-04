@@ -21,13 +21,13 @@ import { SlaveScene } from "./SlaveScene";
 import { UserScene } from "./UserScene";
 import { Header, Ready, StyleText } from "../components/component";
 import { ws } from "../components/websocket";
-import { Chat } from "../components/chat";
 import { Location } from "../components/route";
 import { ArenaScene } from "./ArenaScene";
 import { TaskScene } from "./TaskScene";
 import { FriendScene } from "./FriendScene";
 import { TreasuryScene } from "./TreasuryScene";
 import { PackScene } from "./PackScene";
+import { Chat } from "../components/chat";
 
 export class MainScene extends ManageContainer implements IScene {
     /**
@@ -55,12 +55,7 @@ export class MainScene extends ManageContainer implements IScene {
         // app bakcgroupd
         Manager.backgroundColor(0x000);
 
-        this.interactive = true;
-        this.on('pointertap', () => {
-            // Manager.changeScene(new TreasuryScene);
-        })
-
-        this.addChild(new Header(), new Chat());
+        this.addChild(new Header(), Manager.chat = Chat.getInstance());
     }
 
     /**

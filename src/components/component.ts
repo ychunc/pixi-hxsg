@@ -1,9 +1,12 @@
 import { Container, Graphics, Text, TextStyle, Sprite, ITextStyle, Texture, InteractionEvent } from "pixi.js";
-import { Scrollbox as PIXIScrollbox } from "pixi-scrollbox";
+
 import gsap from "gsap";
+
+import { Scrollbox as PIXIScrollbox } from "pixi-scrollbox";
 
 import { Manager } from "../Manager";
 import { MainScene } from "../scenes/MainScene";
+
 
 type Callback = (...args: any[]) => void | null;
 
@@ -151,6 +154,8 @@ export class ClickEffect {
 
 export class Scrollbox extends PIXIScrollbox {
 
+    public sprite: Sprite;
+
     /**
      * 滑动容器
      */
@@ -159,13 +164,26 @@ export class Scrollbox extends PIXIScrollbox {
         this.boxWidth = Manager.width * 0.85;
         this.boxHeight = Manager.height;
 
-        const sprite = this.content.addChild(new Sprite(Texture.WHITE))
-        sprite.width = Manager.width * 0.85;
-        sprite.height = Manager.height + 1000;
-        sprite.tint = 0x360033;
+        this.sprite = this.content.addChild(new Sprite(Texture.WHITE))
+        this.sprite.width = Manager.width * 0.85;
+        this.sprite.height = Manager.height + 1000;
+        this.sprite.tint = 0x360033;
 
         // force an update of the scrollbox's calculations after updating the children
         this.update();
+    }
+
+    public setWidth(width: number) {
+        this.boxWidth = width;
+        this.sprite.width = width;
+    }
+
+    public setHeight(hieght: number) {
+        this.boxHeight = hieght;
+    }
+
+    public setbackgroud(color: number) {
+        this.sprite.tint = color;
     }
 
 }
