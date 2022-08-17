@@ -14,6 +14,11 @@ export class Spine extends Container {
         let resources = Loader.shared.resources;
 
         this.animations = [];
+
+        console.log(resources.aa);
+        console.log(resources.spine);
+
+
         for (const key in resources.spine.data.animations) {
             this.animations.push(key);
         }

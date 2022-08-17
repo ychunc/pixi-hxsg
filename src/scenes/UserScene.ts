@@ -178,8 +178,6 @@ export class AttributeScene extends ManageContainer implements IScene {
     public attr_num: number = 0;
 
     public infos() {
-
-        console.log(AttributeScene.data);
         var item = AttributeScene.data
 
         this.attr_num = item.lv * 4 - item.attr_atk - item.attr_hp - item.attr_mp - item.attr_spd;

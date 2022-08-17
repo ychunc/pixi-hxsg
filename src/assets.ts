@@ -113,6 +113,10 @@ let base = [
     { name: "f_jt", url: "./ui/f_jt.png" },
 
     { name: "confirm_box", url: "./ui/confirm_box.png" },
+    { name: "chat_bg", url: "./ui/chat_bg.png" },
+
+    { name: "th", url: "./ui/th.json" },
+
 
     { name: "avatar", url: "./avatar/avatar.png" },
 

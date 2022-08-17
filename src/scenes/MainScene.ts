@@ -19,7 +19,7 @@ import { MainScene as MainSceneExa } from "../examples/MainScene"
 
 import { SlaveScene } from "./SlaveScene";
 import { UserScene } from "./UserScene";
-import { Header, Ready, StyleText } from "../components/component";
+import { Dialogue, Header, Ready, StyleText } from "../components/component";
 import { ws } from "../components/websocket";
 import { Location } from "../components/route";
 import { ArenaScene } from "./ArenaScene";
@@ -28,6 +28,7 @@ import { FriendScene } from "./FriendScene";
 import { TreasuryScene } from "./TreasuryScene";
 import { PackScene } from "./PackScene";
 import { Chat } from "../components/chat";
+import { Animation } from "../components/animation";
 
 export class MainScene extends ManageContainer implements IScene {
     /**
@@ -39,6 +40,8 @@ export class MainScene extends ManageContainer implements IScene {
      * current nav index
      */
     public static currentNavIndex: number = 0;
+
+    public static header: any = null;
 
     constructor() {
         super();
@@ -55,7 +58,7 @@ export class MainScene extends ManageContainer implements IScene {
         // app bakcgroupd
         Manager.backgroundColor(0x000);
 
-        this.addChild(new Header(), Manager.chat = Chat.getInstance());
+        this.addChild(MainScene.header = new Header(), Manager.chat = Chat.getInstance());
     }
 
     /**
@@ -140,7 +143,7 @@ export class MainScene extends ManageContainer implements IScene {
             { 'name': '邮件', 'calllback': () => { }, },
             { 'name': '任务', 'calllback': () => { Manager.changeScene(new TaskScene) }, },
             { 'name': '擂台', 'calllback': () => { Manager.changeScene(new ArenaScene) }, },
-            { 'name': '教派', 'calllback': () => { }, },
+            { 'name': '教派', 'calllback': () => { document.getElementById('stats')!.setAttribute('style', 'display:none') }, },
             { 'name': '训练', 'calllback': () => { }, },
             { 'name': '宝库', 'calllback': () => { Manager.changeScene(new TreasuryScene) }, },
             { 'name': '公告', 'calllback': () => { ws.close(); }, },
@@ -196,11 +199,18 @@ export class MainScene extends ManageContainer implements IScene {
             container.addChild(text);
 
             let but_bg = Sprite.from('home_button');
-            but_bg.x = 600 + (Number(key) % 2 ? 50 : 0);
+            but_bg.interactive = true;
             but_bg.y = 80 + Number(key) * 50;
+            but_bg.x = 580 + (Number(key) % 2 ? 70 : 0);
+
+            var tip = Animation.th();
+            tip.y = 38;
+            if (data.npc[key].tip) but_bg.addChild(tip);
             container.addChild(but_bg);
 
             let but_text = new StyleText('', { fontSize: 30 });
+            but_text.x = 6;
+            but_text.y = 16;
             switch (data.npc[key].type) {
                 case 'plot':
                     but_text.text.text = '对话';
@@ -214,37 +224,40 @@ export class MainScene extends ManageContainer implements IScene {
                     but_text.text.style.strokeThickness = 10
                     break;
             }
-            but_text.x = 606 + (Number(key) % 2 ? 50 : 0);
-            but_text.x = 606 + (Number(key) % 2 ? 50 : 0);
-            but_text.y = 96 + Number(key) * 50;
-            but_text.y = 96 + Number(key) * 50;
-            container.addChild(but_text);
+            but_bg.addChild(but_text);
 
-            [but_bg, but_text].forEach((object) => {
-                object.interactive = true;
-                object.on("pointertap", () => {
-                    var ready = new Ready();
-                    ready.zIndex = 10;
-                    this.addChild(ready);
 
-                    switch (data.npc[key].type) {
-                        case 'plot':
-                            console.log('message...');
-                            break;
-                        case 'game':
-                            setTimeout(() => {
-                                ws.send({ "route": "game", "uri": "join" });
-                            }, 500 + Math.random() * 1000);
-                            break;
-                        case 'npc':
-                            setTimeout(() => {
-                                ws.send({ "route": "npc", "uri": "join" });
-                            }, 500 + Math.random() * 1000);
-                            break;
-                    }
-                });
+
+            var ready = new Ready();
+            ready.zIndex = 10;
+
+            but_bg.on("pointertap", () => {
+                console.log('MainScene.header', MainScene.header);
+
+                var dialogue = new Dialogue(MainScene.header.height);
+                switch (data.npc[key].type) {
+                    case 'plot':
+                        console.log('message...');
+                        this.addChild(dialogue);
+                        break;
+                    case 'game':
+                        console.log('game...');
+                        this.addChild(ready);
+                        setTimeout(() => {
+                            ws.send({ "route": "game", "uri": "join" });
+                        }, 500 + Math.random() * 1000);
+                        break;
+                    case 'npc':
+                        console.log('npc...');
+                        this.addChild(ready);
+                        setTimeout(() => {
+                            ws.send({ "route": "npc", "uri": "join" });
+                        }, 500 + Math.random() * 1000);
+                        break;
+                }
             });
         }
+
         return container;
     }
 
@@ -305,7 +318,8 @@ export class MainScene extends ManageContainer implements IScene {
         this.addChild(avatar);
 
         gsap.to(avatar, {
-            pixi: { tint: 'red' }, duration: 0.5, repeat: -1, yoyo: true,
+            duration: 0.5, repeat: -1, yoyo: true,
+            pixi: { tint: 'red' }
         });
 
         [home_avatar, username, avatar].forEach((object) => {

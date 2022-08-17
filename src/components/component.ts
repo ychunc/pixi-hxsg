@@ -11,6 +11,127 @@ import { MainScene } from "../scenes/MainScene";
 type Callback = (...args: any[]) => void | null;
 
 
+export class Dialogue extends Container {
+
+    public graphics: Graphics;
+
+    /**
+     * 剧情对话
+     */
+    constructor(edgeY: number = 0) {
+        super();
+
+        this.zIndex = 2000;
+
+        this.sortableChildren = true;
+
+        // 上背景
+        var container = this.getBackgroup(-1);
+        gsap.to(container, { duration: 0.5, y: container.height + edgeY })
+
+        // 下背景
+        var container = this.getBackgroup();
+        container.y = Manager.height;
+        gsap.to(container, { duration: 0.5, y: Manager.height - container.height - 150 })
+
+        // 中间图形
+        const graphics = this.graphics = new Graphics();
+        // 底层背景
+        graphics.beginFill(0x00052e);
+        graphics.drawRect(0, 0, Manager.width, 566);
+        graphics.endFill();
+        // 黑背景
+        graphics.lineStyle(4, 0xA0A0A0, 1);
+        graphics.beginFill(0x000000);
+        graphics.drawRect(Manager.width * 0.03 / 2, 6, Manager.width * 0.97, 550);
+        graphics.endFill();
+
+        graphics.pivot.x = graphics.width / 2;
+        graphics.pivot.y = graphics.height / 2;
+        graphics.x = graphics.width / 2;
+        graphics.y = edgeY + graphics.height / 2 + container.height;
+
+        graphics.scale.y = 0;
+        gsap.to(graphics.scale, { duration: 0.5, y: 1 }).eventCallback('onComplete', () => {
+            graphics.lineStyle(4, 0xA0A0A0, 0.8);
+            graphics.beginFill(0x00052e);
+            graphics.drawRect(Manager.width * 0.03 / 2, 550 - 100 + 10, Manager.width * 0.97, 100);
+            graphics.endFill();
+
+            this.text('成都高温限电 地铁关闭部分照明 原因竟\n是这样实在太无奈了!四川成都近期四川各\n地持续高温，当前电力供需紧张形势进一\n步加剧。有网友晒出地铁站已关闭部分广\n告灯箱和部分照明。不过还是有不少居民\n到地铁站纳凉。');
+
+            this.avatar();
+        });
+
+
+        this.interactive = true;
+        this.on('pointertap', () => { this.destroy(); });
+
+        this.addChild(graphics);
+    }
+
+    public avatar() {
+        this.addChild(new Avatar({ avatar: 'npc_1', y: 152 }, (_this) => {
+            _this.x = -130;
+            _this.toX = 50;
+        }));
+
+        let npcNick = new StyleText('跑环使者', Object.assign({
+            fontSize: 36,
+            fill: '#F7EDCA',
+            stroke: '#d3393c',
+            strokeThickness: 10,
+            lineJoin: "round",
+        }));
+        npcNick.x = 200;
+        npcNick.y = 150;
+        this.addChild(npcNick);
+
+        this.addChild(new Avatar({ avatar: '5', y: 152 }, (_this) => {
+            _this.toX = Manager.width - 170;
+        }));
+
+        let userNick = new StyleText('三国新人', Object.assign({
+            fontSize: 36,
+            fill: '#F7EDCA',
+            stroke: '#d3393c',
+            strokeThickness: 10,
+            lineJoin: "round",
+        }));
+        userNick.x = Manager.width - 340;
+        userNick.y = 240;
+        this.addChild(userNick);
+    }
+
+    public text(txt: string) {
+        var text = new StyleText(txt);
+        text.x = 16;
+        text.y = 10;
+
+        var back = new StyleText('返回', { fill: '#e8dd13' });
+        back.x = Manager.width / 2 - back.width / 2;
+        back.y = 550 - 100 / 2 - 10;
+        this.graphics.addChild(text, back);
+    }
+
+    public getBackgroup(up: number = 1) {
+        var container = new Container();
+        var bgR = Sprite.from('chat_bg');
+        bgR.x = Manager.width;
+        bgR.scale.x = 0.7 * -1;
+        bgR.scale.y = 0.7 * up;
+
+        var bgL = Sprite.from('chat_bg');
+        bgL.scale.x = 0.7;
+        bgL.scale.y = 0.7 * up;
+        container.addChild(bgL, bgR);
+        this.addChild(container);
+
+        return container;
+    }
+
+}
+
 export class Ready extends Container {
 
     /**
@@ -190,21 +311,28 @@ export class Scrollbox extends PIXIScrollbox {
 
 export class Avatar extends Container {
 
+    public avatar: Sprite;
+    public toX: number;
+
     /**
      * 头像
      */
-    constructor(item: { avatar: number, y: number }) {
+    constructor(item: { avatar: any, y: number }, callback = (_this: Avatar) => { }) {
         super();
+        var avatars = Sprite.from('avatar');
+        avatars.scale.set(0.57);
+
+        var avatar = this.avatar = Sprite.from(`./avatar/${item.avatar}.png`);
 
         this.y = item.y;
         this.x = Manager.width;
         this.alpha = 0.5;
+        this.toX = 500;
 
-        var avatar = Sprite.from(`./avatar/${item.avatar}.png`);
-        var avatars = Sprite.from('avatar');
-        avatars.scale.set(0.57);
+        callback(this);
+
         this.addChild(avatars, avatar);
-        gsap.to(this, { duration: 0.3, alpha: 1, x: 500 });
+        gsap.to(this, { duration: 0.3, alpha: 1, x: this.toX });
     }
 }
 
@@ -257,6 +385,10 @@ export class Header extends Container {
      */
     constructor(ISanim: boolean = true) {
         super();
+
+        this.zIndex = 3000;
+
+        this.sortableChildren = true;
 
         let title = Sprite.from("home_title");
         title.scale.x = 1.2;

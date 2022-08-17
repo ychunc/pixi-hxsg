@@ -160,11 +160,11 @@ export class Skill {
         }));
     }
 
-    public static bgShock(tl = gsap.timeline()) {
+    public static bgShock(tl = gsap.timeline(), t = 0.06) {
         tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
             GameScene.GameBg.visible = true;
         }));
-        tl.add(gsap.to({}, { duration: 0.06 }).eventCallback('onComplete', () => {
+        tl.add(gsap.to({}, { duration: t }).eventCallback('onComplete', () => {
             GameScene.GameBg.visible = false;
         }));
     }
@@ -542,6 +542,9 @@ export class Skill {
 
             // 震动
             Skill.shock(gsap.timeline(), 0.08);
+
+            // 背景闪动
+            Skill.bgShock(gsap.timeline())
         }));
 
         // 人物进攻

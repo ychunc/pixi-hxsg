@@ -83,8 +83,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
         let header = new Header(true);
         let frame = new Frame();
 
-        var item = SlaveDetailScene.data
-        console.log(item);
+        var item = SlaveDetailScene.data;
 
         let title = new SceneTite('副将:' + item.slave.name);
 
