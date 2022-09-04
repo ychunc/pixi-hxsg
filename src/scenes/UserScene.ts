@@ -15,7 +15,7 @@ export class UserScene extends ManageContainer implements IScene {
     constructor() {
         super();
 
-        let header = new Header(true);
+        let header = new Header();
         let frame = new Frame();
         let title = new SceneTite('赤壁区-' + UserScene.data.nick + '(10001)');
 
@@ -120,7 +120,7 @@ export class AttributeScene extends ManageContainer implements IScene {
 
         AttributeScene.data = item;
 
-        let header = new Header(true);
+        let header = new Header();
         let frame = new Frame();
         let title = new SceneTite('分配属性点');
 
@@ -269,7 +269,7 @@ export class SkillScene extends ManageContainer implements IScene {
 
         SkillScene.data = item;
 
-        let header = new Header(true);
+        let header = new Header();
         let frame = new Frame();
         let title = new SceneTite('技能');
 

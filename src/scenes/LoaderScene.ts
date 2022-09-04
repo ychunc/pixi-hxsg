@@ -3,8 +3,6 @@ import { IScene, Manager } from "../Manager";
 import { assets } from "../assets";
 import gsap from "gsap";
 import { LoginScene } from "./LoginScene";
-// import { SpineTest as LoginScene } from "../components/spineTest";
-
 
 export class LoaderScene extends Container implements IScene {
     public data: any;
@@ -74,9 +72,9 @@ export class LoaderScene extends Container implements IScene {
 
     private downloadProgress(loader: Loader): void {
         const progressRatio = loader.progress / 100;
-        // this.loaderBarFill.scale.x = progressRatio;
+        this.loaderBarFill.scale.x = progressRatio;
 
-        this.tl.add(gsap.to(this.loaderBarFill.scale, { duration: progressRatio / 80, x: progressRatio }));
+        // this.tl.add(gsap.to(this.loaderBarFill.scale, { duration: progressRatio / 80, x: progressRatio }));
 
         this.text.text = '资源加载中...' + (progressRatio * 100).toFixed(0) + '%';
         this.warpSpeed = progressRatio;
@@ -97,10 +95,9 @@ export class LoaderScene extends Container implements IScene {
         // Loader.shared.add('spine11', './spine/yc_a_11mofagongzhu/YC_A_09jinglijingcha.json', { metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } })
         // Loader.shared.add('spine12', './spine/yc_a_12mofagongzhu/YC_A_16.json', { metadata: { imageMetadata: { alphaMode: ALPHA_MODES.PMA } } })
 
-        this.tl.add(gsap.to(this.loaderBar, { duration: 0.1, alpha: 0, /**y: -500**/ }).eventCallback('onComplete', () => {
-
+        gsap.to(this.loaderBar, { duration: 0.1 }).eventCallback('onComplete', () => {
             Manager.changeScene(new LoginScene());
-        }));
+        });
     }
 
     public randomizeStar(star: any, initial: any = null) {

@@ -132,7 +132,7 @@ export class People extends Container {
         hp.y = 3;
         hp.x = 0.3;
         hp.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-        hp.mask = this.HPMask = this.getHPMask(1);
+        hp.mask = this.HPMask = this.getHPMask(1); // safari卡顿,使用Texture, Rectangle裁剪
         hp.addChild(hp.mask);
         this.struct.hp = hp;
         return hp;

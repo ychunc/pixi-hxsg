@@ -58,7 +58,7 @@ export class MainScene extends ManageContainer implements IScene {
         // app bakcgroupd
         Manager.backgroundColor(0x000);
 
-        this.addChild(MainScene.header = new Header(), Manager.chat = Chat.getInstance());
+        this.addChild(Manager.chat = Chat.getInstance());
     }
 
     /**
@@ -109,20 +109,61 @@ export class MainScene extends ManageContainer implements IScene {
      */
     public changeNavPage(index: number = 0) {
         this.navPageContainer.destroy();
+        if (!MainScene.mapData) return;
 
         switch (index) {
             case 0:
                 this.navPageContainer = this.nav_people();
                 break;
+            case 1:
+                this.navPageContainer = new Container();
+                break;
+            case 2:
+                this.navPageContainer = this.nav_map();
+                break;
             case 3:
                 this.navPageContainer = this.nav_facilities();
                 break;
-            default:
-                this.navPageContainer = new Container();
-                break;
         }
+
         this.navPageContainer.zIndex = 0;
+        this.addChild(MainScene.header = new Header(MainScene.mapData.name));
         this.addChild(this.navPageContainer);
+    }
+
+    public nav_map() {
+        var container = new Container();
+        container.x = 380;
+        container.y = 90;
+        if (!MainScene.mapData) return container;
+
+        for (const key in MainScene.mapData.nearby) {
+            let item = MainScene.mapData.nearby[key]
+            let row = new Container();
+
+            let text = new StyleText(item[1]);
+            text.x = 160;
+            text.y = 16;
+
+            let map = Sprite.from('map_' + item[2]);
+            map.x = 80;
+            map.scale.set(0.6);
+
+            let fx = Sprite.from('fx_' + key);
+            fx.scale.set(0.8);
+
+            row.addChild(fx, map, text);
+            row.y = container.children.length * 70;
+            container.addChild(row);
+
+            row.interactive = true;
+            row.on("pointertap", () => {
+                ws.send({ route: 'map', data: item[0], msg: '移动位置' });
+            });
+        }
+
+
+        return container;
     }
 
     /**
@@ -183,9 +224,17 @@ export class MainScene extends ManageContainer implements IScene {
     public static mapData: any;
 
     /**
+     * 对话框对象
+     */
+
+    public dialogue: any;
+
+    /**
      * nav_人物
      */
     public nav_people() {
+        console.log('人物NPC');
+
         var container = new Container();
         if (!MainScene.mapData) return container;
 
@@ -212,13 +261,13 @@ export class MainScene extends ManageContainer implements IScene {
             but_text.x = 6;
             but_text.y = 16;
             switch (data.npc[key].type) {
-                case 'plot':
+                case 'PLOT':
                     but_text.text.text = '对话';
                     but_text.text.style.stroke = '#0000FF'
                     but_text.text.style.strokeThickness = 10
                     break;
-                case 'game':
-                case 'npc':
+                case 'PVP':
+                case 'PVE':
                     but_text.text.text = '战斗';
                     but_text.text.style.stroke = '#FF0000'
                     but_text.text.style.strokeThickness = 10
@@ -226,29 +275,24 @@ export class MainScene extends ManageContainer implements IScene {
             }
             but_bg.addChild(but_text);
 
-
-
-            var ready = new Ready();
-            ready.zIndex = 10;
-
             but_bg.on("pointertap", () => {
+                var ready = new Ready();
+                ready.zIndex = 10;
                 console.log('MainScene.header', MainScene.header);
 
-                var dialogue = new Dialogue(MainScene.header.height);
+                var dialogue = this.dialogue = new Dialogue(MainScene.header.height);
                 switch (data.npc[key].type) {
-                    case 'plot':
-                        console.log('message...');
+                    case 'PLOT':
                         this.addChild(dialogue);
+                        ws.send({ "route": "task", "uri": "commit", "data": { taskId: data.npc[key].taskId } });
                         break;
-                    case 'game':
-                        console.log('game...');
+                    case 'PVP':
                         this.addChild(ready);
                         setTimeout(() => {
                             ws.send({ "route": "game", "uri": "join" });
                         }, 500 + Math.random() * 1000);
                         break;
-                    case 'npc':
-                        console.log('npc...');
+                    case 'PVE':
                         this.addChild(ready);
                         setTimeout(() => {
                             ws.send({ "route": "npc", "uri": "join" });

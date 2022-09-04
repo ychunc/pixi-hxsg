@@ -6,12 +6,14 @@ import { Scrollbox as PIXIScrollbox } from "pixi-scrollbox";
 
 import { Manager } from "../Manager";
 import { MainScene } from "../scenes/MainScene";
-
+import { Animation } from "./animation";
 
 type Callback = (...args: any[]) => void | null;
 
 
 export class Dialogue extends Container {
+
+    public data: any;
 
     public graphics: Graphics;
 
@@ -58,14 +60,13 @@ export class Dialogue extends Container {
             graphics.drawRect(Manager.width * 0.03 / 2, 550 - 100 + 10, Manager.width * 0.97, 100);
             graphics.endFill();
 
-            this.text('成都高温限电 地铁关闭部分照明 原因竟\n是这样实在太无奈了!四川成都近期四川各\n地持续高温，当前电力供需紧张形势进一\n步加剧。有网友晒出地铁站已关闭部分广\n告灯箱和部分照明。不过还是有不少居民\n到地铁站纳凉。');
-
             this.avatar();
         });
 
-
         this.interactive = true;
-        this.on('pointertap', () => { this.destroy(); });
+        this.on('pointertap', () => {
+            this.plotText();
+        });
 
         this.addChild(graphics);
     }
@@ -103,15 +104,67 @@ export class Dialogue extends Container {
         this.addChild(userNick);
     }
 
-    public text(txt: string) {
-        var text = new StyleText(txt);
-        text.x = 16;
-        text.y = 10;
+    /**
+     * 对话剧情
+     */
+    public plot: any = [];
 
-        var back = new StyleText('返回', { fill: '#e8dd13' });
+    /**
+     * 任务内容
+     */
+    public task: any = [];
+
+    /**
+     * 对话步骤
+     */
+    public plotText() {
+        if (this.plot.length == 0) {
+            // 跳转主页
+            Manager.changeScene(new MainScene);
+            // 任务完成
+            if (!this.task.next && this.data.Complete) {
+                Manager.currentScene.addChild(new confirmBox(`恭喜您完成${this.task.name}`, (_this) => {
+                    _this.destroy();
+                }))
+            }
+            return;
+        }
+
+        let row = this.plot.shift();
+        this.updateText(row);
+    }
+
+    public content: StyleText | any;
+
+    public updateText(txt: string) {
+        this.content.text.text = txt;
+    }
+
+    /**
+     * 加载动画,对话
+     */
+    public initText() {
+        var text = this.content = new StyleText('', {
+            wordWrap: true, wordWrapWidth: Manager.width * 0.96, breakWords: true
+        });
+        text.x = 16; text.y = 10;
+
+        /**
+         *  |----继续----|  #判断 任意区域
+         *  |----返回----|  #判断 任意区域
+         *  |----选项----|  #必须点选项
+         * 
+         * 数据里要带选项
+         */
+        var back = new StyleText(this.plot.length > 0 ? '继续' : '返回', { fill: '#e8dd13' });
         back.x = Manager.width / 2 - back.width / 2;
         back.y = 550 - 100 / 2 - 10;
         this.graphics.addChild(text, back);
+
+        var npc_jt = Animation.npc_jt();
+        npc_jt.x = -26;
+        npc_jt.y = 18;
+        back.addChild(npc_jt);
     }
 
     public getBackgroup(up: number = 1) {
@@ -171,7 +224,6 @@ export class Ready extends Container {
             graphics.endFill();
             alpha += 0.2;
         })
-
         container.addChild(graphics);
 
         // 文字
@@ -213,7 +265,7 @@ export class Ready extends Container {
     }
 
     public getGrd(): Sprite {
-        var texture = new Sprite
+        var texture = new Sprite();
 
         const quality = 100;
         const canvas = document.createElement('canvas');
@@ -379,11 +431,13 @@ export class SplitLine extends Graphics {
 
 export class Header extends Container {
 
+    public text: StyleText;
+
     /**
      * 左上角小地图
      * @param ISanim 是否动画
      */
-    constructor(ISanim: boolean = true) {
+    constructor(txt: string = '许昌', ISanim: boolean = true) {
         super();
 
         this.zIndex = 3000;
@@ -395,7 +449,7 @@ export class Header extends Container {
         title.scale.y = 1.2;
         this.addChild(title);
 
-        let text = new StyleText('许昌', { fill: '#FFF', fontSize: 32 });
+        let text = this.text = new StyleText(txt, { fill: '#FFF', fontSize: 32 });
         text.x = Manager.width / 2 - text.width / 2;
         text.y = title.height / 2 - text.height / 2 - 5;
         this.addChild(text);

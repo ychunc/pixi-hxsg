@@ -80,7 +80,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
     constructor() {
         super();
 
-        let header = new Header(true);
+        let header = new Header();
         let frame = new Frame();
 
         var item = SlaveDetailScene.data;
@@ -184,7 +184,7 @@ export class SkillScene extends ManageContainer implements IScene {
 
         SkillScene.data = item;
 
-        let header = new Header(true);
+        let header = new Header();
         let frame = new Frame();
         let title = new SceneTite(item.slave.name + '技能');
 
@@ -274,7 +274,7 @@ export class AttributeScene extends ManageContainer implements IScene {
 
         AttributeScene.data = item;
 
-        let header = new Header(true);
+        let header = new Header();
         let frame = new Frame();
         let title = new SceneTite(item.slave.name + '属性点');
 
@@ -422,7 +422,7 @@ export class AbilityScene extends ManageContainer implements IScene {
     constructor() {
         super();
 
-        let header = new Header(true);
+        let header = new Header();
         let frame = new Frame();
         let title = new SceneTite('战斗能力')
 

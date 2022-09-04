@@ -116,6 +116,20 @@ let base = [
     { name: "chat_bg", url: "./ui/chat_bg.png" },
 
     { name: "th", url: "./ui/th.json" },
+    { name: "npc_jt", url: "./ui/npc_jt.json" },
+
+    { name: "fx_b", url: "./ui/fx_b.png" },
+    { name: "fx_l", url: "./ui/fx_l.png" },
+    { name: "fx_r", url: "./ui/fx_r.png" },
+    { name: "fx_t", url: "./ui/fx_t.png" },
+
+    { name: "map_0", url: "./ui/map_0.png" },
+    { name: "map_1", url: "./ui/map_1.png" },
+    { name: "map_2", url: "./ui/map_2.png" },
+    { name: "map_3", url: "./ui/map_3.png" },
+    { name: "map_4", url: "./ui/map_4.png" },
+    { name: "map_5", url: "./ui/map_5.png" },
+    { name: "map_6", url: "./ui/map_6.png" },
 
 
     { name: "avatar", url: "./avatar/avatar.png" },

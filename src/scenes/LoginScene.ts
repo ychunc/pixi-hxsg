@@ -1,11 +1,10 @@
 import { TextStyle, Text } from "pixi.js";
 import gsap from "gsap";
+import { ws } from "../components/websocket"
 import { IScene, ManageContainer, Manager } from "../Manager";
 import { Spine } from "../components/spine";
 import { Button } from "../components/component";
-// import { MainScene } from "./MainScene";
-import { ws } from "../components/websocket"
-import { GameOver } from "./GameScene";
+import { MainScene } from "./MainScene";
 
 export class LoginScene extends ManageContainer implements IScene {
     public static username: HTMLInputElement
@@ -93,8 +92,7 @@ export class LoginScene extends ManageContainer implements IScene {
         this.addChild(button)
         button.on("pointertap", () => {
             LoginScene.removeInput();
-            // Manager.changeScene(new MainScene);
-            Manager.changeScene(new GameOver);
+            Manager.changeScene(new MainScene);
         });
 
         if (ws.action == 'AUTO') {

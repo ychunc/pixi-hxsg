@@ -40,7 +40,7 @@ export class Chat extends Container {
         this.scrollbox = new Scrollbox();
         this.setScrollbox();
 
-        this.scrollbox.on("pointertap", (event) => this.chatFull(event, 'tap'));
+        // this.scrollbox.on("pointertap", (event) => this.chatFull(event, 'tap'));
 
         // let n = 0;
         // setInterval(() => {

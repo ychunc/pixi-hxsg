@@ -26,7 +26,16 @@ export class Route {
                 break;
             case 'map':
                 MainScene.mapData = result.data
-                Manager.currentScene.changeNavPage(0);
+                Manager.currentScene.changeNavPage(MainScene.currentNavIndex);
+                break;
+            case 'plot':
+                setTimeout(() => {
+                    Manager.currentScene.dialogue.data = result.data;
+                    Manager.currentScene.dialogue.initText();
+                    Manager.currentScene.dialogue.plot = result.data.Plot;
+                    Manager.currentScene.dialogue.task = result.data.Task;
+                    Manager.currentScene.dialogue.plotText();
+                }, 500);
                 break;
             case 'user':
                 switch (route[1]) {

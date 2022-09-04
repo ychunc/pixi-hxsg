@@ -10,7 +10,7 @@ export class PackScene extends ManageContainer implements IScene {
     constructor() {
         super();
 
-        let header = new Header(true);
+        let header = new Header();
         let frame = new Frame();
 
         // app backgroundColor

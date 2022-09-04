@@ -44,6 +44,25 @@ export class Animation {
         return anim;
     }
 
+    public static npc_jt() {
+        let data = Loader.shared.resources['npc_jt'].data.animations.npc_jt;
+
+        const frames = [];
+        for (let i = 0; i < data.length; i++) {
+            frames.push(Texture.from(data[i]));
+        }
+        const anim = new AnimatedSprite(frames);
+        anim.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+
+        anim.scale.set(0.8);
+        anim.anchor.set(0.5);
+        anim.animationSpeed = 0.1;
+        anim.loop = true;
+        anim.play();
+
+        return anim;
+    }
+
     public static blood() {
         let data = Loader.shared.resources['blood'].data.animations.blood;
 

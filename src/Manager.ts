@@ -1,9 +1,9 @@
-import { Application, Container, DisplayObject, InteractionEvent, Sprite, Ticker, UPDATE_PRIORITY } from 'pixi.js'
+import { Application, Container, DisplayObject, InteractionEvent, Sprite,/** Ticker, UPDATE_PRIORITY **/ } from 'pixi.js'
 
 import gsap from 'gsap';
 
 import { Particles } from "./components/particles";
-import { addStats } from 'pixi-stats';
+// import { addStats } from 'pixi-stats';
 
 export class Manager {
     public static app: Application;
@@ -83,9 +83,9 @@ export class Manager {
         Manager.app.stage.addChild(Manager.particles);
 
         // FPS
-        const stats = addStats(document, Manager.app);
-        const ticker: Ticker = Ticker.shared;
-        ticker.add(stats.update, stats, UPDATE_PRIORITY.UTILITY);
+        // const stats = addStats(document, Manager.app);
+        // const ticker: Ticker = Ticker.shared;
+        // ticker.add(stats.update, stats, UPDATE_PRIORITY.UTILITY);
 
         // ClickEffect
         Manager.app.renderer.plugins.interaction.on("pointerdown", (event: InteractionEvent) => Manager.ClickEffect(event))
@@ -137,6 +137,7 @@ export class Manager {
         //     Manager.scenes.push(newScene);
         // }
 
+        // 先new出来,延迟add。解决卡顿
         // Add the new one
         Manager.currentScene = newScene;
         Manager.app.stage.addChild(newScene);

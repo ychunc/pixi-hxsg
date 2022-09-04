@@ -17,7 +17,7 @@ export class TreasuryScene extends ManageContainer implements IScene {
 
     constructor() {
         super();
-        let header = new Header(true);
+        let header = new Header();
         let frame = new Frame();
         let title = new SceneTite('宝物');
         let splitLine = new SplitLine();
@@ -106,7 +106,7 @@ export class SlaveScene extends ManageContainer implements IScene {
      */
     constructor() {
         super();
-        let header = new Header(true);
+        let header = new Header();
         let frame = new Frame();
         let title = new SceneTite('招贤馆');
         let splitLine = new SplitLine();
@@ -245,7 +245,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
 
         console.log(item);
 
-        let header = new Header(true);
+        let header = new Header();
         let frame = new Frame();
         let title = new SceneTite(item.name);
 

@@ -477,7 +477,7 @@ export class GameScene extends ManageContainer implements IScene {
             // P2选择图标
             GameScene.T.PP['P2'][this.current_select_action_index].addChild(GameScene.f_jt)
 
-            // 显示全部血条
+            // // 显示全部血条
             this.bloodBarAll(true);
 
             // 隐藏技能选择
@@ -573,8 +573,6 @@ export class GameScene extends ManageContainer implements IScene {
      * 功能菜单
      */
     public menu() {
-
-
         var butText = ['攻击', '技能', '招降', '物品', '招将', '逃跑', '防御'];
         for (let index = 0; index < butText.length; index++) {
             let ContainerRow = new Container();

@@ -96,13 +96,13 @@ export class ws {
 
     public static reConnect(mes: string = '已断开连接,是否重新连接?') {
         // 自动断开提示
-        if (ws.action == 'AUTO') {
-            if (this.confirmBox) this.confirmBox.destroy();
-            Manager.currentScene.addChild(this.confirmBox = new confirmBox(mes,
-                () => ws.connect(),
-                () => Manager.changeScene(new LoginScene))
-            );
-        }
+        // if (ws.action == 'AUTO') {
+        if (this.confirmBox) this.confirmBox.destroy();
+        Manager.currentScene.addChild(this.confirmBox = new confirmBox(mes,
+            () => ws.connect(),
+            () => Manager.changeScene(new LoginScene))
+        );
+        // }
         ws.action = 'AUTO';
     }
 
