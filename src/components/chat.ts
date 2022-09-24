@@ -136,7 +136,7 @@ export class Chat extends Container {
             text.focus();
             text.onkeydown = (event) => {
                 if (event.keyCode == 13) {
-                    ws.send({ "route": "chat", "msg": text.value });
+                    ws.send({ "route": ["Chat", "chat"], "msg": text.value });
                     this.removeInput();
                 }
             }
@@ -146,7 +146,7 @@ export class Chat extends Container {
             };
 
             send.on('pointertap', () => {
-                ws.send({ "route": "chat", "msg": text.value });
+                ws.send({ "route": ["Chat", "chat"], "msg": text.value });
                 this.removeInput();
             });
         })

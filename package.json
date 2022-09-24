@@ -2,6 +2,7 @@
   "license": "",
   "scripts": {
     "start": "webpack serve --mode=development",
+    "start-php": "php ../think_hxsg/think worker:gateway",
     "build": "run-s clean build-only",
     "build-only": "webpack --mode=production",
     "clean": "rimraf dist"

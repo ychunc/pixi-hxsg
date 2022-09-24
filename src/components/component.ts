@@ -7,15 +7,21 @@ import { Scrollbox as PIXIScrollbox } from "pixi-scrollbox";
 import { Manager } from "../Manager";
 import { MainScene } from "../scenes/MainScene";
 import { Animation } from "./animation";
+import { ws } from "./websocket";
 
 type Callback = (...args: any[]) => void | null;
 
 
 export class Dialogue extends Container {
 
-    public data: any;
+    private data: any;
 
     public graphics: Graphics;
+
+    public setData(data: any) {
+        this.data = data;
+        this.task = data.Task;
+    }
 
     /**
      * 剧情对话
@@ -65,10 +71,16 @@ export class Dialogue extends Container {
 
         this.interactive = true;
         this.on('pointertap', () => {
-            this.plotText();
+            this.textPlot();
         });
 
         this.addChild(graphics);
+    }
+
+    submit(data: any) {
+        setTimeout(() => {
+            ws.send(data);
+        }, 500);
     }
 
     public avatar() {
@@ -105,11 +117,6 @@ export class Dialogue extends Container {
     }
 
     /**
-     * 对话剧情
-     */
-    public plot: any = [];
-
-    /**
      * 任务内容
      */
     public task: any = [];
@@ -117,9 +124,9 @@ export class Dialogue extends Container {
     /**
      * 对话步骤
      */
-    public plotText() {
-        if (this.plot.length == 0) {
-            // 跳转主页
+    public textPlot() {
+        if (this.task.plot.length == 0) {
+            // 请求最新位置
             Manager.changeScene(new MainScene);
             // 任务完成
             if (!this.task.next && this.data.Complete) {
@@ -130,7 +137,7 @@ export class Dialogue extends Container {
             return;
         }
 
-        let row = this.plot.shift();
+        let row = this.task.plot.shift();
         this.updateText(row);
     }
 
@@ -141,22 +148,15 @@ export class Dialogue extends Container {
     }
 
     /**
-     * 加载动画,对话
+     * 加载对话动画
      */
-    public initText() {
+    public textAction() {
         var text = this.content = new StyleText('', {
             wordWrap: true, wordWrapWidth: Manager.width * 0.96, breakWords: true
         });
         text.x = 16; text.y = 10;
 
-        /**
-         *  |----继续----|  #判断 任意区域
-         *  |----返回----|  #判断 任意区域
-         *  |----选项----|  #必须点选项
-         * 
-         * 数据里要带选项
-         */
-        var back = new StyleText(this.plot.length > 0 ? '继续' : '返回', { fill: '#e8dd13' });
+        var back = new StyleText('继续', { fill: '#e8dd13' });
         back.x = Manager.width / 2 - back.width / 2;
         back.y = 550 - 100 / 2 - 10;
         this.graphics.addChild(text, back);

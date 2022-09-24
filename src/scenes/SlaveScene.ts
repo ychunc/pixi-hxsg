@@ -45,7 +45,7 @@ export class SlaveScene extends ManageContainer implements IScene {
             but.x = 550;
             this.addChild(but);
             but.on("pointertap", () => {
-                ws.send({ route: 'slave', uri: 'up', sid: item.id, up: item.up })
+                ws.send({ route: ['Slave', 'up'], sid: item.id, up: item.up })
             });
 
             let style = {
@@ -96,7 +96,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
                 { type: 'text', name: '头衔', value: '将才', style: {}, calllback: () => { } },
                 {
                     type: 'buttton', name: '休息', value: '', style: { x: -150 }, calllback: () => {
-                        ws.send({ route: 'slave', uri: 'up', sid: item.id, up: item.up })
+                        ws.send({ route: ['Slave', 'up'], sid: item.id, up: item.up })
                     }
                 },
             ],
@@ -106,7 +106,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
                 {
                     type: 'button', name: '升级', value: '', style: {}, calllback: () => {
                         this.addChild(new confirmBox('确定使用副将心法?', () => {
-                            ws.send({ route: 'goods', uri: "useVaria", id: item.id, type: 3, num: 1 })
+                            ws.send({ route: ['Goods', "useVaria"], id: item.id, type: 3, num: 1 })
                         }))
                     }
                 }
@@ -133,8 +133,8 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
                 { type: 'button', name: '副将生平', value: '100', style: false, calllback: () => { Manager.changeScene(new SlaveSlaveDetailScene(item['slave'], SlaveDetailScene)) } },
                 {
                     type: 'button', name: '解雇副将', value: '100', style: false, calllback: () => {
-                        this.addChild(new confirmBox('确定要解雇副将吗?', () => {
-                            ws.send({ route: 'slave', uri: "del", id: item.id })
+                        this.addChild(new confirmBox('即将解雇副将!!!', () => {
+                            ws.send({ route: ['Slave', "del"], id: item.id })
                         }))
                     }
                 },
@@ -242,7 +242,7 @@ export class SkillScene extends ManageContainer implements IScene {
                         var item = data.skill[index];
                         var lv: any = { 1: '一', 2: '二', 3: '三', 4: '四', 5: '五' };
                         this.addChild(new confirmBox("确定使用" + lv[item.lv] + "级技能书?", () => {
-                            ws.send({ route: 'goods', uri: "useVaria", id: item.id, type: 2, num: 1 })
+                            ws.send({ route: ['Goods', "useVaria"], id: item.id, type: 2, num: 1 })
                         }));
                     }
                 },
@@ -254,7 +254,7 @@ export class SkillScene extends ManageContainer implements IScene {
             {
                 type: 'button', name: '学习技能', value: '', style: {}, color: 0x4e50b5, calllback: () => {
                     this.addChild(new confirmBox("确定学习新技能?", () => {
-                        ws.send({ route: 'slave', uri: "skillStudy", usid: data.id })
+                        ws.send({ route: ['Slave', "skillStudy"], usid: data.id })
                     }));
                 }
             },
@@ -284,7 +284,7 @@ export class AttributeScene extends ManageContainer implements IScene {
         confirm.x = 72;
         confirm.y = Manager.height * 0.86;
         this.addChild(confirm);
-        confirm.on('pointertap', () => ws.send({ route: 'slave', uri: 'attr', attr: this.attr, id: item.id }))
+        confirm.on('pointertap', () => ws.send({ route: ['Slave', 'setAttr'], attr: this.attr, id: item.id }))
 
         var reset = new Button('重新分配', {}, 0x4e50b5, () => { }, true);
         reset.x = confirm.x + confirm.width + 50;

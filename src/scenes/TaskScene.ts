@@ -16,7 +16,7 @@ export class TaskScene extends ManageContainer implements IScene {
         // app bakcgroupd
         Manager.backgroundColor(0x360033);
 
-        ws.send({ route: 'task', 'id': 3 });
+        ws.send({ route: ["Task", "list"], 'id': 3 });
 
         this.interactive = true;
         this.on('pointertap', () => {

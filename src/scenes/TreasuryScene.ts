@@ -89,7 +89,11 @@ export class TreasuryScene extends ManageContainer implements IScene {
             [
                 { type: 'button', name: '宝物', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
                 { type: 'button', name: '经验书', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
-                { type: 'button', name: '副将', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { ws.send({ route: "slave", uri: "slave", attr: "up" }) } },
+                {
+                    type: 'button', name: '副将', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => {
+                        ws.send({ route: ["Slave", "slave"], attr: "up" });
+                    }
+                },
             ],
         ];
         this.scrollbox.content.addChild(this.structure(data));
@@ -170,7 +174,7 @@ export class SlaveScene extends ManageContainer implements IScene {
             [{
                 type: 'button', name: '招募副将', value: '', style: { fontSize: 46 }, color: 0xC600C3, calllback: () => {
                     Manager.currentScene.addChild(new confirmBox('确定招募副将?', () => {
-                        ws.send({ route: "slave", uri: "get" });
+                        ws.send({ route: ["Slave", "get"] });
                         Manager.changeScene(new SlaveScene)
                     }))
                 }

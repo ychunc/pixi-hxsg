@@ -25,17 +25,13 @@ export class Route {
                 Manager.changeScene(new MainScene);
                 break;
             case 'map':
-                MainScene.mapData = result.data
+                MainScene.mapData = result.data;
                 Manager.currentScene.changeNavPage(MainScene.currentNavIndex);
                 break;
             case 'plot':
-                setTimeout(() => {
-                    Manager.currentScene.dialogue.data = result.data;
-                    Manager.currentScene.dialogue.initText();
-                    Manager.currentScene.dialogue.plot = result.data.Plot;
-                    Manager.currentScene.dialogue.task = result.data.Task;
-                    Manager.currentScene.dialogue.plotText();
-                }, 500);
+                Manager.currentScene.dialogue.setData(result.data);
+                Manager.currentScene.dialogue.textAction();
+                Manager.currentScene.dialogue.textPlot();
                 break;
             case 'user':
                 switch (route[1]) {
@@ -65,7 +61,7 @@ export class Route {
                         Location.to(SlaveScene);
                         break;
                     case 'del':
-                        Location.to(SlaveScene, { route: "slave", uri: "list" });
+                        Location.to(SlaveScene, { route: ["slave", "list"] });
                         break;
                     case 'slave':
                         SlaveSlaveScene.data = result.data;

@@ -257,10 +257,10 @@ export class MainScene extends ManageContainer implements IScene {
                             console.log('message...');
                             break;
                         case 'game':
-                            ws.send({ "route": "game", "uri": "join" })
+                            ws.send({ "route": ["game", "join"] })
                             break;
                         case 'npc':
-                            ws.send({ "route": "npc", "uri": "join" })
+                            ws.send({ "route": ["npc", "join"] })
                             break;
                     }
                 });

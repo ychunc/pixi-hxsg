@@ -426,7 +426,7 @@ export class GameScene extends ManageContainer implements IScene {
                 skill.push(row['sikll'].toString());
             }
 
-            ws.send({ route: GameScene.gameType == 'NPC' ? 'npc' : 'game', uri: "row", "data": data, "skill": skill });
+            ws.send({ route: [GameScene.gameType == 'NPC' ? 'Npc' : 'Game', "row"], "data": data, "skill": skill });
             return;
         }
 

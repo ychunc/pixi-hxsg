@@ -58,6 +58,9 @@ export class MainScene extends ManageContainer implements IScene {
         // app bakcgroupd
         Manager.backgroundColor(0x000);
 
+        // 获取最新地图
+        ws.send({ "route": ["Map", "map"], "index": 1 });
+
         this.addChild(Manager.chat = Chat.getInstance());
     }
 
@@ -158,7 +161,7 @@ export class MainScene extends ManageContainer implements IScene {
 
             row.interactive = true;
             row.on("pointertap", () => {
-                ws.send({ route: 'map', data: item[0], msg: '移动位置' });
+                ws.send({ route: ['Map', 'map'], index: item[0], msg: '移动位置' });
             });
         }
 
@@ -176,10 +179,10 @@ export class MainScene extends ManageContainer implements IScene {
 
         var datas = [
             { 'name': '状态', 'calllback': () => { Manager.changeScene(new UserScene) }, },
-            { 'name': '物品', 'calllback': () => { Location.to(PackScene, { route: 'goods', uri: 'list', 'type': 3 }) }, },
-            { 'name': '副将', 'calllback': () => { Location.to(SlaveScene, { route: "slave", uri: 'list' }) }, },
+            { 'name': '物品', 'calllback': () => { Location.to(PackScene, { route: ["Goods", "list"], "type": 3 }) }, },
+            { 'name': '副将', 'calllback': () => { Location.to(SlaveScene, { route: ["Slave", "list"] }) }, },
             { 'name': '组队', 'calllback': () => { }, },
-            { 'name': '排行', 'calllback': () => { Location.to(SortScene, { route: 'user', uri: 'sort' }) }, },
+            { 'name': '排行', 'calllback': () => { Location.to(SortScene, { route: ["User", "sort"] }) }, },
             { 'name': '好友', 'calllback': () => { Manager.changeScene(new FriendScene) }, },
             { 'name': '邮件', 'calllback': () => { }, },
             { 'name': '任务', 'calllback': () => { Manager.changeScene(new TaskScene) }, },
@@ -283,19 +286,19 @@ export class MainScene extends ManageContainer implements IScene {
                 var dialogue = this.dialogue = new Dialogue(MainScene.header.height);
                 switch (data.npc[key].type) {
                     case 'PLOT':
+                        dialogue.submit({ "route": ["Task", "commit"], "data": { taskId: data.npc[key].taskId } });
                         this.addChild(dialogue);
-                        ws.send({ "route": "task", "uri": "commit", "data": { taskId: data.npc[key].taskId } });
                         break;
                     case 'PVP':
                         this.addChild(ready);
                         setTimeout(() => {
-                            ws.send({ "route": "game", "uri": "join" });
+                            ws.send({ "route": ["Game", "join"] });
                         }, 500 + Math.random() * 1000);
                         break;
                     case 'PVE':
                         this.addChild(ready);
                         setTimeout(() => {
-                            ws.send({ "route": "npc", "uri": "join" });
+                            ws.send({ "route": ["Npc", "join"] });
                         }, 500 + Math.random() * 1000);
                         break;
                 }
@@ -395,7 +398,7 @@ export class MainScene extends ManageContainer implements IScene {
         home_slave.interactive = true;
         this.addChild(home_slave);
         home_slave.on("pointertap", () => {
-            Location.to(SlaveScene, { route: "slave", uri: "list" })
+            Location.to(SlaveScene, { route: ["Slave", "list"] })
         });
 
         let home_data = Sprite.from('home_data');

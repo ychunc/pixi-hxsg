@@ -130,7 +130,7 @@ export class AttributeScene extends ManageContainer implements IScene {
         confirm.x = 72;
         confirm.y = Manager.height * 0.86;
         this.addChild(confirm);
-        confirm.on('pointertap', () => ws.send({ route: 'user', uri: 'attr', attr: this.attr }))
+        confirm.on('pointertap', () => ws.send({ route: ['Sser', 'attr'], attr: this.attr }))
 
         var reset = new Button('重新分配', {}, 0x4e50b5, () => { }, true);
         reset.x = confirm.x + confirm.width + 50;
@@ -327,7 +327,7 @@ export class SkillScene extends ManageContainer implements IScene {
                         var item = data.skill[index];
                         var lv: any = { 1: '一', 2: '二', 3: '三', 4: '四', 5: '五' };
                         this.addChild(new confirmBox("确定使用" + lv[item.lv] + "级技能书?", () => {
-                            ws.send({ route: 'goods', uri: "useVaria", id: item.id, type: 2, num: 1 })
+                            ws.send({ route: ['goods', "useVaria"], id: item.id, type: 2, num: 1 })
                         }));
                     }
                 },
@@ -339,7 +339,7 @@ export class SkillScene extends ManageContainer implements IScene {
             {
                 type: 'button', name: '学习技能', value: '', style: {}, color: 0x4e50b5, calllback: () => {
                     this.addChild(new confirmBox("确定学习新技能?", () => {
-                        ws.send({ route: "user", uri: "skillStudy" })
+                        ws.send({ route: ["user", "skillStudy"] })
                     }));
                 }
             },
