@@ -187,11 +187,31 @@ export class SlaveScene extends ManageContainer implements IScene {
                 { type: 'button', name: '将才', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
             ],
             [
-                { type: 'button', name: '成长', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
-                { type: 'button', name: '血', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
-                { type: 'button', name: '精', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
-                { type: 'button', name: '攻', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
-                { type: 'button', name: '速', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
+                {
+                    type: 'button', name: '成长', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => {
+                        ws.send({ route: ["Slave", "slave"], attr: "up" })
+                    }
+                },
+                {
+                    type: 'button', name: '血', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => {
+                        ws.send({ route: ["Slave", "slave"], attr: "x" })
+                    }
+                },
+                {
+                    type: 'button', name: '精', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => {
+                        ws.send({ route: ["Slave", "slave"], attr: "j" })
+                    }
+                },
+                {
+                    type: 'button', name: '攻', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => {
+                        ws.send({ route: ["Slave", "slave"], attr: "g" })
+                    }
+                },
+                {
+                    type: 'button', name: '速', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => {
+                        ws.send({ route: ["Slave", "slave"], attr: "s" })
+                    }
+                },
             ],
         ];
 
@@ -201,6 +221,7 @@ export class SlaveScene extends ManageContainer implements IScene {
     public lists() {
         var container = new Container();
         let data = SlaveScene.data.list;
+        let attr = SlaveScene.data.attr;
 
         for (let index = 0; index < data.length; index++) {
             var row = new Container();
@@ -216,8 +237,8 @@ export class SlaveScene extends ManageContainer implements IScene {
             });
             name.on('pointertap', () => Manager.changeScene(new SlaveDetailScene(data[index], SlaveScene)));
 
-            let level = new StyleText('  (0.85-' + data[index].up + ')', { fontSize: 40 });
-            level.x = name.width
+            let level = new StyleText('  (0.85-' + data[index][attr] + ')', { fontSize: 40 });
+            level.x = name.width;
 
             let cloumn = new Graphics();
             cloumn.beginFill(0xFFFFFF, 0.2).drawRect(-6, -6, Manager.width * 0.8, 60);

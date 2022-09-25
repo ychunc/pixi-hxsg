@@ -130,7 +130,7 @@ export class AttributeScene extends ManageContainer implements IScene {
         confirm.x = 72;
         confirm.y = Manager.height * 0.86;
         this.addChild(confirm);
-        confirm.on('pointertap', () => ws.send({ route: ['Sser', 'attr'], attr: this.attr }))
+        confirm.on('pointertap', () => ws.send({ route: ['User', 'setAttr'], attr: this.attr }))
 
         var reset = new Button('重新分配', {}, 0x4e50b5, () => { }, true);
         reset.x = confirm.x + confirm.width + 50;

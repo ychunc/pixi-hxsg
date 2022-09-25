@@ -5,6 +5,8 @@ import { MainScene } from "./MainScene";
 import { Button, Frame, Header, StyleText } from "../components/component";
 import { Scrollbox } from "pixi-scrollbox";
 
+import { Location } from "../components/route";
+
 export class PackScene extends ManageContainer implements IScene {
 
     constructor() {
@@ -49,7 +51,7 @@ export class PackScene extends ManageContainer implements IScene {
         // 物品类型
         var data = ['药品', '装备', '矿石', '杂物'];
         var width = 20;
-        data.forEach((element) => {
+        data.forEach((element, key) => {
             var button = new Button(element, { fontSize: 46, fill: 0x63005d }, 0xdea500, (_this) => {
                 _this.butWidth *= 1.2;
             });
@@ -59,7 +61,7 @@ export class PackScene extends ManageContainer implements IScene {
             width += button.width + 10;
             scrollbox.content.addChild(button);
 
-            button.on('pointertap', () => Manager.changeScene(new PackScene));
+            button.on('pointertap', () => Location.to(PackScene, { route: ["Goods", "list"], "type": key }));
         });
 
         // 分割线

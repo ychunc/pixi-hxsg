@@ -179,7 +179,7 @@ export class MainScene extends ManageContainer implements IScene {
 
         var datas = [
             { 'name': '状态', 'calllback': () => { Manager.changeScene(new UserScene) }, },
-            { 'name': '物品', 'calllback': () => { Location.to(PackScene, { route: ["Goods", "list"], "type": 3 }) }, },
+            { 'name': '物品', 'calllback': () => { Location.to(PackScene, { route: ["Goods", "list"], "type": 0 }) }, },
             { 'name': '副将', 'calllback': () => { Location.to(SlaveScene, { route: ["Slave", "list"] }) }, },
             { 'name': '组队', 'calllback': () => { }, },
             { 'name': '排行', 'calllback': () => { Location.to(SortScene, { route: ["User", "sort"] }) }, },
