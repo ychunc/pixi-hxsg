@@ -74,7 +74,7 @@ export class ws {
         }
 
         if (data.type == 'ping') {
-            ws.websocket.send(JSON.stringify({ route: ["Api", "pong"] }));
+            ws.websocket.send(JSON.stringify({ route: ["Tool", "pong"] }));
         }
     }
 

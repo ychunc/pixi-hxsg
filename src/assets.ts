@@ -75,6 +75,8 @@ let base = [
     { name: 'game_fail', url: "./game/fail.png" },
     { name: 'game_row', url: "./game/row.png" },
 
+    { name: 'm_1', url: "./game/m_1.png" },
+
     // ui
     { name: "home_nav", url: "./ui/home_nav.json" },
     { name: "home_nav_text", url: "./ui/home_nav_text.json" },
@@ -131,9 +133,7 @@ let base = [
     { name: "map_5", url: "./ui/map_5.png" },
     { name: "map_6", url: "./ui/map_6.png" },
 
-
     { name: "avatar", url: "./avatar/avatar.png" },
-
 ]
 data.push(base)
 export const assets = data

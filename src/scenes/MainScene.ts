@@ -281,7 +281,6 @@ export class MainScene extends ManageContainer implements IScene {
             but_bg.on("pointertap", () => {
                 var ready = new Ready();
                 ready.zIndex = 10;
-                console.log('MainScene.header', MainScene.header);
 
                 var dialogue = this.dialogue = new Dialogue(MainScene.header.height);
                 switch (data.npc[key].type) {
@@ -292,7 +291,7 @@ export class MainScene extends ManageContainer implements IScene {
                     case 'PVP':
                         this.addChild(ready);
                         setTimeout(() => {
-                            ws.send({ "route": ["Game", "join"] });
+                            ws.send({ "route": ["User", "joinGame"] });
                         }, 500 + Math.random() * 1000);
                         break;
                     case 'PVE':
@@ -416,7 +415,6 @@ export class MainScene extends ManageContainer implements IScene {
         ];
 
         for (const key in texts) {
-
             let style = Object.assign({
                 fontSize: 30,
             }, texts[key].style);

@@ -1,6 +1,6 @@
 import { Container, Sprite, Texture } from "pixi.js";
 import { IScene, Manager, ManageContainer } from "../Manager";
-import { StyleText, Frame, Header, Button, SceneTite, confirmBox } from "../components/component";
+import { StyleText, Frame, Header, Button, SceneTitle, confirmBox } from "../components/component";
 import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
 import { Scrollbox } from "pixi-scrollbox";
@@ -17,7 +17,7 @@ export class UserScene extends ManageContainer implements IScene {
 
         let header = new Header();
         let frame = new Frame();
-        let title = new SceneTite('赤壁区-' + UserScene.data.nick + '(10001)');
+        let title = new SceneTitle('赤壁区-' + UserScene.data.nick + '(10001)');
 
 
         // app bakcgroupd
@@ -122,7 +122,7 @@ export class AttributeScene extends ManageContainer implements IScene {
 
         let header = new Header();
         let frame = new Frame();
-        let title = new SceneTite('分配属性点');
+        let title = new SceneTitle('分配属性点');
 
         this.infos();
 
@@ -197,7 +197,7 @@ export class AttributeScene extends ManageContainer implements IScene {
                 { type: 'button', name: ' +1 ', value: 0, style: {}, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, 1, 'hp') },
                 { type: 'button', name: ' +3 ', value: 0, style: {}, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, 3, 'hp') },
                 { type: 'button', name: ' -1 ', value: 0, style: { x: 350 }, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, -1, 'hp') },
-                { type: 'button', name: ' -3 ', value: 0, style: { x: 456 }, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, -3, 'hp') },
+                { type: 'button', name: ' -3 ', value: 0, style: { x: 468 }, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, -3, 'hp') },
             ],
 
             [{ type: 'text', name: '精力', value: item.struct.d.x, style: {}, color: 0xdea500, calllback: () => { } },],
@@ -210,7 +210,7 @@ export class AttributeScene extends ManageContainer implements IScene {
                 { type: 'button', name: ' +1 ', value: 0, style: {}, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, 1, 'mp') },
                 { type: 'button', name: ' +3 ', value: 0, style: {}, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, 3, 'mp') },
                 { type: 'button', name: ' -1 ', value: 0, style: { x: 350 }, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, -1, 'mp') },
-                { type: 'button', name: ' -3 ', value: 0, style: { x: 456 }, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, -3, 'mp') },
+                { type: 'button', name: ' -3 ', value: 0, style: { x: 468 }, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, -3, 'mp') },
             ],
 
             [{ type: 'text', name: '攻击', value: item.struct.d.g, style: {}, color: 0xdea500, calllback: () => { } },],
@@ -223,7 +223,7 @@ export class AttributeScene extends ManageContainer implements IScene {
                 { type: 'button', name: ' +1 ', value: 0, style: {}, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, 1, 'atk') },
                 { type: 'button', name: ' +3 ', value: 0, style: {}, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, 3, 'atk') },
                 { type: 'button', name: ' -1 ', value: 0, style: { x: 350 }, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, -1, 'atk') },
-                { type: 'button', name: ' -3 ', value: 0, style: { x: 456 }, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, -3, 'atk') },
+                { type: 'button', name: ' -3 ', value: 0, style: { x: 468 }, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, -3, 'atk') },
             ],
 
             [{ type: 'text', name: '速度', value: item.struct.d.s, style: {}, color: 0xdea500, calllback: () => { } },],
@@ -236,7 +236,7 @@ export class AttributeScene extends ManageContainer implements IScene {
                 { type: 'button', name: ' +1 ', value: 0, style: {}, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, 1, 'spd') },
                 { type: 'button', name: ' +3 ', value: 0, style: {}, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, 3, 'spd') },
                 { type: 'button', name: ' -1 ', value: 0, style: { x: 350 }, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, -1, 'spd') },
-                { type: 'button', name: ' -3 ', value: 0, style: { x: 456 }, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, -3, 'spd') },
+                { type: 'button', name: ' -3 ', value: 0, style: { x: 468 }, color: 0x4e50b5, calllback: (_this: any) => this.actionAttr(_this, -3, 'spd') },
             ],
         ];
 
@@ -271,7 +271,7 @@ export class SkillScene extends ManageContainer implements IScene {
 
         let header = new Header();
         let frame = new Frame();
-        let title = new SceneTite('技能');
+        let title = new SceneTitle('技能');
 
         console.log(SkillScene.data);
 

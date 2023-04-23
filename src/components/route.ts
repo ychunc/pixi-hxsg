@@ -21,6 +21,8 @@ export class Route {
                 break;
             case 'login':
                 UserScene.data = result.data;
+                console.log('login', UserScene.data);
+
                 LoginScene.removeInput();
                 Manager.changeScene(new MainScene);
                 break;

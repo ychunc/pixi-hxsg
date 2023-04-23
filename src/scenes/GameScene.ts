@@ -1,7 +1,7 @@
 import { Container, Sprite, AnimatedSprite, SCALE_MODES, Texture, Rectangle } from "pixi.js";
 import { gsap } from "gsap"
 import { IScene, Manager, ManageContainer } from "../Manager";
-import { StyleText, Button, Frame, Header, SceneTite } from "../components/component";
+import { StyleText, Button, Frame, Header, SceneTitle } from "../components/component";
 import { Animation } from "../components/animation"
 import { Skill } from "../components/skill";
 import { ws } from "../components/websocket"
@@ -72,6 +72,16 @@ export class GameScene extends ManageContainer implements IScene {
     public static round: any = {};
 
     /**
+     * 游戏头部
+     */
+    public static GameHeader: GameHeader;
+
+    /**
+     * 游戏背景
+     */
+    public static GameBg: GameBg;
+
+    /**
      * 当前操作的角色
      */
     public current_select_action_index = 0;
@@ -82,10 +92,10 @@ export class GameScene extends ManageContainer implements IScene {
         super();
 
         // GAME 背景
-        this.addChild(this.background());
+        this.addChild(GameScene.GameBg = new GameBg);
 
         // GAME 头部
-        this.addChild(this.header());
+        this.addChild(GameScene.GameHeader = new GameHeader);
 
         // GAME 返回按钮
         this.addChild(this.back());
@@ -133,7 +143,7 @@ export class GameScene extends ManageContainer implements IScene {
         T.y = 200;
         this.addChild(T);
 
-        // 初始人物选择
+        // 初始选择人物
         GameScene.T.PP['P2'][this.current_select_action_index].addChild(GameScene.f_jt);
 
         // 必须让人物入场完成后再
@@ -170,51 +180,6 @@ export class GameScene extends ManageContainer implements IScene {
         but9.on("pointertap", () => {
             this.playGame();
         }, this);
-    }
-
-    /**
-     * 头部
-     */
-    public header() {
-        let container = new Container();
-
-        let game_title = Sprite.from('game_title');
-        game_title.scale.x = 1.18;
-        game_title.scale.y = 1.18;
-        container.addChild(game_title);
-
-        let addressName = new StyleText('许昌', { fontSize: 30 });
-        addressName.x = Manager.width / 2 - addressName.width / 2;
-        addressName.y = 8;
-        container.addChild(addressName);
-
-        let titleNameBg = Sprite.from('title_name');
-        titleNameBg.scale.y = 1.6;
-        titleNameBg.x = Manager.width / 2 - titleNameBg.width / 2;
-        titleNameBg.y = 45;
-        container.addChild(titleNameBg);
-
-        let TitleName = new StyleText('东方不败-出招(60)', { fontSize: 28 });
-        TitleName.x = Manager.width / 2 - TitleName.width / 2;
-        TitleName.y = 48;
-        container.addChild(TitleName);
-
-        let leftName = new StyleText(GameScene.gameUser[0].nick, { fontSize: 30 });
-        leftName.text.anchor.x = 0.5;
-        leftName.x = 90;
-        leftName.y = 52;
-        container.addChild(leftName);
-
-        let rightName = new StyleText(GameScene.gameUser[1].nick, { fontSize: 30 });
-        rightName.text.anchor.x = 0.5;
-        rightName.x = Manager.width - 90;
-        rightName.y = 52;
-        container.addChild(rightName);
-
-        rightName.interactive = true;
-        rightName.on("pointertap", () => Manager.changeScene(new MainScene));
-
-        return container;
     }
 
     /**
@@ -426,7 +391,11 @@ export class GameScene extends ManageContainer implements IScene {
                 skill.push(row['sikll'].toString());
             }
 
-            ws.send({ route: [GameScene.gameType == 'NPC' ? 'Npc' : 'Game', "row"], "data": data, "skill": skill });
+            let action: any = {
+                'NPC': ['Npc', 'actionGame'],
+                'GAME': ['User', 'actionGame'],
+            }
+            ws.send({ route: action[GameScene.gameType], "data": data, "skill": skill });
             return;
         }
 
@@ -631,25 +600,6 @@ export class GameScene extends ManageContainer implements IScene {
     }
 
     /**
-     * 游戏背景容器
-     */
-    public static GameBg: Sprite;
-
-    /**
-     * 显示游戏背景
-     * @returns any
-     */
-    public background() {
-        var bg = Sprite.from('bg10');
-        bg.y = 92;
-        bg.scale.x = 3.2;
-        bg.scale.y = 2.94;
-        bg.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST
-        GameScene.GameBg = bg;
-        return bg;
-    }
-
-    /**
      * 控制血条百分比
      */
     public static bloodRate() {
@@ -658,7 +608,6 @@ export class GameScene extends ManageContainer implements IScene {
             for (var n = 0; n < team_data[P].length; n++) {
                 let ps = team_data[P][n];
                 // 更新血蓝条
-                console.log(GameScene.T.PP, P, n);
                 GameScene.T.PP[P.toLocaleUpperCase()][n].setHPMask(ps.d.x / ps.d.x_)
             }
         }
@@ -751,7 +700,9 @@ export class GameScene extends ManageContainer implements IScene {
 
             tl.add(gsap.to({}, { duration: 0.00001 }).eventCallback('onComplete', () => {
                 // 背景黑色
-                if (item.sk > 0) GameScene.GameBg.visible = false;
+                if (item.sk > 0) GameScene.GameBg.display(false);
+                // 更新标题
+                GameScene.GameHeader.updateTitle("[" + item.pk_g.p + "] " + item.pk_g.n + "[" + item.sk + "]");
             }));
 
             // 镜头开始X
@@ -785,12 +736,17 @@ export class GameScene extends ManageContainer implements IScene {
      * 运行前准备
      */
     public readyRunGame() {
+        console.log('运行前准备');
+
         // 清空当前队员指针
         this.current_select_action_index = 0;
 
         // 隐藏选择动画
         GameScene.f_jt.visible = false;
         GameScene.map_zz.visible = false;
+
+        // 清空倒计时
+        GameScene.GameHeader.StopCountDown();
 
         // 隐藏buff
         this.buff(false);
@@ -818,13 +774,146 @@ export class GameScene extends ManageContainer implements IScene {
         // 显示控制/增益图标 
         this.buff();
 
-        // 倒计时重置
-        // game_timer = 60;
-        // 自动战斗
-        // _this.autoPk();
+        // 倒计时
+        GameScene.GameHeader.startCountDown(30);
 
         // 游戏结束
         if (GameScene.GameOver == 'end') Manager.changeScene(new GameOver);
+    }
+
+}
+
+export class GameBg extends Container {
+
+    public bg: Sprite;
+
+    constructor() {
+        super();
+
+        // 背景
+        this.addChild(this.bg = this.background());
+        // 战马
+        this.addChild(this.steed());
+    }
+
+    public display(visible: boolean, type: string = '') {
+        switch (type) {
+            case 'bg':
+                this.bg.visible = visible;
+                break;
+            default:
+                this.bg.visible = visible;
+                this.visible = visible;
+                break;
+        }
+    }
+
+    /**
+     * 战马
+     */
+    public steed() {
+        let steed = Sprite.from('m_1');
+        steed.scale.x = 3.2;
+        steed.scale.y = 2.94;
+        steed.y = 200;
+        steed.x = Manager.width - steed.width;
+        steed.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST
+        return steed;
+    }
+
+
+
+    /**
+     * 显示游戏背景
+     * @returns any
+     */
+    public background() {
+        let sprite = Sprite.from('bg10');
+        sprite.y = 92;
+        sprite.scale.x = 3.2;
+        sprite.scale.y = 2.94;
+        sprite.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+        return sprite;
+    }
+
+}
+
+export class GameHeader extends Container {
+
+    public title: StyleText;
+
+    public countDown: any;
+
+    constructor() {
+        super();
+
+        this.backgroud();
+        this.address();
+        this.nick();
+
+        let title = new StyleText('东方不败-出招(60)', {
+            fontSize: 28,
+            align: "center",
+            wordWrap: true,
+            wordWrapWidth: 300
+        });
+        title.text.anchor.x = 0.5;
+        title.x = Manager.width / 2 - title.width / 2 + title.width / 2;
+        title.y = 48;
+        this.title = title;
+        this.addChild(this.title);
+
+        this.startCountDown();
+    }
+
+    public backgroud() {
+        let game_title = Sprite.from('game_title');
+        game_title.scale.x = 1.18;
+        game_title.scale.y = 1.18;
+        this.addChild(game_title);
+
+        let titleNameBg = Sprite.from('title_name');
+        titleNameBg.scale.y = 1.6;
+        titleNameBg.x = Manager.width / 2 - titleNameBg.width / 2;
+        titleNameBg.y = 45;
+        this.addChild(titleNameBg);
+    }
+
+    public address() {
+        let addressName = new StyleText('许昌', { fontSize: 30 });
+        addressName.x = Manager.width / 2 - addressName.width / 2;
+        addressName.y = 8;
+        this.addChild(addressName);
+    }
+
+    public startCountDown(time: number = 60) {
+        this.updateTitle(`东方不败-出招(${time})`)
+        this.countDown = gsap.to(this.title, { duration: 1, ease: 'none', repeat: time }).eventCallback("onRepeat", () => {
+            time--;
+            this.updateTitle(`东方不败-出招(${time})`)
+        });
+    }
+
+    public StopCountDown() {
+        this.countDown.kill();
+    }
+
+    public updateTitle(txt: string) {
+        this.title.text.text = txt;
+    }
+
+    public nick() {
+        let leftName = new StyleText(GameScene.gameUser[0].nick, { fontSize: 30 });
+        leftName.text.anchor.x = 0.5;
+        leftName.x = 90;
+        leftName.y = 52;
+        this.addChild(leftName);
+
+        let rightName = new StyleText(GameScene.gameUser[1].nick, { fontSize: 30 });
+        rightName.text.anchor.x = 0.5;
+        rightName.x = Manager.width - 90;
+        rightName.y = 52;
+        this.addChild(rightName);
     }
 
 }
@@ -836,7 +925,7 @@ export class GameOver extends ManageContainer implements IScene {
 
         let header = new Header();
         let frame = new Frame();
-        let title = new SceneTite('按任意键返回');
+        let title = new SceneTitle('按任意键返回');
         title.y = Manager.height * 0.70;
 
         let status = { color: 0x5e5f5e, image: 'game_fail' };

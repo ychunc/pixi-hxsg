@@ -1,4 +1,4 @@
-import { Container, Graphics, Text, TextStyle, Sprite, ITextStyle, Texture, InteractionEvent } from "pixi.js";
+import { Container, Graphics, Text, TextStyle, Sprite, ITextStyle, Texture } from "pixi.js";
 
 import gsap from "gsap";
 
@@ -11,6 +11,8 @@ import { ws } from "./websocket";
 
 type Callback = (...args: any[]) => void | null;
 
+var fontFamily = '9pxDemo'
+var fontFamily = 'inherit'
 
 export class Dialogue extends Container {
 
@@ -289,41 +291,46 @@ export class Ready extends Container {
 
 }
 
-export class ClickEffect {
+// export class ClickEffect {
 
-    /**
-     * 点击效果
-     * @param event 
-     */
-    constructor(event: InteractionEvent) {
-        let scale = 0.3;
+//     /**
+//      * 点击效果
+//      * @param event 
+//      */
+//     constructor(event: InteractionEvent) {
+//         let scale = 0.3;
 
-        var c1 = Sprite.from('c1');
-        var c2 = Sprite.from('c2');
-        var c3 = Sprite.from('c3');
-        Manager.app.stage.addChild(c1, c2, c3);
+//         var c1 = Sprite.from('c1');
+//         var c2 = Sprite.from('c2');
+//         var c3 = Sprite.from('c3');
+//         Manager.app.stage.addChild(c1, c2, c3);
 
-        c1.tint = 0xFFFFFF;
-        c2.tint = 0xFF3399;
-        c3.tint = 0xFFFFFF;
+//         c1.tint = 0xFFFFFF;
+//         c2.tint = 0xFF3399;
+//         c3.tint = 0xFFFFFF;
 
-        [c1, c2, c3].forEach((obj) => {
-            obj.zIndex = 500;
-            obj.scale.set(0.1);
-            obj.anchor.set(0.5);
-            obj.x = event.data.global.x;
-            obj.y = event.data.global.y;
-        });
+//         [c1, c2, c3].forEach((obj) => {
+//             obj.zIndex = 500;
+//             obj.scale.set(0.1);
+//             obj.anchor.set(0.5);
+//             obj.x = event.data.global.x;
+//             obj.y = event.data.global.y;
+//         });
 
-        gsap.to(c1.scale, { duration: 0.3, x: scale, y: scale });
-        gsap.to(c2.scale, { duration: 0.3, x: scale, y: scale });
-        gsap.to(c3.scale, { delay: 0.1, duration: 0.3, x: scale, y: scale });
+//         gsap.to(c1.scale, { duration: 0.3, x: scale, y: scale });
+//         gsap.to(c2.scale, { duration: 0.3, x: scale, y: scale });
+//         gsap.to(c3.scale, { delay: 0.1, duration: 0.3, x: scale, y: scale });
 
-        gsap.to(c1, { delay: 0.2, duration: 0.3, tint: 0xFF3399, alpha: 0 });
-        gsap.to(c2, { delay: 0.1, duration: 0.3, alpha: 0 });
-        gsap.to(c3, { delay: 0.3, duration: 0.3, alpha: 0 });
-    }
-}
+//         gsap.to(c1, { delay: 0.2, duration: 0.3, tint: 0xFF3399, alpha: 0 });
+//         gsap.to(c2, { delay: 0.1, duration: 0.3, alpha: 0 });
+//         gsap.to(c3, { delay: 0.3, duration: 0.3, alpha: 0 });
+
+
+//         sound.play('sound1');
+//         console.log('click');
+
+//     }
+// }
 
 export class Scrollbox extends PIXIScrollbox {
 
@@ -389,7 +396,7 @@ export class Avatar extends Container {
 }
 
 
-export class SceneTite extends Container {
+export class SceneTitle extends Container {
 
     public text: StyleText;
     /**
@@ -507,12 +514,12 @@ export class StyleText extends Container {
         super();
 
         style = Object.assign({
-            // fontFamily: '9pxDemo',
-            fontFamily: 'Arial',
+            fontFamily: fontFamily,
             fontWeight: 'bold',
             fontSize: 40,
             fill: '#ffffeb',
             lineJoin: "round",
+            breakWords: true,
         }, style);
         this.text = new Text(txt, style)
 
@@ -554,11 +561,9 @@ export class confirmBox extends Container {
         // 提示文本
         let color = ['d3393c']; color;
         style = Object.assign({
-            // fontFamily: '9pxDemo',
-            fontFamily: 'Arial',
+            fontFamily: fontFamily,
             fontWeight: 'bold',
             fontSize: 38,
-            // fill: '#FFF',
             fill: '#ffffeb',
 
         }, style);
@@ -647,7 +652,7 @@ export class Button extends Container {
 
         // 文字
         let Textstyle = new TextStyle({
-            // fontFamily: '9pxDemo',
+            fontFamily: fontFamily,
             fontSize: 50,
             fill: ['#ffffff'],
             lineJoin: 'round',

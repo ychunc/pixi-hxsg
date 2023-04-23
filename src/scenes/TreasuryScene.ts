@@ -3,7 +3,7 @@ import { Container, Graphics } from "pixi.js";
 import { ManageContainer, IScene, Manager } from "../Manager";
 
 import {
-    Header, Frame, SceneTite, StyleText, SplitLine,
+    Header, Frame, SceneTitle, StyleText, SplitLine,
     Scrollbox, Button, Avatar, confirmBox
 } from "../components/component";
 
@@ -19,7 +19,7 @@ export class TreasuryScene extends ManageContainer implements IScene {
         super();
         let header = new Header();
         let frame = new Frame();
-        let title = new SceneTite('宝物');
+        let title = new SceneTitle('宝物');
         let splitLine = new SplitLine();
 
         // app backgroundColor
@@ -112,7 +112,7 @@ export class SlaveScene extends ManageContainer implements IScene {
         super();
         let header = new Header();
         let frame = new Frame();
-        let title = new SceneTite('招贤馆');
+        let title = new SceneTitle('招贤馆');
         let splitLine = new SplitLine();
 
         // app backgroundColor
@@ -272,7 +272,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
 
         let header = new Header();
         let frame = new Frame();
-        let title = new SceneTite(item.name);
+        let title = new SceneTitle(item.name);
 
         this.lists(item);
 

@@ -1,7 +1,7 @@
 import { IScene, Manager, ManageContainer } from "../Manager";
 import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
-import { Header, Frame, SceneTite } from "../components/component";
+import { Header, Frame, SceneTitle } from "../components/component";
 import { ws } from "../components/websocket";
 
 export class TaskScene extends ManageContainer implements IScene {
@@ -11,7 +11,7 @@ export class TaskScene extends ManageContainer implements IScene {
 
         let header = new Header();
         let frame = new Frame();
-        let title = new SceneTite('剧情任务');
+        let title = new SceneTitle('剧情任务');
 
         // app bakcgroupd
         Manager.backgroundColor(0x360033);

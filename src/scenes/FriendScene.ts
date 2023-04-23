@@ -1,7 +1,7 @@
 import { IScene, Manager, ManageContainer } from "../Manager";
 import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
-import { Header, Frame, SceneTite, Button } from "../components/component";
+import { Header, Frame, SceneTitle, Button } from "../components/component";
 import { Container, Graphics } from "pixi.js";
 // import { ws } from "../components/websocket";
 
@@ -12,7 +12,7 @@ export class FriendScene extends ManageContainer implements IScene {
 
         let header = new Header();
         let frame = new Frame();
-        let title = new SceneTite('好友(56/100)')
+        let title = new SceneTitle('好友(56/100)')
 
         // app bakcgroupd
         Manager.backgroundColor(0x360033);
@@ -110,7 +110,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
 
         var item = SlaveDetailScene.data
 
-        let title = new SceneTite('副将:' + item.slave.name);
+        let title = new SceneTitle('副将:' + item.slave.name);
 
         // let data = [
         //     [
@@ -203,7 +203,7 @@ export class SkillScene extends ManageContainer implements IScene {
 
         let header = new Header();
         let frame = new Frame();
-        let title = new SceneTite('技能')
+        let title = new SceneTitle('技能')
 
         this.addChild(frame, header, title, new Back(SlaveDetailScene));
     }
@@ -219,7 +219,7 @@ export class AttributeScene extends ManageContainer implements IScene {
 
         let header = new Header();
         let frame = new Frame();
-        let title = new SceneTite(item.slave.name + '属性点')
+        let title = new SceneTitle(item.slave.name + '属性点')
 
         this.addChild(frame, header, title, new Back(SlaveDetailScene));
     }
@@ -233,7 +233,7 @@ export class AbilityScene extends ManageContainer implements IScene {
 
         let header = new Header();
         let frame = new Frame();
-        let title = new SceneTite('战斗能力')
+        let title = new SceneTitle('战斗能力')
 
         this.addChild(frame, header, title, new Back(SlaveDetailScene));
     }

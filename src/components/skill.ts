@@ -12,7 +12,6 @@ export class Skill {
     public data: any;
 
     constructor(data: any) {
-
         this.tl = gsap.timeline();;
 
         this.data = data;
@@ -83,7 +82,7 @@ export class Skill {
 
         this.tl.add(gsap.to(T, { duration: 0.00001, x: 0 }).eventCallback('onComplete', () => {
             // 背景恢复
-            GameScene.GameBg.visible = true;
+            GameScene.GameBg.display(true);
             // 扣血数字
             this.bloodAnimation(this.data['pk_s']);
             this.bloodAnimation(this.data['pk_g']);
@@ -162,10 +161,10 @@ export class Skill {
 
     public static bgShock(tl = gsap.timeline(), t = 0.06) {
         tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
-            GameScene.GameBg.visible = true;
+            GameScene.GameBg.display(true, 'bg');
         }));
         tl.add(gsap.to({}, { duration: t }).eventCallback('onComplete', () => {
-            GameScene.GameBg.visible = false;
+            GameScene.GameBg.display(false, 'bg');
         }));
     }
 
@@ -285,7 +284,7 @@ export class Skill {
 
         let XB = (row['pk_g']['p'].toLocaleUpperCase() == 'P1' ? 1 : -1)
 
-        GameScene.GameBg.visible = false;
+        GameScene.GameBg.display(false, 'bg');
 
         // 绿~红白绿~
         this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
@@ -457,7 +456,7 @@ export class Skill {
 
         // 背景闪动
         this.tl.add(gsap.to({}, { duration: 0.03 }).eventCallback('onComplete', () => {
-            GameScene.GameBg.visible = true;
+            GameScene.GameBg.display(true, 'bg');
         }));
 
         this.tl.add(gsap.to(line, { alpha: 0.4, duration: 0.05 }).eventCallback('onComplete', () => {
@@ -465,7 +464,7 @@ export class Skill {
         }, [line]));
 
         this.tl.add(gsap.to({}, { duration: 0.06 }).eventCallback('onComplete', () => {
-            GameScene.GameBg.visible = false;
+            GameScene.GameBg.display(false, 'bg');
         }));
 
         let PGX = PG.x;

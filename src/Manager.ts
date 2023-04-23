@@ -1,9 +1,12 @@
-import { Application, Container, DisplayObject, InteractionEvent, Sprite,/** Ticker, UPDATE_PRIORITY **/ } from 'pixi.js'
+import {
+    Application, Container, DisplayObject, InteractionEvent, Sprite,
+    Ticker, UPDATE_PRIORITY
+} from 'pixi.js'
 
 import gsap from 'gsap';
 
 import { Particles } from "./components/particles";
-// import { addStats } from 'pixi-stats';
+import { addStats } from 'pixi-stats';
 
 export class Manager {
     public static app: Application;
@@ -63,7 +66,9 @@ export class Manager {
             height: height,
             antialias: true, // 反锯齿
         }
-        Manager.app = new Application(options)
+        Manager.app = new Application(options);
+
+        (globalThis as any).__PIXI_APP__ = Manager.app; // eslint-disable-line
 
         Manager.app.ticker.add(Manager.update)
 
@@ -83,9 +88,9 @@ export class Manager {
         Manager.app.stage.addChild(Manager.particles);
 
         // FPS
-        // const stats = addStats(document, Manager.app);
-        // const ticker: Ticker = Ticker.shared;
-        // ticker.add(stats.update, stats, UPDATE_PRIORITY.UTILITY);
+        const stats = addStats(document, Manager.app);
+        const ticker: Ticker = Ticker.shared;
+        ticker.add(stats.update, stats, UPDATE_PRIORITY.UTILITY);
 
         // ClickEffect
         Manager.app.renderer.plugins.interaction.on("pointerdown", (event: InteractionEvent) => Manager.ClickEffect(event))
@@ -118,9 +123,9 @@ export class Manager {
     public static changeScene(newScene: IScene): void {
         // Remove and destroy old scene... if we had one..
         if (Manager.currentScene) {
+
             Manager.app.stage.removeChild(Manager.currentScene);
             Manager.currentScene.destroy();
-            // Manager.currentScene.visible = false;
 
             gsap.killTweensOf('*');
         }
@@ -137,7 +142,7 @@ export class Manager {
         //     Manager.scenes.push(newScene);
         // }
 
-        // 先new出来,延迟add。解决卡顿
+        // 先new出来,延迟add,解决卡顿
         // Add the new one
         Manager.currentScene = newScene;
         Manager.app.stage.addChild(newScene);
@@ -208,9 +213,10 @@ export class Manager {
         gsap.to(c2.scale, { duration: 0.3, x: scale, y: scale });
         gsap.to(c3.scale, { delay: 0.1, duration: 0.3, x: scale, y: scale });
 
-        gsap.to(c1, { delay: 0.2, duration: 0.3, tint: 0xFF3399, alpha: 0 });
-        gsap.to(c2, { delay: 0.1, duration: 0.3, alpha: 0 });
-        gsap.to(c3, { delay: 0.3, duration: 0.3, alpha: 0 });
+        gsap.to(c1, { delay: 0.2, duration: 0.3, tint: 0xFF3399, alpha: 0 }).eventCallback("onComplete", () => c1.destroy());
+        gsap.to(c2, { delay: 0.1, duration: 0.3, alpha: 0 }).eventCallback("onComplete", () => c2.destroy());
+        gsap.to(c3, { delay: 0.3, duration: 0.3, alpha: 0 }).eventCallback("onComplete", () => c3.destroy());
+
     }
 }
 

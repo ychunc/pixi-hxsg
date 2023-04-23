@@ -81,9 +81,6 @@ export class People extends Container {
         graphics.interactive = true;
 
         graphics.on("pointertap", () => GameScene.onSelected(this.data), this);
-
-        // this.hitArea = new Rectangle(0, 0, 30, 40);
-        // this.on("pointertap", () => GameScene.onSelected(this.data), this);
     }
 
     public from(name: string, scale: any): Sprite {
@@ -290,14 +287,6 @@ export class Team extends Container {
                 { duration: 0.25, y: people.struct.body.scale.y * 1.2, ease: 'none', repeat: 100000, yoyo: true }
             );
         }
-
-        // 查看战场容器大小 [TEST]
-        const graphics = new Graphics();
-        graphics.beginFill(0xDE3249);
-        graphics.drawRect(0, 0, this.width, this.height);
-        graphics.endFill();
-        graphics.alpha = 0.5;
-        // this.addChild(graphics);
     }
 
 }
