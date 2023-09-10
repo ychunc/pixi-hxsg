@@ -14,6 +14,9 @@ export class Skill {
     constructor(data: any) {
         this.tl = gsap.timeline();;
 
+        console.log('技能=>', data.sk);
+
+
         this.data = data;
         switch (parseInt(data.sk)) {
             case 0:
@@ -34,6 +37,7 @@ export class Skill {
                 this.wlhd();
                 break;
             case 7:
+            case 71:
                 this.wgjd();
                 break;
             case 8:
@@ -67,8 +71,9 @@ export class Skill {
      */
     public static getStartX(item: any): number {
         let PG = item.pk_g.p.toLocaleUpperCase();
-        var startX = 0
-        if (item.sk > 0) {
+        var startX = 0;
+
+        if ([0, 71].indexOf(parseInt(item.sk)) == -1) {
             startX = (Manager.width / 2 - 100) * (PG == 'P1' ? 1 : -1)
         }
         return startX;
@@ -286,19 +291,24 @@ export class Skill {
 
         GameScene.GameBg.display(false, 'bg');
 
-        // 绿~红白绿~
-        this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
-            Manager.backgroundColor(0x005300); // 绿~
-        }));
-        this.tl.add(gsap.to({}, { duration: 0.5 }).eventCallback('onComplete', () => {
-            Manager.backgroundColor(0xff1700); // 红
-        }));
-        this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
-            Manager.backgroundColor(0xdedcdf); // 白
-        }));
+        if (parseInt(row.sk) == 7) {
+            // 绿~红白绿~
+            this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
+                Manager.backgroundColor(0x005300); // 绿~
+            }));
+            this.tl.add(gsap.to({}, { duration: 0.5 }).eventCallback('onComplete', () => {
+                Manager.backgroundColor(0xff1700); // 红
+            }));
+            this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
+                Manager.backgroundColor(0xdedcdf); // 白
+            }));
+        }
+
 
         this.tl.add(gsap.to({}, { duration: 0.02 }).eventCallback('onComplete', () => {
-            Manager.backgroundColor(0x005300); // 绿~
+            if (parseInt(row.sk) == 7) {
+                Manager.backgroundColor(0x005300); // 绿~
+            }
 
             // 防守方人物变化
             for (const key in this.data['pk_s']['ps']) {

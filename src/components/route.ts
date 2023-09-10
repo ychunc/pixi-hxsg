@@ -1,5 +1,5 @@
-import { ws } from "./websocket";
 import { Manager } from "../Manager";
+import { Ws } from "./websocket";
 import { MainScene } from "../scenes/MainScene";
 import { LoginScene } from "../scenes/LoginScene";
 import { SortScene } from "../scenes/SortScene";
@@ -8,11 +8,11 @@ import { AttributeScene, SkillScene, SlaveDetailScene, SlaveScene } from "../sce
 import { SlaveScene as SlaveSlaveScene } from "../scenes/TreasuryScene";
 import { PackScene } from "../scenes/PackScene";
 import { GameScene } from "../scenes/GameScene";
+import { Square } from "../scenes/Square";
 
 export class Route {
 
     constructor(result: any, route: any[]) {
-        console.log("Route :", route, result, result.msg);
 
         switch (route[0]) {
             case 'chat':
@@ -21,14 +21,33 @@ export class Route {
                 break;
             case 'login':
                 UserScene.data = result.data;
-                console.log('login', UserScene.data);
-
                 LoginScene.removeInput();
                 Manager.changeScene(new MainScene);
+                break;
+            case 'notify':
+                Manager.notify = result.data;
+                Manager.header.notify();
+
+                // 请求用户数据
+                Ws.send({ "route": ["User", "user"] });
                 break;
             case 'map':
                 MainScene.mapData = result.data;
                 Manager.currentScene.changeNavPage(MainScene.currentNavIndex);
+                break;
+            case 'square':
+                switch (route[1]) {
+                    case 'play':
+                        Manager.changeScene(new Square);
+                        break;
+                    case 'notify':
+                        Square.data = result.data;
+                        if (Manager.currentScene.constructor.name == 'Square') {
+                            Manager.currentScene.content();
+                        }
+                        break;
+                }
+
                 break;
             case 'plot':
                 Manager.currentScene.dialogue.setData(result.data);
@@ -153,7 +172,7 @@ export class Location {
     public static to(Scene: any, route?: {}) {
         console.log(route ? '发送请求:' : '开始跳转', new Date().getTime() / 1000);
         if (route) {
-            ws.send(route);
+            Ws.send(route);
         } else {
             Manager.changeScene(new Scene);
         }

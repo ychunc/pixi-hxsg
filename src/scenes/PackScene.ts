@@ -1,8 +1,7 @@
 import { Container, Graphics, Sprite, Texture } from "pixi.js";
-import { IScene, ManageContainer, Manager } from "../Manager";
-import { Back } from "../components/back";
+import { IScene, ManageContainer, Manager, } from "../Manager";
 import { MainScene } from "./MainScene";
-import { Button, Frame, Header, StyleText } from "../components/component";
+import { Button, Frame, Header, StyleText, Back, SceneTitle } from "../components/component";
 import { Scrollbox } from "pixi-scrollbox";
 
 import { Location } from "../components/route";
@@ -19,15 +18,7 @@ export class PackScene extends ManageContainer implements IScene {
         Manager.backgroundColor(0x010134);
 
         // title
-        let title = new StyleText('装备', {
-            fontSize: 40,
-            fill: '#F7EDCA',
-            stroke: '#d3393c',
-            strokeThickness: 10,
-            lineJoin: "round",
-        })
-        title.y = header.height;
-        title.x = Manager.width / 2 - title.width / 2;
+        let title = new SceneTitle('装备');
         this.addChild(title);
 
         // create the scrollbox
@@ -79,7 +70,7 @@ export class PackScene extends ManageContainer implements IScene {
 
         this.addChild(scrollbox)
 
-        scrollbox.y = header.height + title.height;
+        scrollbox.y = header.height + title.height + 10;
         scrollbox.x = Manager.width / 2 - scrollbox.width / 2;
 
         this.addChild(frame, header, new Back(MainScene));

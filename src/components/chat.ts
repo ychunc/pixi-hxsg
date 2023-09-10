@@ -2,7 +2,7 @@ import gsap from "gsap";
 import { Container, Sprite, Loader, DisplayObject } from "pixi.js";
 import { Manager } from "../Manager";
 import { Scrollbox, StyleText } from "./component";
-import { ws } from "./websocket";
+import { Ws } from "./websocket";
 
 
 export class Chat extends Container {
@@ -39,15 +39,6 @@ export class Chat extends Container {
         // Scrollbox
         this.scrollbox = new Scrollbox();
         this.setScrollbox();
-
-        // this.scrollbox.on("pointertap", (event) => this.chatFull(event, 'tap'));
-
-        // let n = 0;
-        // setInterval(() => {
-        //     let txt = '哈哈哈哈哈哈哈哈哈哈哈哈哈哈' + n;
-        //     this.message(0, txt);
-        //     n++;
-        // }, 100);
     }
 
     public messageContainer: Container = new Container;
@@ -136,7 +127,7 @@ export class Chat extends Container {
             text.focus();
             text.onkeydown = (event) => {
                 if (event.keyCode == 13) {
-                    ws.send({ "route": ["Chat", "chat"], "msg": text.value });
+                    Ws.send({ "route": ["Chat", "chat"], "msg": text.value });
                     this.removeInput();
                 }
             }
@@ -146,7 +137,7 @@ export class Chat extends Container {
             };
 
             send.on('pointertap', () => {
-                ws.send({ "route": ["Chat", "chat"], "msg": text.value });
+                Ws.send({ "route": ["Chat", "chat"], "msg": text.value });
                 this.removeInput();
             });
         })
@@ -184,12 +175,6 @@ export class Chat extends Container {
             sprite.on('pointertap', () => {
                 this.currentIndex = index;
                 this.currentChatSprite.x = 344 + this.currentIndex * 100;
-
-                // Manager.currentScene.addChild(new confirmBox('确定开启聊天?', (_this) => {
-                // ws.send({ "route": "chat", "msg": "转" })
-                //     _this.destroy();
-                // }))
-
             });
 
             container.addChild(sprite);
@@ -203,7 +188,6 @@ export class Chat extends Container {
     public background() {
         let home_chat = Sprite.from('home_chat');
         home_chat.scale.x = 1.17;
-        // home_chat.alpha = 0.5;
         this.addChild(home_chat);
         this.backgroundSprite = home_chat;
     }

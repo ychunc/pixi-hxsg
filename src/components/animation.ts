@@ -44,6 +44,30 @@ export class Animation {
         return anim;
     }
 
+    /**
+     * tit
+     * @param type 'xt','sl','yj'
+     * @returns 
+     */
+    public static tit(type: string) {
+        let data = Loader.shared.resources['tit_m'].data.animations[type];
+
+        const frames = [];
+        for (let i = 0; i < data.length; i++) {
+            frames.push(Texture.from(data[i]));
+        }
+        const anim = new AnimatedSprite(frames);
+        anim.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+
+        anim.scale.set(0.8);
+        anim.anchor.set(0.5);
+        anim.animationSpeed = 0.1;
+        anim.loop = true;
+        anim.play();
+
+        return anim;
+    }
+
     public static npc_jt() {
         let data = Loader.shared.resources['npc_jt'].data.animations.npc_jt;
 

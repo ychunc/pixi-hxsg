@@ -7,7 +7,9 @@ import { Scrollbox as PIXIScrollbox } from "pixi-scrollbox";
 import { Manager } from "../Manager";
 import { MainScene } from "../scenes/MainScene";
 import { Animation } from "./animation";
-import { ws } from "./websocket";
+import { Ws } from "./websocket";
+import { Notify } from "../scenes/Notify";
+
 
 type Callback = (...args: any[]) => void | null;
 
@@ -81,7 +83,7 @@ export class Dialogue extends Container {
 
     submit(data: any) {
         setTimeout(() => {
-            ws.send(data);
+            Ws.send(data);
         }, 500);
     }
 
@@ -438,6 +440,8 @@ export class SplitLine extends Graphics {
 
 export class Header extends Container {
 
+    public data = [];
+
     public text: StyleText;
 
     /**
@@ -470,7 +474,30 @@ export class Header extends Container {
 
         map.interactive = true;
         map.on("pointertap", () => Manager.changeScene(new MainScene), this);
+
+        Manager.header = this;
+
+        this.notify();
     }
+
+    public notify() {
+        if (Manager.notify.length <= 0) {
+            return;
+        }
+
+        var tit = Animation.tit('xt');
+        tit.y = this.height / 2;
+        tit.x = Manager.width - 30;
+
+        tit.interactive = true;
+        tit.on("pointertap", () => {
+            Manager.notify = []; // reset notify
+            Manager.changeScene(new Notify);
+        }, this);
+
+        this.addChild(tit);
+    }
+
 }
 
 export class Frame extends Container {
@@ -653,7 +680,7 @@ export class Button extends Container {
         // 文字
         let Textstyle = new TextStyle({
             fontFamily: fontFamily,
-            fontSize: 50,
+            fontSize: 40,
             fill: ['#ffffff'],
             lineJoin: 'round',
         });
@@ -771,4 +798,66 @@ export class Button extends Container {
         return this;
     }
 
+}
+
+
+export class Back extends Container {
+
+    public button: Button;
+    public backgroup: Sprite;
+    public scene: any;
+    public callback: any;
+
+    /**
+     * 返回按钮
+     * @param scene 返回的界面对象
+     * @param beforeCallback 前置回调
+     * @param afterCallback 后置回调
+     */
+    constructor(scene: any, beforeCallback: Callback = () => { }, afterCallback: Callback = () => { }) {
+        super();
+
+        this.zIndex = 950;
+
+        this.alpha = 0.3;
+
+        this.button = new Button('返回');
+
+        this.backgroup = Sprite.from("leg");
+        this.backgroup.visible = false;
+        this.addChild(this.backgroup, this.button);
+
+        this.backgroup.height = Manager.width / this.backgroup.width * 2.2 * this.backgroup.height;
+        this.backgroup.width = Manager.width * 2.2;
+
+        this.button.x = Manager.width - this.button.width - 20;
+        this.button.y = this.height / 2 - this.button.height / 2;
+
+        this.scene = scene;
+
+        this.callback = beforeCallback;
+
+        this.button.on("pointertap", this.doBack, this);
+
+        this.y = Manager.height;
+
+        gsap.to(this, { duration: 0.3, y: Manager.height - this.height - 100, alpha: 1 }).eventCallback('onComplete', () => {
+            if (afterCallback) afterCallback(this);
+        })
+    }
+
+    // 点击返回
+    public doBack() {
+        // 返回之前做点什么
+        if (this.callback) this.callback();
+
+        // 切换场景 
+        Manager.changeScene(new this.scene);
+
+        // 切换场景
+        // let scene = null;
+        // Manager.scenes.pop()
+        // Manager.changeScene(scene = Manager.scenes.pop());
+        // scene.visible = true;
+    }
 }

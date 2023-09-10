@@ -17,8 +17,6 @@ export interface IST {
     }
 }
 
-// type Callback = (...args: any[]) => void | null;
-
 
 export class People extends Container {
     // 需要创建什么额外的配饰,可以继续添加子Container,然后set/get

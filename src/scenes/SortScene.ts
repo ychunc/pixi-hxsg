@@ -1,8 +1,7 @@
 import { Container, Graphics } from "pixi.js";
 import { IScene, Manager } from "../Manager";
-import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
-import { Button, Frame, Header, StyleText } from "../components/component";
+import { Button, Frame, Header, StyleText, Back } from "../components/component";
 
 export class SortScene extends Container implements IScene {
 

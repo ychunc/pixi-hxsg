@@ -18,6 +18,9 @@ let base = [
     { name: "c2", url: "./game/c2.png" },
     { name: "c3", url: "./game/c3.png" },
 
+    // sound
+    { name: 'click', url: "./sound/click.mp3" },
+
     // role
     { name: "r1", url: "./game/roles/r1.json" },
     { name: "r1n", url: "./game/roles/r1n.json" },
@@ -119,6 +122,7 @@ let base = [
 
     { name: "th", url: "./ui/th.json" },
     { name: "npc_jt", url: "./ui/npc_jt.json" },
+    { name: "tit_m", url: "./ui/tit_m.json" },
 
     { name: "fx_b", url: "./ui/fx_b.png" },
     { name: "fx_l", url: "./ui/fx_l.png" },
@@ -132,6 +136,16 @@ let base = [
     { name: "map_4", url: "./ui/map_4.png" },
     { name: "map_5", url: "./ui/map_5.png" },
     { name: "map_6", url: "./ui/map_6.png" },
+
+    { name: "ss_1", url: "./ui/ss_m_1.png" },
+    { name: "ss_2", url: "./ui/ss_m_2.png" },
+    { name: "ss_3", url: "./ui/ss_m_3.png" },
+    { name: "ss_4", url: "./ui/ss_m_4.png" },
+    { name: "ss_5", url: "./ui/ss_m_5.png" },
+    { name: "ss_6", url: "./ui/ss_m_6.png" },
+    { name: "ss_7", url: "./ui/ss_m_7.png" },
+    { name: "ss_8", url: "./ui/ss_m_8.png" },
+    { name: "ss_9", url: "./ui/ss_m_9.png" },
 
     { name: "avatar", url: "./avatar/avatar.png" },
 ]

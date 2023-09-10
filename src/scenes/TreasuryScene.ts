@@ -4,12 +4,11 @@ import { ManageContainer, IScene, Manager } from "../Manager";
 
 import {
     Header, Frame, SceneTitle, StyleText, SplitLine,
-    Scrollbox, Button, Avatar, confirmBox
+    Scrollbox, Button, Avatar, confirmBox, Back
 } from "../components/component";
 
-import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
-import { ws } from "../components/websocket";
+import { Ws } from "../components/websocket";
 
 export class TreasuryScene extends ManageContainer implements IScene {
 
@@ -91,7 +90,7 @@ export class TreasuryScene extends ManageContainer implements IScene {
                 { type: 'button', name: '经验书', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => { } },
                 {
                     type: 'button', name: '副将', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => {
-                        ws.send({ route: ["Slave", "slave"], attr: "up" });
+                        Ws.send({ route: ["Slave", "slave"], attr: "up" });
                     }
                 },
             ],
@@ -174,7 +173,7 @@ export class SlaveScene extends ManageContainer implements IScene {
             [{
                 type: 'button', name: '招募副将', value: '', style: { fontSize: 46 }, color: 0xC600C3, calllback: () => {
                     Manager.currentScene.addChild(new confirmBox('确定招募副将?', () => {
-                        ws.send({ route: ["Slave", "get"] });
+                        Ws.send({ route: ["Slave", "get"] });
                         Manager.changeScene(new SlaveScene)
                     }))
                 }
@@ -189,27 +188,27 @@ export class SlaveScene extends ManageContainer implements IScene {
             [
                 {
                     type: 'button', name: '成长', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => {
-                        ws.send({ route: ["Slave", "slave"], attr: "up" })
+                        Ws.send({ route: ["Slave", "slave"], attr: "up" })
                     }
                 },
                 {
                     type: 'button', name: '血', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => {
-                        ws.send({ route: ["Slave", "slave"], attr: "x" })
+                        Ws.send({ route: ["Slave", "slave"], attr: "x" })
                     }
                 },
                 {
                     type: 'button', name: '精', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => {
-                        ws.send({ route: ["Slave", "slave"], attr: "j" })
+                        Ws.send({ route: ["Slave", "slave"], attr: "j" })
                     }
                 },
                 {
                     type: 'button', name: '攻', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => {
-                        ws.send({ route: ["Slave", "slave"], attr: "g" })
+                        Ws.send({ route: ["Slave", "slave"], attr: "g" })
                     }
                 },
                 {
                     type: 'button', name: '速', value: '', style: { fontSize: 46, fill: 0x63005d }, color: 0xdea500, calllback: () => {
-                        ws.send({ route: ["Slave", "slave"], attr: "s" })
+                        Ws.send({ route: ["Slave", "slave"], attr: "s" })
                     }
                 },
             ],

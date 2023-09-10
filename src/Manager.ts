@@ -1,12 +1,14 @@
 import {
     Application, Container, DisplayObject, InteractionEvent, Sprite,
-    Ticker, UPDATE_PRIORITY
+    // Ticker, UPDATE_PRIORITY
 } from 'pixi.js'
 
 import gsap from 'gsap';
 
 import { Particles } from "./components/particles";
-import { addStats } from 'pixi-stats';
+// import { addStats } from 'pixi-stats';
+
+import * as tf from '@tensorflow/tfjs';
 
 export class Manager {
     public static app: Application;
@@ -27,6 +29,16 @@ export class Manager {
      * Chat Container
      */
     public static chat: any;
+
+    /**
+     * Notify data
+     */
+    public static notify: any = [];
+
+    /**
+     * Header data
+     */
+    public static header: any;
 
     /**
      * back scenes
@@ -70,6 +82,8 @@ export class Manager {
 
         (globalThis as any).__PIXI_APP__ = Manager.app; // eslint-disable-line
 
+        (globalThis as any).tf = tf;
+
         Manager.app.ticker.add(Manager.update)
 
         Manager.app.stage.sortableChildren = true;
@@ -88,9 +102,9 @@ export class Manager {
         Manager.app.stage.addChild(Manager.particles);
 
         // FPS
-        const stats = addStats(document, Manager.app);
-        const ticker: Ticker = Ticker.shared;
-        ticker.add(stats.update, stats, UPDATE_PRIORITY.UTILITY);
+        // const stats = addStats(document, Manager.app);
+        // const ticker: Ticker = Ticker.shared;
+        // ticker.add(stats.update, stats, UPDATE_PRIORITY.UTILITY);
 
         // ClickEffect
         Manager.app.renderer.plugins.interaction.on("pointerdown", (event: InteractionEvent) => Manager.ClickEffect(event))
@@ -230,7 +244,7 @@ export interface IScene extends DisplayObject {
 export class ManageContainer extends Container implements IScene {
     public static data: any;
 
-    public update(): void {
+    public update(_framesPassed?: number): void {
         // To be a scene we must have the update method even if we don't use it.
     }
 }

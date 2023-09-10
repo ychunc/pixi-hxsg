@@ -1,7 +1,7 @@
 import { TextStyle, Text } from "pixi.js";
 import gsap from "gsap";
 
-import { ws } from "../components/websocket"
+import { Ws } from "../components/websocket"
 import { IScene, ManageContainer, Manager } from "../Manager";
 import { Spine } from "../components/spine";
 import { Button } from "../components/component";
@@ -96,15 +96,15 @@ export class LoginScene extends ManageContainer implements IScene {
             Manager.changeScene(new MainScene);
         });
 
-        if (ws.action == 'AUTO') {
+        if (Ws.action == 'AUTO') {
             this.login();
         }
 
     }
 
     public login() {
-        ws.action = 'ACTIVE';
-        ws.connect();
+        Ws.action = 'ACTIVE';
+        Ws.connect();
     }
 
     public static removeInput() {

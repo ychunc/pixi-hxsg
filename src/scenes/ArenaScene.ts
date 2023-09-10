@@ -1,8 +1,7 @@
 import { IScene, Manager, ManageContainer } from "../Manager";
-import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
-import { Header, Frame, SceneTitle } from "../components/component";
-// import { ws } from "../components/websocket";
+import { Header, Frame, SceneTitle, Back } from "../components/component";
+// import { Ws } from "../components/websocket";
 
 export class ArenaScene extends ManageContainer implements IScene {
 
@@ -42,7 +41,7 @@ export class ArenaScene extends ManageContainer implements IScene {
         //     but.x = 550;
         //     this.addChild(but);
         //     but.on("pointertap", () => {
-        //         ws.send({ route: 'slave', uri: 'up', sid: item.id, up: item.up })
+        //         Ws.send({ route: 'slave', uri: 'up', sid: item.id, up: item.up })
         //     });
 
         //     let style = {
@@ -89,7 +88,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
         //         { type: 'text', name: '头衔', value: '将才', style: {}, calllback: () => { } },
         //         {
         //             type: 'buttton', name: '休息', value: '将才', style: { x: -10 }, calllback: () => {
-        //                 ws.send({ route: 'slave', uri: 'up', sid: item.id, up: item.up })
+        //                 Ws.send({ route: 'slave', uri: 'up', sid: item.id, up: item.up })
         //             }
         //         },
         //     ],
@@ -99,7 +98,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
         //         {
         //             type: 'button', name: '升级', value: '', style: {}, calllback: () => {
         //                 this.addChild(new confirmBox('确定使用副将心法?', {}, () => {
-        //                     ws.send({ route: 'goods', uri: "useVaria", id: item.id, type: 3, num: 1 })
+        //                     Ws.send({ route: 'goods', uri: "useVaria", id: item.id, type: 3, num: 1 })
         //                 }))
         //             }
         //         }
@@ -127,7 +126,7 @@ export class SlaveDetailScene extends ManageContainer implements IScene {
         //         {
         //             type: 'button', name: '解雇副将', value: '100', style: false, calllback: () => {
         //                 this.addChild(new confirmBox('确定要解雇副将吗?', {}, () => {
-        //                     ws.send({ route: 'slave', uri: "del", id: item.id })
+        //                     Ws.send({ route: 'slave', uri: "del", id: item.id })
         //                 }))
         //             }
         //         },

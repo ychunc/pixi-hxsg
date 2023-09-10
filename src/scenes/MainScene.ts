@@ -1,6 +1,8 @@
 import { Container, Sprite, Texture } from "pixi.js";
 import * as PIXI from "pixi.js";
 
+// import { sound } from "@pixi/sound";
+
 import gsap from "gsap";
 
 import { PixiPlugin } from "gsap/PixiPlugin";
@@ -15,12 +17,10 @@ import { IScene, ManageContainer, Manager } from "../Manager";
 import { SortScene } from "./SortScene";
 import { LoginScene } from "./LoginScene";
 
-import { MainScene as MainSceneExa } from "../examples/MainScene"
-
 import { SlaveScene } from "./SlaveScene";
 import { UserScene } from "./UserScene";
 import { Dialogue, Header, Ready, StyleText } from "../components/component";
-import { ws } from "../components/websocket";
+import { Ws } from "../components/websocket";
 import { Location } from "../components/route";
 import { ArenaScene } from "./ArenaScene";
 import { TaskScene } from "./TaskScene";
@@ -29,6 +29,7 @@ import { TreasuryScene } from "./TreasuryScene";
 import { PackScene } from "./PackScene";
 import { Chat } from "../components/chat";
 import { Animation } from "../components/animation";
+import { Square } from "./Square";
 
 export class MainScene extends ManageContainer implements IScene {
     /**
@@ -59,7 +60,7 @@ export class MainScene extends ManageContainer implements IScene {
         Manager.backgroundColor(0x000);
 
         // 获取最新地图
-        ws.send({ "route": ["Map", "map"], "index": 1 });
+        Ws.send({ "route": ["Map", "map"], "index": 1 });
 
         this.addChild(Manager.chat = Chat.getInstance());
     }
@@ -86,6 +87,9 @@ export class MainScene extends ManageContainer implements IScene {
             navs.push(nav);
             nav.interactive = true;
             nav.on("pointertap", () => {
+                // 点击声音
+                // sound.play('click');
+
                 // 全局index
                 MainScene.currentNavIndex = index;
                 // 重置图标
@@ -119,19 +123,55 @@ export class MainScene extends ManageContainer implements IScene {
                 this.navPageContainer = this.nav_people();
                 break;
             case 1:
-                this.navPageContainer = new Container();
+                this.navPageContainer = this.nav_facilities();
                 break;
             case 2:
                 this.navPageContainer = this.nav_map();
                 break;
             case 3:
-                this.navPageContainer = this.nav_facilities();
+                this.navPageContainer = this.nav_function();
                 break;
         }
 
         this.navPageContainer.zIndex = 0;
         this.addChild(MainScene.header = new Header(MainScene.mapData.name));
         this.addChild(this.navPageContainer);
+    }
+
+    public nav_facilities() {
+        var container = new Container();
+        container.x = 400 - 10;
+        container.y = 110 - 10;
+
+        var datas = [
+            { 'name': '医馆', 'calllback': () => { }, },
+            { 'name': '钱庄', 'calllback': () => { }, },
+            { 'name': '驿馆', 'calllback': () => { }, },
+            { 'name': '市场', 'calllback': () => { }, },
+            { 'name': '广场', 'calllback': () => { Manager.changeScene(new Square) }, },
+            { 'name': '官府', 'calllback': () => { }, },
+            { 'name': '战场', 'calllback': () => { }, },
+            { 'name': '管家', 'calllback': () => { }, },
+        ];
+
+        let obj: StyleText[] = []
+
+        datas.forEach((element, index) => {
+            obj[index] = new StyleText(datas[index].name, {});
+            obj[index].x = 50 + index % 2 * 180 + 20;
+            obj[index].y = Math.floor(index / 2) * 70;
+
+            let bg = Sprite.from('ss_' + (index + 1));
+            bg.x = index % 2 * 180;
+            bg.y = Math.floor(index / 2) * 70 - 10;
+            bg.scale.set(0.7, 0.7);
+
+            obj[index].on("pointertap", () => element.calllback(), this);
+
+            container.addChild(bg, obj[index]);
+        });
+
+        return container;
     }
 
     public nav_map() {
@@ -161,7 +201,7 @@ export class MainScene extends ManageContainer implements IScene {
 
             row.interactive = true;
             row.on("pointertap", () => {
-                ws.send({ route: ['Map', 'map'], index: item[0], msg: '移动位置' });
+                Ws.send({ route: ['Map', 'map'], index: item[0], msg: '移动位置' });
             });
         }
 
@@ -172,7 +212,7 @@ export class MainScene extends ManageContainer implements IScene {
     /**
      * 设施
      */
-    public nav_facilities() {
+    public nav_function() {
         var container = new Container();
         container.x = 400 - 10;
         container.y = 110 - 10;
@@ -190,12 +230,12 @@ export class MainScene extends ManageContainer implements IScene {
             { 'name': '教派', 'calllback': () => { document.getElementById('stats')!.setAttribute('style', 'display:none') }, },
             { 'name': '训练', 'calllback': () => { }, },
             { 'name': '宝库', 'calllback': () => { Manager.changeScene(new TreasuryScene) }, },
-            { 'name': '公告', 'calllback': () => { ws.close(); }, },
-            { 'name': 'VIP', 'calllback': () => { Manager.changeScene(new MainSceneExa) }, },
+            { 'name': '公告', 'calllback': () => { Ws.close(); }, },
+            { 'name': 'VIP', 'calllback': () => { }, },
             {
                 'name': '登出', 'calllback': () => {
                     MainScene.currentNavIndex = 0;
-                    ws.action = 'ACTIVE';
+                    Ws.action = 'ACTIVE';
                     Manager.changeScene(new LoginScene);
                 },
             },
@@ -236,8 +276,6 @@ export class MainScene extends ManageContainer implements IScene {
      * nav_人物
      */
     public nav_people() {
-        console.log('人物NPC');
-
         var container = new Container();
         if (!MainScene.mapData) return container;
 
@@ -291,13 +329,13 @@ export class MainScene extends ManageContainer implements IScene {
                     case 'PVP':
                         this.addChild(ready);
                         setTimeout(() => {
-                            ws.send({ "route": ["User", "joinGame"] });
+                            Ws.send({ "route": ["User", "joinGame"] });
                         }, 500 + Math.random() * 1000);
                         break;
                     case 'PVE':
                         this.addChild(ready);
                         setTimeout(() => {
-                            ws.send({ "route": ["Npc", "join"] });
+                            Ws.send({ "route": ["Npc", "join"] });
                         }, 500 + Math.random() * 1000);
                         break;
                 }

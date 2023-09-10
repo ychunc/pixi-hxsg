@@ -1,12 +1,11 @@
 import { Container, Sprite, Texture } from "pixi.js";
 import { IScene, Manager, ManageContainer } from "../Manager";
-import { StyleText, Frame, Header, Button, SceneTitle, confirmBox } from "../components/component";
-import { Back } from "../components/back";
+import { StyleText, Frame, Header, Button, SceneTitle, confirmBox, Back } from "../components/component";
 import { MainScene } from "./MainScene";
 import { Scrollbox } from "pixi-scrollbox";
 import { Spine } from "../components/spine";
 import gsap from "gsap";
-import { ws } from "../components/websocket";
+import { Ws } from "../components/websocket";
 
 export class UserScene extends ManageContainer implements IScene {
 
@@ -130,7 +129,7 @@ export class AttributeScene extends ManageContainer implements IScene {
         confirm.x = 72;
         confirm.y = Manager.height * 0.86;
         this.addChild(confirm);
-        confirm.on('pointertap', () => ws.send({ route: ['User', 'setAttr'], attr: this.attr }))
+        confirm.on('pointertap', () => Ws.send({ route: ['User', 'setAttr'], attr: this.attr }))
 
         var reset = new Button('重新分配', {}, 0x4e50b5, () => { }, true);
         reset.x = confirm.x + confirm.width + 50;
@@ -327,7 +326,7 @@ export class SkillScene extends ManageContainer implements IScene {
                         var item = data.skill[index];
                         var lv: any = { 1: '一', 2: '二', 3: '三', 4: '四', 5: '五' };
                         this.addChild(new confirmBox("确定使用" + lv[item.lv] + "级技能书?", () => {
-                            ws.send({ route: ['goods', "useVaria"], id: item.id, type: 2, num: 1 })
+                            Ws.send({ route: ['goods', "useVaria"], id: item.id, type: 2, num: 1 })
                         }));
                     }
                 },
@@ -339,7 +338,7 @@ export class SkillScene extends ManageContainer implements IScene {
             {
                 type: 'button', name: '学习技能', value: '', style: {}, color: 0x4e50b5, calllback: () => {
                     this.addChild(new confirmBox("确定学习新技能?", () => {
-                        ws.send({ route: ["user", "skillStudy"] })
+                        Ws.send({ route: ["user", "skillStudy"] })
                     }));
                 }
             },

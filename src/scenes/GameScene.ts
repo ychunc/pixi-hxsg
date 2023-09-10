@@ -4,7 +4,7 @@ import { IScene, Manager, ManageContainer } from "../Manager";
 import { StyleText, Button, Frame, Header, SceneTitle } from "../components/component";
 import { Animation } from "../components/animation"
 import { Skill } from "../components/skill";
-import { ws } from "../components/websocket"
+import { Ws } from "../components/websocket"
 import { Team } from "../components/game";
 import { MainScene } from "./MainScene";
 
@@ -39,7 +39,8 @@ export class GameScene extends ManageContainer implements IScene {
     /**
     * 游戏结果
     */
-    public static isWin: boolean | number | string;
+    // public static isWin: boolean | number | string;
+    public static isWin: number;
 
     /**
      * 游戏状态 run end
@@ -148,9 +149,9 @@ export class GameScene extends ManageContainer implements IScene {
 
         // 必须让人物入场完成后再
         gsap.to({}, { duration: 0.2 }).eventCallback('onComplete', () => {
-            // ws.send({ "route": "npc", "uri": "row", "data": ["0", "0", "0", "0"], "skill": [0, 0, 0, 0] })
-            // ws.send({ "route": "npc", "uri": "row", "data": ["0", "0", "0", "0"], "skill": ["9", "8", "2", "2"] })
-            // ws.send({ "route": "npc", "uri": "row", "data": ["0", "0", "0", "0"], "skill": ["-1", "-1", "-1", "-1"] })
+            // Ws.send({ "route": "npc", "uri": "row", "data": ["0", "0", "0", "0"], "skill": [0, 0, 0, 0] })
+            // Ws.send({ "route": "npc", "uri": "row", "data": ["0", "0", "0", "0"], "skill": ["9", "8", "2", "2"] })
+            // Ws.send({ "route": "npc", "uri": "row", "data": ["0", "0", "0", "0"], "skill": ["-1", "-1", "-1", "-1"] })
         })
 
 
@@ -395,7 +396,7 @@ export class GameScene extends ManageContainer implements IScene {
                 'NPC': ['Npc', 'actionGame'],
                 'GAME': ['User', 'actionGame'],
             }
-            ws.send({ route: action[GameScene.gameType], "data": data, "skill": skill });
+            Ws.send({ route: action[GameScene.gameType], "data": data, "skill": skill });
             return;
         }
 
@@ -702,14 +703,16 @@ export class GameScene extends ManageContainer implements IScene {
                 // 背景黑色
                 if (item.sk > 0) GameScene.GameBg.display(false);
                 // 更新标题
-                GameScene.GameHeader.updateTitle("[" + item.pk_g.p + "] " + item.pk_g.n + "[" + item.sk + "]");
+                GameScene.GameHeader.updateTitle(item.sk_name);
             }));
 
             // 镜头开始X
             this.runData.startX = Skill.getStartX(item);
 
             // 起手动画
-            if (item.sk > 0) tl.add(Skill.skillStart(this.runData.startX, item));
+            if ([0, 71].indexOf(parseInt(item.sk)) == -1) {
+                tl.add(Skill.skillStart(this.runData.startX, item));
+            }
 
             // 镜头进攻X
             var duration = Skill.skillSpend[item.sk];

@@ -1,3 +1,4 @@
+// import { sound } from "@pixi/sound";
 import { Manager } from "../Manager";
 import { LoginScene } from "../scenes/LoginScene";
 import { confirmBox } from "./component";
@@ -10,7 +11,7 @@ export interface ISSEND {
 
 type action = 'ACTIVE' | 'AUTO'
 
-export class ws {
+export class Ws {
 
     public static websocket: WebSocket;
     public static url: string = "ws://" + location.hostname + ":8950";
@@ -22,7 +23,7 @@ export class ws {
     private constructor() { }
 
     public static connect(url: string = '') {
-        ws.close();
+        Ws.close();
 
         switch (window.location.host.split('.')[0]) {
             case "hxsg":
@@ -30,32 +31,34 @@ export class ws {
                 break;
         }
 
-        ws.websocket = new WebSocket(url || ws.url);
-        ws.websocket.onopen = ws.onOpen;
-        ws.websocket.onmessage = ws.onMessage;
-        ws.websocket.onerror = ws.onError;
-        ws.websocket.onclose = ws.onClose;
+        Ws.websocket = new WebSocket(url || Ws.url);
+        Ws.websocket.onopen = Ws.onOpen;
+        Ws.websocket.onmessage = Ws.onMessage;
+        Ws.websocket.onerror = Ws.onError;
+        Ws.websocket.onclose = Ws.onClose;
 
-        console.log('ws', ws.websocket);
+        console.log('ws', Ws.websocket);
 
     }
 
     public static send(data: any): void {
-        if (ws.websocket.readyState != 1) {
+        if (Ws.websocket.readyState != 1) {
             console.log('%c ws %c not content ',
                 'background:#35495e ; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff',
                 'background:#ff0000 ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff');
-            return ws.reConnect();
+            return Ws.reConnect();
 
         }
         console.log('send...', data);
-
-        ws.websocket.send(JSON.stringify(data));
+        // 点击声音
+        // sound.play('click');
+        // 发送数据
+        Ws.websocket.send(JSON.stringify(data));
     }
 
     public static close() {
         try {
-            ws.websocket.close();
+            Ws.websocket.close();
         } catch (error) {
         }
     }
@@ -69,12 +72,12 @@ export class ws {
     public static onMessage(e: { data: string; }) {
         var data = JSON.parse(e.data);
         if (data.code !== undefined) {
-            ws.data = data.data;
+            Ws.data = data.data;
             new Route(data, data.route)
         }
 
         if (data.type == 'ping') {
-            ws.websocket.send(JSON.stringify({ route: ["Tool", "pong"] }));
+            Ws.websocket.send(JSON.stringify({ route: ["Tool", "pong"] }));
         }
     }
 
@@ -82,28 +85,28 @@ export class ws {
         console.log('%c ws %c onClose',
             'background:#35495e ; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff',
             'background:#FF0000 ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff');
-        ws.reConnect();
+        Ws.reConnect();
     }
 
     public static onError() {
         console.log('%c ws %c onError',
             'background:#35495e ; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff',
             'background:#FF0000 ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff');
-        ws.reConnect('服务器未响应');
+        Ws.reConnect('服务器未响应');
     }
 
     public static confirmBox: confirmBox;
 
     public static reConnect(mes: string = '已断开连接,是否重新连接?') {
         // 自动断开提示
-        // if (ws.action == 'AUTO') {
+        // if (Ws.action == 'AUTO') {
         if (this.confirmBox) this.confirmBox.destroy();
         Manager.currentScene.addChild(this.confirmBox = new confirmBox(mes,
-            () => ws.connect(),
+            () => Ws.connect(),
             () => Manager.changeScene(new LoginScene))
         );
         // }
-        ws.action = 'AUTO';
+        Ws.action = 'AUTO';
     }
 
 }

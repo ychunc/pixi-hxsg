@@ -1,8 +1,7 @@
 import { IScene, Manager, ManageContainer } from "../Manager";
-import { Back } from "../components/back";
 import { MainScene } from "./MainScene";
-import { Header, Frame, SceneTitle } from "../components/component";
-import { ws } from "../components/websocket";
+import { Header, Frame, SceneTitle, Back } from "../components/component";
+import { Ws } from "../components/websocket";
 
 export class TaskScene extends ManageContainer implements IScene {
 
@@ -16,7 +15,7 @@ export class TaskScene extends ManageContainer implements IScene {
         // app bakcgroupd
         Manager.backgroundColor(0x360033);
 
-        ws.send({ route: ["Task", "list"], 'id': 3 });
+        Ws.send({ route: ["Task", "list"], 'id': 3 });
 
         this.interactive = true;
         this.on('pointertap', () => {
